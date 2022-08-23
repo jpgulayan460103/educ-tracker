@@ -32,9 +32,24 @@ class Client extends Model
         parent::boot();
         self::creating(function ($model) {
             $model->uuid = (string) Str::uuid();
+            $full_name_array = [
+                $model->last_name,
+                $model->first_name,
+                $model->middle_name,
+                $model->ext_name,
+            ];
+            $full_name = implode(" ",$full_name_array);
+            $model->full_name = trim($full_name);
         });
         self::updating(function($model) {
-
+            $full_name_array = [
+                $model->last_name,
+                $model->first_name,
+                $model->middle_name,
+                $model->ext_name,
+            ];
+            $full_name = implode(" ",$full_name_array);
+            $model->full_name = trim($full_name);
         });
     }
 

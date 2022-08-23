@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompositionRequest;
 use App\Models\Beneficiary;
 use App\Models\BioParent;
 use App\Models\Client;
@@ -49,7 +50,7 @@ class CompositionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CompositionRequest $request)
     {
         $form_data = $request->all();
         $client = Client::create($form_data['client']);
