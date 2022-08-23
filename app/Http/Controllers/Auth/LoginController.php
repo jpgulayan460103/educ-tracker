@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -41,5 +44,30 @@ class LoginController extends Controller
     public function username()
     {
         return 'username';
+    }
+
+    protected function validateLogin(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+ 
+        $validator->after(function ($validator) {
+
+            $username = request($this->username());
+
+            $user = User::where('username', $username)->first();
+            if($user){
+                if($user->is_active == 0){
+                    $validator->errors()->add(
+                        'username', 'User is not activated'
+                    );
+                }
+            }
+        });
+         
+        $validator->validate();
     }
 }

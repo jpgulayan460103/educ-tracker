@@ -14,8 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(10)->create();
+        // User::factory(10)->create();
         $this->call(PsgcSeeder::class);
+        $this->call(OfficeSeeder::class);
         $this->call(SchoolLevelSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }
