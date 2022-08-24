@@ -22,7 +22,9 @@ class BeneficiaryTransformer extends TransformerAbstract
      * @var array
      */
     protected array $availableIncludes = [
-        //
+        'composition',
+        'school_level',
+        'sector',
     ];
     
     /**
@@ -40,7 +42,6 @@ class BeneficiaryTransformer extends TransformerAbstract
             'middle_name' => $beneficiary->middle_name,
             'ext_name' => $beneficiary->ext_name,
             'full_name' => $beneficiary->full_name,
-            'street_number' => $beneficiary->street_number,
             'school_level_id' => $beneficiary->school_level_id,
             'mobile_number' => $beneficiary->mobile_number,
             'birth_date' => $beneficiary->birth_date,
@@ -49,6 +50,30 @@ class BeneficiaryTransformer extends TransformerAbstract
             'occupation' => $beneficiary->occupation,
             'monthly_salary' => $beneficiary->monthly_salary,
             'composition_id' => $beneficiary->composition_id,
+            'sector_id' => $beneficiary->sector_id,
+            'sector_others' => $beneficiary->sector_others,
+            'remarks' => $beneficiary->remarks,
+            'status' => $beneficiary->status,
+            'status_date' => $beneficiary->status_date,
         ];
+    }
+
+    public function includeComposition(Beneficiary $composition)
+    {
+        if($composition->composition){
+            return $this->item($composition->composition, new CompositionTransformer);
+        }
+    }
+    public function includeSchoolLevel(Beneficiary $composition)
+    {
+        if($composition->school_level){
+            return $this->item($composition->school_level, new SchoolLevelTransformer);
+        }
+    }
+    public function includeSector(Beneficiary $composition)
+    {
+        if($composition->sector){
+            return $this->item($composition->sector, new SectorTransformer);
+        }
     }
 }

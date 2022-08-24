@@ -22,7 +22,7 @@ class ClientTransformer extends TransformerAbstract
      * @var array
      */
     protected array $availableIncludes = [
-        //
+        'psgc'
     ];
     
     /**
@@ -50,5 +50,11 @@ class ClientTransformer extends TransformerAbstract
             'monthly_salary' => $client->monthly_salary,
             'relationship_beneficiary' => $client->relationship_beneficiary,
         ];
+    }
+    public function includePsgc(Client $client)
+    {
+        if($client->psgc){
+            return $this->item($client->psgc, new PsgcTransformer);
+        }
     }
 }

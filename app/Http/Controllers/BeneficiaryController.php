@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beneficiary;
+use App\Transformers\BeneficiaryTransformer;
 use Illuminate\Http\Request;
 
 class BeneficiaryController extends Controller
@@ -14,7 +15,21 @@ class BeneficiaryController extends Controller
      */
     public function index()
     {
-        //
+        $beneficiaries = Beneficiary::with(
+            'composition.father',
+            'composition.mother',
+            'composition.client.psgc',
+            'school_level',
+            'sector',
+        )->paginate(10);
+
+        return fractal($beneficiaries, new BeneficiaryTransformer)->parseIncludes('
+            composition.father,
+            composition.mother,
+            composition.client.psgc,
+            school_level,
+            sector,
+        ');
     }
 
     /**

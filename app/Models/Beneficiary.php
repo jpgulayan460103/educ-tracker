@@ -32,9 +32,9 @@ class Beneficiary extends Model
         parent::boot();
         self::creating(function ($model) {
             $full_name_array = [
-                $model->last_name,
                 $model->first_name,
                 $model->middle_name,
+                $model->last_name,
                 $model->ext_name,
             ];
             $full_name = implode(" ",$full_name_array);
@@ -42,13 +42,28 @@ class Beneficiary extends Model
         });
         self::updating(function($model) {
             $full_name_array = [
-                $model->last_name,
                 $model->first_name,
                 $model->middle_name,
+                $model->last_name,
                 $model->ext_name,
             ];
             $full_name = implode(" ",$full_name_array);
             $model->full_name = trim($full_name);
         });
+    }
+
+    public function composition()
+    {
+        return $this->belongsTo(Composition::class);
+    }
+
+    public function school_level()
+    {
+        return $this->belongsTo(SchoolLevel::class);
+    }
+
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class);
     }
 }

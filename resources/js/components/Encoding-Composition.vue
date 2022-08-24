@@ -30,7 +30,7 @@
                         <div class="form-group">
                             <label for="ext_name">Ext Name:</label>
                             <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.client.ext_name">
-                                <option>NONE</option>
+                                <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
                                 <option value="I">I</option>
@@ -167,7 +167,7 @@
                         <div class="form-group">
                             <label for="ext_name">Ext Name:</label>
                             <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.father.ext_name">
-                                <option>NONE</option>
+                                <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
                                 <option value="I">I</option>
@@ -218,7 +218,7 @@
                         <div class="form-group">
                             <label for="ext_name">Ext Name:</label>
                             <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.mother.ext_name">
-                                <option>NONE</option>
+                                <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
                                 <option value="I">I</option>
@@ -270,7 +270,7 @@
                         <div class="form-group">
                             <label for="ext_name">Ext Name:</label>
                             <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.beneficiaries[key].ext_name">
-                                <option>NONE</option>
+                                <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
                                 <option value="I">I</option>
@@ -377,6 +377,7 @@
 import Axios from 'axios';
 import DatePicker from 'vue2-datepicker';
 import uniqBy from 'lodash/uniqBy'
+import isEmpty from 'lodash/isEmpty'
 
     export default {
         components: { DatePicker },
@@ -448,6 +449,9 @@ import uniqBy from 'lodash/uniqBy'
             removeStudent(index){
                 if (index > -1) { // only splice array when item is found
                     this.formData.beneficiaries.splice(index, 1); // 2nd parameter means remove one item only
+                }
+                if(isEmpty(this.formData.beneficiaries)){
+                    this.addStudent();
                 }
             }
         }

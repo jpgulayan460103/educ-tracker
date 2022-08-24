@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\CompositionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resources([
     'family-composition' => CompositionController::class,
+    'beneficiaries' => BeneficiaryController::class,
 ]);

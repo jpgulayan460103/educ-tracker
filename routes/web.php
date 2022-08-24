@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/encoded', [App\Http\Controllers\HomeController::class, 'encoded'])->name('encoded');
 
 // Route::post('login', 'Auth\LoginController@login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);

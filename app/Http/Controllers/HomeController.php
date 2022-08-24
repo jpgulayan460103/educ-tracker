@@ -41,4 +41,13 @@ class HomeController extends Controller
             return view('login');
         }
     }
+
+    public function encoded()
+    {
+        if(Auth::check()){
+            return view('encoded');
+        }else{
+            return view('login');
+        }
+    }
 }

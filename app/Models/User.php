@@ -35,9 +35,9 @@ class User extends Authenticatable
         parent::boot();
         self::creating(function ($model) {
             $full_name_array = [
-                $model->last_name,
                 $model->first_name,
                 $model->middle_name,
+                $model->last_name,
                 $model->ext_name,
             ];
             $full_name = implode(" ",$full_name_array);
@@ -46,9 +46,9 @@ class User extends Authenticatable
         });
         self::updating(function($model) {
             $full_name_array = [
-                $model->last_name,
                 $model->first_name,
                 $model->middle_name,
+                $model->last_name,
                 $model->ext_name,
             ];
             $full_name = implode(" ",$full_name_array);
