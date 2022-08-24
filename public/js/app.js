@@ -5089,6 +5089,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -34411,6 +34419,18 @@ var render = function () {
                 _c("td", [_vm._v(_vm._s(beneficiary.status))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(beneficiary.status_date))]),
+                _vm._v(" "),
+                _c("td", [
+                  _c("span", [
+                    _vm._v(_vm._s(beneficiary.composition.father.full_name)),
+                  ]),
+                ]),
+                _vm._v(" "),
+                _c("td", [
+                  _c("span", [
+                    _vm._v(_vm._s(beneficiary.composition.mother.full_name)),
+                  ]),
+                ]),
               ]),
             ])
           }),
@@ -34444,6 +34464,10 @@ var staticRenderFns = [
         _c("th", [_vm._v("Status")]),
         _vm._v(" "),
         _c("th", [_vm._v("Remarks")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Father's Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Mother's Name")]),
       ]),
     ])
   },

@@ -14,6 +14,8 @@
                         <th>Amount Granted</th>
                         <th>Status</th>
                         <th>Remarks</th>
+                        <th>Father's Name</th>
+                        <th>Mother's Name</th>
                     </tr>
                 </thead>
                 <tbody v-for="beneficiary in beneficiaries" :key="beneficiary.key">
@@ -31,6 +33,12 @@
                             <td>{{ beneficiary.school_level.amount }}</td>
                             <td>{{ beneficiary.status }}</td>
                             <td>{{ beneficiary.status_date }}</td>
+                            <td>
+                                <span>{{ beneficiary.composition.father.full_name }}</span>
+                            </td>
+                            <td>
+                                <span>{{ beneficiary.composition.mother.full_name }}</span>
+                            </td>
                         </tr>
                     </tbody>
             </table>
