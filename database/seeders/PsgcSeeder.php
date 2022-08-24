@@ -32,7 +32,7 @@ class PsgcSeeder extends Seeder
             $insert_data['province_name'] = $psgc_data[0];
             $insert_data['province_psgc'] = $psgc_data[1];
             $insert_data['city_name'] = $psgc_data[2];
-            $insert_data['city_name_psgc'] = $psgc_data[3];
+            $insert_data['city_psgc'] = $psgc_data[3];
             $insert_data['brgy_name'] = $psgc_data[4];
             $insert_data['brgy_psgc'] = $psgc_data[5];
             $insert_data['district'] = $psgc_data[6];

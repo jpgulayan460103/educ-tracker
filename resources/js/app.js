@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 
+import 'vue2-datepicker/index.css';
+
 window.Vue = require('vue').default;
 
 /**

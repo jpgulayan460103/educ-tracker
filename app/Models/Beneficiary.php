@@ -15,15 +15,16 @@ class Beneficiary extends Model
         'middle_name',
         'ext_name',
         'full_name',
-        'street_number',
         'school_level_id',
-        'mobile_number',
         'birth_date',
         'age',
         'gender',
-        'occupation',
-        'monthly_salary',
         'composition_id',
+        'status',
+        'status_date',
+        'sector_id',
+        'sector_others',
+        // 'remarks',
     ];
 
     public static function boot()

@@ -20,7 +20,7 @@ class CreatePsgcsTable extends Migration
             $table->string('province_name')->nullable();
             $table->integer('province_psgc')->nullable();
             $table->string('city_name')->nullable();
-            $table->integer('city_name_psgc')->nullable();
+            $table->integer('city_psgc')->nullable();
             $table->string('brgy_name')->nullable();
             $table->integer('brgy_psgc')->nullable();
             $table->string('district')->nullable();

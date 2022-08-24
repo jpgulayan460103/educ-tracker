@@ -20,15 +20,16 @@ class CreateBeneficiariesTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('ext_name')->nullable();
-            $table->string('street_number')->nullable();
             $table->unsignedBigInteger('school_level_id')->nullable();
-            $table->string('mobile_number')->nullable();
             $table->date('birth_date')->nullable();
             $table->integer('age')->nullable();
             $table->string('gender')->nullable();
-            $table->string('occupation')->nullable();
-            $table->float('monthly_salary', 15, 2)->nullable();
             $table->unsignedBigInteger('composition_id')->nullable();
+            $table->string('status')->nullable();
+            $table->date('status_date')->nullable();
+            $table->unsignedBigInteger('sector_id')->nullable();
+            $table->string('sector_others')->nullable();
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }
