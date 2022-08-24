@@ -7,6 +7,7 @@ use App\Models\Psgc;
 use App\Models\SchoolLevel;
 use App\Models\Sector;
 use App\Models\SectorOther;
+use App\Models\SwadOffice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,6 +30,30 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $swad_offices = SwadOffice::all();
+        $payouts = Payout::all();
+        $data = [
+            'swad_offices' => $swad_offices,
+            'payouts' => $payouts,
+        ];
+        if(Auth::check()){
+            return view('dashboard', $data);
+        }else{
+            return view('login');
+        }
+    }
+
+    public function beneficiaries()
+    {
+        if(Auth::check()){
+            return view('beneficiaries');
+        }else{
+            return view('login');
+        }
+    }
+
+    public function encoding()
+    {
         $psgcs = Psgc::all();
         $school_levels = SchoolLevel::all();
         $sectors = Sector::all();
@@ -43,15 +68,6 @@ class HomeController extends Controller
         ];
         if(Auth::check()){
             return view('composition', $data);
-        }else{
-            return view('login');
-        }
-    }
-
-    public function encoded()
-    {
-        if(Auth::check()){
-            return view('encoded');
         }else{
             return view('login');
         }

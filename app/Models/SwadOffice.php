@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SwadOffice extends Model
 {
     use HasFactory;
+
+    public function beneficiaries()
+    {
+        return $this->hasMany(Beneficiary::class);
+    }
 }

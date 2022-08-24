@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\CompositionController;
+use App\Http\Controllers\SwadOfficeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::resources([
-//     'family-composition' => CompositionController::class,
-//     'beneficiaries' => BeneficiaryController::class,
-// ]);
+Route::resources([
+    // 'family-composition' => CompositionController::class,
+    // 'beneficiaries' => BeneficiaryController::class,
+    'swad-offices' => SwadOfficeController::class,
+]);
+
+Route::get('beneficiaries/reports', [BeneficiaryController::class, 'report'])->name('report');

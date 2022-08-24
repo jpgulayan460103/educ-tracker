@@ -13,4 +13,9 @@ class SchoolLevel extends Model
         'name',
         'amount',
     ];
+
+    public function beneficiaries()
+    {
+        return $this->hasMany(Beneficiary::class);
+    }
 }
