@@ -15,14 +15,13 @@ class SectorSeeder extends Seeder
     public function run()
     {
         $sectors = [
-            "Working Student",
             "Solo Parent",
-            "Distressed OFW",
-            "HIV",
-            "Orphan or Abandoned",
-            "Unemployed parents",
-            "VAWC Victim",
-            "Calamity Victim",
+            "Indigenous People",
+            "Recovering Person who used Drugs",
+            "4PS DSWD Beneficiary",
+            "Street Dwellers",
+            "Psychosocial/Mental/Learning Disability",
+            "Stateless Persons/Asylum Seekers/Refugees",
             "Others",
         ];
 

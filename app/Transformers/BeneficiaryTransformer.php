@@ -25,6 +25,8 @@ class BeneficiaryTransformer extends TransformerAbstract
         'composition',
         'school_level',
         'sector',
+        'payout',
+        'swad_office',
     ];
     
     /**
@@ -51,29 +53,42 @@ class BeneficiaryTransformer extends TransformerAbstract
             'monthly_salary' => $beneficiary->monthly_salary,
             'composition_id' => $beneficiary->composition_id,
             'sector_id' => $beneficiary->sector_id,
-            'sector_others' => $beneficiary->sector_others,
             'remarks' => $beneficiary->remarks,
             'status' => $beneficiary->status,
             'status_date' => $beneficiary->status_date,
+            'payout_id' => $beneficiary->payout_id,
+            'swad_office_id' => $beneficiary->swad_office_id,
         ];
     }
 
-    public function includeComposition(Beneficiary $composition)
+    public function includeComposition(Beneficiary $beneficiary)
     {
-        if($composition->composition){
-            return $this->item($composition->composition, new CompositionTransformer);
+        if($beneficiary->composition){
+            return $this->item($beneficiary->composition, new CompositionTransformer);
         }
     }
-    public function includeSchoolLevel(Beneficiary $composition)
+    public function includeSchoolLevel(Beneficiary $beneficiary)
     {
-        if($composition->school_level){
-            return $this->item($composition->school_level, new SchoolLevelTransformer);
+        if($beneficiary->school_level){
+            return $this->item($beneficiary->school_level, new SchoolLevelTransformer);
         }
     }
-    public function includeSector(Beneficiary $composition)
+    public function includeSector(Beneficiary $beneficiary)
     {
-        if($composition->sector){
-            return $this->item($composition->sector, new SectorTransformer);
+        if($beneficiary->sector){
+            return $this->item($beneficiary->sector, new SectorTransformer);
+        }
+    }
+    public function includePayout(Beneficiary $beneficiary)
+    {
+        if($beneficiary->payout){
+            return $this->item($beneficiary->payout, new PayoutTransformer);
+        }
+    }
+    public function includeSwadOffice(Beneficiary $beneficiary)
+    {
+        if($beneficiary->swad_office){
+            return $this->item($beneficiary->swad_office, new SwadOfficeTransformer);
         }
     }
 }

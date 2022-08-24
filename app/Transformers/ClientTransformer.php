@@ -22,7 +22,9 @@ class ClientTransformer extends TransformerAbstract
      * @var array
      */
     protected array $availableIncludes = [
-        'psgc'
+        'psgc',
+        'sector',
+        'sector_other',
     ];
     
     /**
@@ -49,12 +51,26 @@ class ClientTransformer extends TransformerAbstract
             'occupation' => $client->occupation,
             'monthly_salary' => $client->monthly_salary,
             'relationship_beneficiary' => $client->relationship_beneficiary,
+            'sector_id' => $client->sector_id,
+            'sector_other_id' => $client->sector_other_id,
         ];
     }
     public function includePsgc(Client $client)
     {
         if($client->psgc){
             return $this->item($client->psgc, new PsgcTransformer);
+        }
+    }
+    public function includeSector(Client $client)
+    {
+        if($client->sector){
+            return $this->item($client->sector, new SectorTransformer);
+        }
+    }
+    public function includeSectorOther(Client $client)
+    {
+        if($client->sector_other){
+            return $this->item($client->sector_other, new SectorOtherTransformer);
         }
     }
 }

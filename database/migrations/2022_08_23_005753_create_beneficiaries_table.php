@@ -26,7 +26,8 @@ class CreateBeneficiariesTable extends Migration
             $table->string('gender')->nullable();
             $table->unsignedBigInteger('composition_id')->nullable();
             $table->string('status')->nullable();
-            $table->date('status_date')->nullable();
+            $table->unsignedBigInteger('payout_id')->nullable();
+            $table->unsignedBigInteger('swad_office_id')->nullable();
             $table->unsignedBigInteger('sector_id')->nullable();
             $table->string('sector_others')->nullable();
             $table->text('remarks')->nullable();

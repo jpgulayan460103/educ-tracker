@@ -22,7 +22,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="middle_name">Middle Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.client.middle_name">
+                            <input type="checkbox" id="client_middle_name_check" v-model="formData.client.has_middle_name" @change="noMiddleName($event,'client')"/>
+                            <label for="client_middle_name_check"><span style="font-size: 80%;">No Middle Name</span></label>
+                            
+                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.client.middle_name" :disabled="formData.client.has_middle_name">
                             <span style="color:red" v-if="formError['client.middle_name']">{{ formError['client.middle_name'][0] }}</span>
                         </div>
                     </div>
@@ -40,7 +43,7 @@
                                 <option value="V">V</option>
                                 <option value="VI">VI</option>
                             </select>
-                            <span style="color:red" v-if="formError['client.ext_name']">{{ formError['client.middle_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['client.ext_name']">{{ formError['client.ext_name'][0] }}</span>
                         </div>
                     </div>
                 </div>
@@ -49,7 +52,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="relationship_beneficiary">Relationship to Beneficiary:</label>
-                            <input type="text" class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary">
+                            <select class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary">
+                                <option value="Father">Father</option>
+                                <option value="Mother">Mother</option>
+                                <option value="Grandfather/Grandmother">Grandfather/Grandmother</option>
+                                <option value="Brother/Sister">Brother/Sister</option>
+                                <option value="Guardian">Guardian</option>
+                            </select>
+                            <!-- <input type="text" class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary"> -->
                             <span style="color:red" v-if="formError['client.relationship_beneficiary']">{{ formError['client.relationship_beneficiary'][0] }}</span>
                         </div>
                     </div>
@@ -136,6 +146,27 @@
                         </div>
                     </div>
                 </div>
+                <div class="row gx-2">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="sector_id">Sector:</label>
+                            <select class="form-control" placeholder="Enter Sector" v-model="formData.client.sector_id">
+                                <option v-for="(sector, key) in sectors" :key="key" :value="sector.id">{{ sector.name }}</option>
+                            </select>
+                            <span style="color:red" v-if="formError[`formData.client.sector_id`]">{{ formError[`formData.client.sector_id`][0] }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="sector_other_id">Other Sector:</label>
+                            <select class="form-control" placeholder="Enter Other Sector" v-model="formData.client.sector_other_id">
+                                <option value="">NONE</option>
+                                <option v-for="(sector, key) in sectorOthers" :key="key" :value="sector.id">{{ sector.name }}</option>
+                            </select>
+                            <span style="color:red" v-if="formError[`formData.client.sector_other_id`]">{{ formError[`formData.client.sector_other_id`][0] }}</span>
+                        </div>
+                    </div>
+                </div>
             </fieldset>
 
             <fieldset class="border p-2 my-2">
@@ -159,7 +190,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="middle_name">Father Middle Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.father.middle_name">
+                            <input type="checkbox" id="father_middle_name_check" v-model="formData.father.has_middle_name" @change="noMiddleName($event,'father')"/>
+                            <label for="father_middle_name_check"><span style="font-size: 80%;">No Middle Name</span></label>
+
+                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.father.middle_name" :disabled="formData.father.has_middle_name">
                             <span style="color:red" v-if="formError['father.middle_name']">{{ formError['father.middle_name'][0] }}</span>
                         </div>
                     </div>
@@ -177,7 +211,7 @@
                                 <option value="V">V</option>
                                 <option value="VI">VI</option>
                             </select>
-                            <span style="color:red" v-if="formError['father.ext_name']">{{ formError['father.middle_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['father.ext_name']">{{ formError['father.ext_name'][0] }}</span>
                         </div>
                     </div>
 
@@ -210,7 +244,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="middle_name">Mother Middle Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.mother.middle_name">
+                            <input type="checkbox" id="mother_middle_name_check" v-model="formData.mother.has_middle_name" @change="noMiddleName($event,'mother')"/>
+                            <label for="mother_middle_name_check"><span style="font-size: 80%;">No Middle Name</span></label>
+
+                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.mother.middle_name" :disabled="formData.mother.has_middle_name">
                             <span style="color:red" v-if="formError['mother.middle_name']">{{ formError['mother.middle_name'][0] }}</span>
                         </div>
                     </div>
@@ -228,7 +265,7 @@
                                 <option value="V">V</option>
                                 <option value="VI">VI</option>
                             </select>
-                            <span style="color:red" v-if="formError['mother.ext_name']">{{ formError['mother.middle_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['mother.ext_name']">{{ formError['mother.ext_name'][0] }}</span>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -240,6 +277,8 @@
                     </div>
                 </div>
             </fieldset>
+            <hr>
+            <h2>Beneficiaries</h2>
 
             <fieldset class="border p-2 my-2" v-for="(beneficiary, key) in formData.beneficiaries" :key="key">
                 <legend  class="w-auto">Student's {{ key + 1 }} Information <button type="button" class="btn btn-danger" @click="removeStudent(key)">Remove Student</button></legend>
@@ -262,7 +301,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="middle_name">Student {{ key + 1 }} Middle Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.beneficiaries[key].middle_name">
+                            <input type="checkbox" :id="`beneficiaries_${key}_middle_name_check`" v-model="formData.beneficiaries[key].has_middle_name" @change="noMiddleName($event,'beneficiaries', key)"/>
+                            <label :for="`beneficiaries_${key}_middle_name_check`"><span style="font-size: 80%;">No Middle Name</span></label>
+
+                            <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="formData.beneficiaries[key].middle_name" :disabled="formData.beneficiaries[key].has_middle_name">
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.middle_name`]">{{ formError[`beneficiaries.${key}.middle_name`][0] }}</span>
                         </div>
                     </div>
@@ -280,7 +322,7 @@
                                 <option value="V">V</option>
                                 <option value="VI">VI</option>
                             </select>
-                            <span style="color:red" v-if="formError[`beneficiaries.${key}.ext_name`]">{{ formError[`beneficiaries.${key}.middle_name`][0] }}</span>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.ext_name`]">{{ formError[`beneficiaries.${key}.ext_name`][0] }}</span>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -295,7 +337,7 @@
                 <div class="row gx-2">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="gender">Student {{ key + 1 }} Gender:</label>
+                            <label for="gender">Gender:</label>
                             <select class="form-control" placeholder="Enter Gender" v-model="formData.beneficiaries[key].gender">
                                 <option value="MALE">MALE</option>
                                 <option value="FEMALE">FEMALE</option>
@@ -312,13 +354,15 @@
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="school_name">Student {{ key + 1 }} School Name:</label>
                             <input type="text" class="form-control" placeholder="Enter School Name" v-model="formData.beneficiaries[key].school_name">
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_name`]">{{ formError[`beneficiaries.${key}.school_name`][0] }}</span>
                         </div>
                     </div>
+                </div>
+                <div class="row gx-2">
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="status">Claim Status:</label>
@@ -326,40 +370,31 @@
                                 <option value="Claimed">Claimed</option>
                                 <option value="For Scheduled Payout">For Scheduled Payout</option>
                                 <option value="No Requirements">No Requirements</option>
+                                <option value="Not Eligible">Not Eligible</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.status`]">{{ formError[`beneficiaries.${key}.status`][0] }}</span>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="status_date">Status Date:</label>
-                            <date-picker v-model="formData.beneficiaries[key].status_date" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"></date-picker>
-                            <span style="color:red" v-if="formError[`beneficiaries.${key}.status_date`]">{{ formError[`beneficiaries.${key}.status_date`][0] }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row gx-2">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="sector_id">Student {{ key + 1 }} Sector:</label>
-                            <select class="form-control" placeholder="Enter Sector" v-model="formData.beneficiaries[key].sector_id">
-                                <option v-for="(sector, key) in sectors" :key="key" :value="sector.id">{{ sector.name }}</option>
+                            <label for="payout_id">Status Date:</label>
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].payout_id">
+                                <option value="">NONE</option>
+                                <option v-for="(payout, key) in payouts" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                             </select>
-                            <span style="color:red" v-if="formError[`beneficiaries.${key}.sector_id`]">{{ formError[`beneficiaries.${key}.sector_id`][0] }}</span>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.payout_id`]">{{ formError[`beneficiaries.${key}.payout_id`][0] }}</span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label for="sector_others">Sector Others:</label>
-                            <input type="text" class="form-control" placeholder="Enter School Name" v-model="formData.beneficiaries[key].sector_others">
-                            <span style="color:red" v-if="formError[`beneficiaries.${key}.sector_others`]">{{ formError[`beneficiaries.${key}.sector_others`][0] }}</span>
+                            <label for="amount">Amount:</label>
+                            <input type="text" class="form-control" :value="beneficiaryAmount(formData.beneficiaries[key].school_level_id, formData.beneficiaries[key].status)" readonly>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="remarks">Remarks:</label>
-                            <textarea type="text" class="form-control" placeholder="Enter Remarks" v-model="formData.beneficiaries[key].remarks">
-                            </textarea>
+                            <input type="text" class="form-control" placeholder="Enter Remarks" v-model="formData.beneficiaries[key].remarks" />
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.remarks`]">{{ formError[`beneficiaries.${key}.remarks`][0] }}</span>
                         </div>
                     </div>
@@ -368,7 +403,7 @@
             <h1 style="text-align: center;">
                 <button type="button" class="btn btn-warning" @click="addStudent">Add Student</button>
             </h1>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" :disabled="submit">Submit</button>
         </form>
     </div>
 </template>
@@ -378,17 +413,26 @@ import Axios from 'axios';
 import DatePicker from 'vue2-datepicker';
 import uniqBy from 'lodash/uniqBy'
 import isEmpty from 'lodash/isEmpty'
+import debounce from 'lodash/debounce'
 
     export default {
         components: { DatePicker },
-        props: ['psgcs', 'schoolLevels', 'sectors'],
+        props: ['psgcs', 'schoolLevels', 'sectors', 'payouts', 'sectorOthers'],
         data(){
             return {
                 formData:{
-                    client: {},
-                    father: {},
-                    mother: {},
-                    beneficiaries: [{},{},{}],
+                    client: {
+                        has_middle_name: false,
+                    },
+                    father: {
+                        has_middle_name: false,
+                    },
+                    mother: {
+                        has_middle_name: false,
+                    },
+                    beneficiaries: [{
+                        has_middle_name: false,
+                    }],
                 },
                 formError:{
                     client: {},
@@ -399,6 +443,7 @@ import isEmpty from 'lodash/isEmpty'
                 provinces: [],
                 cities: [],
                 brgys: [],
+                submit: false,
             }
         },
         mounted() {
@@ -406,17 +451,50 @@ import isEmpty from 'lodash/isEmpty'
             this.provinces = uniqBy(this.psgcs, 'province_psgc');
         },
         methods: {
-            formSubmit(){
+            formSubmit: debounce(function(){
+                this.submit = true;
+                this.formError = {
+                    client: {},
+                    father: {},
+                    mother: {},
+                    beneficiaries: [],
+                }
+                for (let index = 0; index < this.formData.beneficiaries.length; index++) {
+                    this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+                }
                 Axios.post(route('family-composition.store'), this.formData)
                 .then(res => {
-
+                    this.submit = false;
+                    alert("Successfuly saved.");
+                    this.formData = {
+                        client: {
+                            has_middle_name: false,
+                        },
+                        father: {
+                            has_middle_name: false,
+                        },
+                        mother: {
+                            has_middle_name: false,
+                        },
+                        beneficiaries: [{
+                            has_middle_name: false,
+                        }],
+                    };
+                    this.formError = {
+                        client: {},
+                        father: {},
+                        mother: {},
+                        beneficiaries: [],
+                    }
                 })
                 .catch(err => {
+                    this.submit = false;
                     this.formError = err.response.data.errors;
                 })
-                .then(res => {})
-                ;
-            },
+                .then(res => {
+                    this.submit = false;
+                });
+            }, 500),
             calcClientAge(){
                 this.formData.client.age = this.getAge(this.formData.client.birth_date);
             },
@@ -442,9 +520,10 @@ import isEmpty from 'lodash/isEmpty'
             setPsgcId(){
                 let psgcs = this.psgcs.filter(item => item.brgy_psgc === this.formData.client.brgy);
                 this.formData.client.psgc_id = psgcs[0].id;
+                this.formData.client.swad_office_id = psgcs[0].swad_office_id;
             },
             addStudent(){
-                this.formData.beneficiaries = [...this.formData.beneficiaries, {}];
+                this.formData.beneficiaries = [...this.formData.beneficiaries, {has_middle_name: false}];
             },
             removeStudent(index){
                 if (index > -1) { // only splice array when item is found
@@ -452,6 +531,24 @@ import isEmpty from 'lodash/isEmpty'
                 }
                 if(isEmpty(this.formData.beneficiaries)){
                     this.addStudent();
+                }
+            },
+            noMiddleName(e, field, index = null){
+                if(e.target.checked){
+                    if(index != null){
+                        this.formData[field][index]['middle_name'] = "";
+                    }else{
+                        this.formData[field]['middle_name'] = "";
+                    }
+                }
+            },
+
+            beneficiaryAmount(school_level_id = null, status = null){
+                let school_level = this.schoolLevels.filter(item => item.id == school_level_id);
+                if(status == "Claimed" && school_level_id != null && status != null){
+                    return school_level[0].amount;
+                }else{
+                    return 0;
                 }
             }
         }

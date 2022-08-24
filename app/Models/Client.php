@@ -25,6 +25,8 @@ class Client extends Model
         'occupation',
         'monthly_salary',
         'relationship_beneficiary',
+        'sector_id',
+        'sector_other_id',
     ];
 
     public static function boot()
@@ -60,5 +62,15 @@ class Client extends Model
     public function psgc()
     {
         return $this->belongsTo(Psgc::class);
+    }
+
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class);
+    }
+
+    public function sector_other()
+    {
+        return $this->belongsTo(SectorOther::class);
     }
 }

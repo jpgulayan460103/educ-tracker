@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resources([
-    'family-composition' => CompositionController::class,
-    'beneficiaries' => BeneficiaryController::class,
-]);
+// Route::resources([
+//     'family-composition' => CompositionController::class,
+//     'beneficiaries' => BeneficiaryController::class,
+// ]);

@@ -19,16 +19,24 @@ class BeneficiaryController extends Controller
             'composition.father',
             'composition.mother',
             'composition.client.psgc',
+            'composition.user',
             'school_level',
             'sector',
-        )->paginate(10);
+            'payout',
+            'swad_office',
+        );
+        $beneficiaries->orderBy('id', 'desc');
+        $beneficiaries = $beneficiaries->paginate(10);
 
         return fractal($beneficiaries, new BeneficiaryTransformer)->parseIncludes('
             composition.father,
             composition.mother,
             composition.client.psgc,
+            composition.user,
             school_level,
             sector,
+            payout,
+            swad_office,
         ');
     }
 

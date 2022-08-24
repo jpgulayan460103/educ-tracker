@@ -6,6 +6,8 @@
         :psgcs="{{ json_encode($psgcs) }}"
         :school-levels="{{ json_encode($school_levels) }}"
         :sectors="{{ json_encode($sectors) }}"
+        :payouts="{{ json_encode($payouts) }}"
+        :sector-others="{{ json_encode($sector_others) }}"
     />
 </div>
 @endsection

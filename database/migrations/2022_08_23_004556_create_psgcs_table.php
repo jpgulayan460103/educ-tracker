@@ -25,6 +25,7 @@ class CreatePsgcsTable extends Migration
             $table->integer('brgy_psgc')->nullable();
             $table->string('district')->nullable();
             $table->string('subdistrict')->nullable();
+            $table->unsignedBigInteger('swad_office_id')->nullable();
             $table->timestamps();
         });
     }

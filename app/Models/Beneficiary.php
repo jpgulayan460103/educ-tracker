@@ -21,10 +21,11 @@ class Beneficiary extends Model
         'gender',
         'composition_id',
         'status',
-        'status_date',
         'sector_id',
+        'swad_office_id',
+        'payout_id',
         'sector_others',
-        // 'remarks',
+        'remarks',
     ];
 
     public static function boot()
@@ -65,5 +66,15 @@ class Beneficiary extends Model
     public function sector()
     {
         return $this->belongsTo(Sector::class);
+    }
+
+    public function payout()
+    {
+        return $this->belongsTo(Payout::class);
+    }
+
+    public function swad_office()
+    {
+        return $this->belongsTo(SwadOffice::class);
     }
 }

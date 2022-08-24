@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BeneficiaryController;
+use App\Http\Controllers\CompositionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,3 +24,8 @@ Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resources([
+    'family-composition' => CompositionController::class,
+    'beneficiaries' => BeneficiaryController::class,
+]);
+

@@ -26,6 +26,7 @@ class CompositionTransformer extends TransformerAbstract
         'father',
         'mother',
         'client',
+        'user',
     ];
     
     /**
@@ -65,6 +66,12 @@ class CompositionTransformer extends TransformerAbstract
     {
         if($composition->client){
             return $this->item($composition->client, new ClientTransformer);
+        }
+    }
+    public function includeUser(Composition $composition)
+    {
+        if($composition->user){
+            return $this->item($composition->user, new UserTransformer);
         }
     }
 }

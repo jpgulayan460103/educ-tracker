@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompositionsTable extends Migration
+class CreateSwadOfficesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateCompositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('compositions', function (Blueprint $table) {
+        Schema::create('swad_offices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('name')->nullable();
             $table->timestamps();
-            $table->string('uuid')->nullable();
-            $table->index('uuid');
         });
     }
 
@@ -30,6 +27,6 @@ class CreateCompositionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compositions');
+        Schema::dropIfExists('swad_offices');
     }
 }

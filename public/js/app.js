@@ -5097,6 +5097,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -5139,6 +5143,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_uniqBy__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash_uniqBy__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lodash/isEmpty */ "./node_modules/lodash/isEmpty.js");
 /* harmony import */ var lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash/debounce */ "./node_modules/lodash/debounce.js");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_4__);
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5526,6 +5532,42 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -5534,14 +5576,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   components: {
     DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ['psgcs', 'schoolLevels', 'sectors'],
+  props: ['psgcs', 'schoolLevels', 'sectors', 'payouts', 'sectorOthers'],
   data: function data() {
     return {
       formData: {
-        client: {},
-        father: {},
-        mother: {},
-        beneficiaries: [{}, {}, {}]
+        client: {
+          has_middle_name: false
+        },
+        father: {
+          has_middle_name: false
+        },
+        mother: {
+          has_middle_name: false
+        },
+        beneficiaries: [{
+          has_middle_name: false
+        }]
       },
       formError: {
         client: {},
@@ -5551,7 +5601,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       provinces: [],
       cities: [],
-      brgys: []
+      brgys: [],
+      submit: false
     };
   },
   mounted: function mounted() {
@@ -5559,13 +5610,51 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.provinces = lodash_uniqBy__WEBPACK_IMPORTED_MODULE_2___default()(this.psgcs, 'province_psgc');
   },
   methods: {
-    formSubmit: function formSubmit() {
+    formSubmit: lodash_debounce__WEBPACK_IMPORTED_MODULE_4___default()(function () {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store'), this.formData).then(function (res) {})["catch"](function (err) {
+      this.submit = true;
+      this.formError = {
+        client: {},
+        father: {},
+        mother: {},
+        beneficiaries: []
+      };
+
+      for (var index = 0; index < this.formData.beneficiaries.length; index++) {
+        this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+      }
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store'), this.formData).then(function (res) {
+        _this.submit = false;
+        alert("Successfuly saved.");
+        _this.formData = {
+          client: {
+            has_middle_name: false
+          },
+          father: {
+            has_middle_name: false
+          },
+          mother: {
+            has_middle_name: false
+          },
+          beneficiaries: [{
+            has_middle_name: false
+          }]
+        };
+        _this.formError = {
+          client: {},
+          father: {},
+          mother: {},
+          beneficiaries: []
+        };
+      })["catch"](function (err) {
+        _this.submit = false;
         _this.formError = err.response.data.errors;
-      }).then(function (res) {});
-    },
+      }).then(function (res) {
+        _this.submit = false;
+      });
+    }, 500),
     calcClientAge: function calcClientAge() {
       this.formData.client.age = this.getAge(this.formData.client.birth_date);
     },
@@ -5605,9 +5694,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         return item.brgy_psgc === _this4.formData.client.brgy;
       });
       this.formData.client.psgc_id = psgcs[0].id;
+      this.formData.client.swad_office_id = psgcs[0].swad_office_id;
     },
     addStudent: function addStudent() {
-      this.formData.beneficiaries = [].concat(_toConsumableArray(this.formData.beneficiaries), [{}]);
+      this.formData.beneficiaries = [].concat(_toConsumableArray(this.formData.beneficiaries), [{
+        has_middle_name: false
+      }]);
     },
     removeStudent: function removeStudent(index) {
       if (index > -1) {
@@ -5617,6 +5709,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       if (lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3___default()(this.formData.beneficiaries)) {
         this.addStudent();
+      }
+    },
+    noMiddleName: function noMiddleName(e, field) {
+      var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      if (e.target.checked) {
+        if (index != null) {
+          this.formData[field][index]['middle_name'] = "";
+        } else {
+          this.formData[field]['middle_name'] = "";
+        }
+      }
+    },
+    beneficiaryAmount: function beneficiaryAmount() {
+      var school_level_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var school_level = this.schoolLevels.filter(function (item) {
+        return item.id == school_level_id;
+      });
+
+      if (status == "Claimed" && school_level_id != null && status != null) {
+        return school_level[0].amount;
+      } else {
+        return 0;
       }
     }
   }
@@ -13262,6 +13378,35 @@ module.exports = baseToString;
 
 /***/ }),
 
+/***/ "./node_modules/lodash/_baseTrim.js":
+/*!******************************************!*\
+  !*** ./node_modules/lodash/_baseTrim.js ***!
+  \******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var trimmedEndIndex = __webpack_require__(/*! ./_trimmedEndIndex */ "./node_modules/lodash/_trimmedEndIndex.js");
+
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+
+/**
+ * The base implementation of `_.trim`.
+ *
+ * @private
+ * @param {string} string The string to trim.
+ * @returns {string} Returns the trimmed string.
+ */
+function baseTrim(string) {
+  return string
+    ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+    : string;
+}
+
+module.exports = baseTrim;
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/_baseUnary.js":
 /*!*******************************************!*\
   !*** ./node_modules/lodash/_baseUnary.js ***!
@@ -15392,6 +15537,236 @@ function toSource(func) {
 }
 
 module.exports = toSource;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_trimmedEndIndex.js":
+/*!*************************************************!*\
+  !*** ./node_modules/lodash/_trimmedEndIndex.js ***!
+  \*************************************************/
+/***/ ((module) => {
+
+/** Used to match a single whitespace character. */
+var reWhitespace = /\s/;
+
+/**
+ * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+ * character of `string`.
+ *
+ * @private
+ * @param {string} string The string to inspect.
+ * @returns {number} Returns the index of the last non-whitespace character.
+ */
+function trimmedEndIndex(string) {
+  var index = string.length;
+
+  while (index-- && reWhitespace.test(string.charAt(index))) {}
+  return index;
+}
+
+module.exports = trimmedEndIndex;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/debounce.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/debounce.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    now = __webpack_require__(/*! ./now */ "./node_modules/lodash/now.js"),
+    toNumber = __webpack_require__(/*! ./toNumber */ "./node_modules/lodash/toNumber.js");
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the
+ * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent
+ * calls to the debounced function return the result of the last `func`
+ * invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+  var lastArgs,
+      lastThis,
+      maxWait,
+      result,
+      timerId,
+      lastCallTime,
+      lastInvokeTime = 0,
+      leading = false,
+      maxing = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = 'maxWait' in options;
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
+
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time;
+    // Start the timer for the trailing edge.
+    timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        timeWaiting = wait - timeSinceLastCall;
+
+    return maxing
+      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+      : timeWaiting;
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime;
+
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+  }
+
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    // Restart the timer.
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined;
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+    lastInvokeTime = 0;
+    lastArgs = lastCallTime = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
+  }
+
+  function debounced() {
+    var time = now(),
+        isInvoking = shouldInvoke(time);
+
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
+      }
+      if (maxing) {
+        // Handle invocations in a tight loop.
+        clearTimeout(timerId);
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+module.exports = debounce;
 
 
 /***/ }),
@@ -33439,6 +33814,39 @@ module.exports = noop;
 
 /***/ }),
 
+/***/ "./node_modules/lodash/now.js":
+/*!************************************!*\
+  !*** ./node_modules/lodash/now.js ***!
+  \************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
+ */
+var now = function() {
+  return root.Date.now();
+};
+
+module.exports = now;
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/property.js":
 /*!*****************************************!*\
   !*** ./node_modules/lodash/property.js ***!
@@ -33538,6 +33946,80 @@ function stubFalse() {
 }
 
 module.exports = stubFalse;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/toNumber.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/toNumber.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var baseTrim = __webpack_require__(/*! ./_baseTrim */ "./node_modules/lodash/_baseTrim.js"),
+    isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    isSymbol = __webpack_require__(/*! ./isSymbol */ "./node_modules/lodash/isSymbol.js");
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = baseTrim(value);
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = toNumber;
 
 
 /***/ }),
@@ -34371,72 +34853,96 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid px-4" }, [
     _c("fieldset", { staticClass: "border p-2 my-2" }, [
-      _c("legend", { staticClass: "w-auto" }, [_vm._v("Encoded")]),
+      _c("legend", { staticClass: "w-auto" }, [
+        _vm._v("Encoded Beneficiaries"),
+      ]),
       _vm._v(" "),
-      _c(
-        "table",
-        { staticClass: "table table-hover" },
-        [
-          _vm._m(0),
-          _vm._v(" "),
-          _vm._l(_vm.beneficiaries, function (beneficiary) {
-            return _c("tbody", { key: beneficiary.key }, [
-              _c("tr", [
-                _c("td", [
-                  _vm._v(_vm._s(beneficiary.composition.client.full_name)),
-                ]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.full_name))]),
-                _vm._v(" "),
-                _c("td", [
-                  _c("span", [
+      _c("div", { staticClass: "table-responsive" }, [
+        _c(
+          "table",
+          { staticClass: "table table-hover" },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _vm._l(_vm.beneficiaries, function (beneficiary) {
+              return _c("tbody", { key: beneficiary.key }, [
+                _c("tr", [
+                  _c("td", [_vm._v(_vm._s(beneficiary.swad_office.name))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _vm._v(_vm._s(beneficiary.composition.client.full_name)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(beneficiary.full_name))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c("span", [
+                      _vm._v(
+                        _vm._s(beneficiary.composition.client.psgc.brgy_name)
+                      ),
+                    ]),
+                    _vm._v(",\n                                "),
+                    _c("span", [
+                      _vm._v(
+                        _vm._s(beneficiary.composition.client.psgc.city_name)
+                      ),
+                    ]),
+                    _vm._v(",\n                                "),
+                    _c("span", [
+                      _vm._v(
+                        _vm._s(
+                          beneficiary.composition.client.psgc.province_name
+                        )
+                      ),
+                    ]),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(beneficiary.school_level.name))]),
+                  _vm._v(" "),
+                  _c("td", [
                     _vm._v(
-                      _vm._s(beneficiary.composition.client.psgc.brgy_name)
+                      _vm._s(
+                        beneficiary.status == "Claimed"
+                          ? beneficiary.school_level.amount
+                          : 0
+                      )
                     ),
                   ]),
-                  _vm._v(",\n                            "),
-                  _c("span", [
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(beneficiary.status))]),
+                  _vm._v(" "),
+                  _c("td", [
                     _vm._v(
-                      _vm._s(beneficiary.composition.client.psgc.city_name)
+                      _vm._s(
+                        beneficiary.payout ? beneficiary.payout.payout_date : ""
+                      )
                     ),
                   ]),
-                  _vm._v(",\n                            "),
-                  _c("span", [
-                    _vm._v(
-                      _vm._s(beneficiary.composition.client.psgc.province_name)
-                    ),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(beneficiary.remarks))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c("span", [
+                      _vm._v(_vm._s(beneficiary.composition.father.full_name)),
+                    ]),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c("span", [
+                      _vm._v(_vm._s(beneficiary.composition.mother.full_name)),
+                    ]),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _vm._v(_vm._s(beneficiary.composition.user.full_name)),
                   ]),
                 ]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.school_level.name))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.sector.name))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.sector_others))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.school_level.amount))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.status))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(beneficiary.status_date))]),
-                _vm._v(" "),
-                _c("td", [
-                  _c("span", [
-                    _vm._v(_vm._s(beneficiary.composition.father.full_name)),
-                  ]),
-                ]),
-                _vm._v(" "),
-                _c("td", [
-                  _c("span", [
-                    _vm._v(_vm._s(beneficiary.composition.mother.full_name)),
-                  ]),
-                ]),
-              ]),
-            ])
-          }),
-        ],
-        2
-      ),
+              ])
+            }),
+          ],
+          2
+        ),
+      ]),
     ]),
   ])
 }
@@ -34447,6 +34953,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("SWAD Office")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Client Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Beneficiary Name")]),
@@ -34455,19 +34963,19 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Educational Level")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Sector")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Others")]),
-        _vm._v(" "),
         _c("th", [_vm._v("Amount Granted")]),
         _vm._v(" "),
         _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status Date")]),
         _vm._v(" "),
         _c("th", [_vm._v("Remarks")]),
         _vm._v(" "),
         _c("th", [_vm._v("Father's Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Mother's Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Encoded By")]),
       ]),
     ])
   },
@@ -34604,12 +35112,68 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
+                      value: _vm.formData.client.has_middle_name,
+                      expression: "formData.client.has_middle_name",
+                    },
+                  ],
+                  attrs: { type: "checkbox", id: "client_middle_name_check" },
+                  domProps: {
+                    checked: Array.isArray(_vm.formData.client.has_middle_name)
+                      ? _vm._i(_vm.formData.client.has_middle_name, null) > -1
+                      : _vm.formData.client.has_middle_name,
+                  },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$a = _vm.formData.client.has_middle_name,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 &&
+                              _vm.$set(
+                                _vm.formData.client,
+                                "has_middle_name",
+                                $$a.concat([$$v])
+                              )
+                          } else {
+                            $$i > -1 &&
+                              _vm.$set(
+                                _vm.formData.client,
+                                "has_middle_name",
+                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                              )
+                          }
+                        } else {
+                          _vm.$set(_vm.formData.client, "has_middle_name", $$c)
+                        }
+                      },
+                      function ($event) {
+                        return _vm.noMiddleName($event, "client")
+                      },
+                    ],
+                  },
+                }),
+                _vm._v(" "),
+                _vm._m(0),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
                       value: _vm.formData.client.middle_name,
                       expression: "formData.client.middle_name",
                     },
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text", placeholder: "Enter Middle Name" },
+                  attrs: {
+                    type: "text",
+                    placeholder: "Enter Middle Name",
+                    disabled: _vm.formData.client.has_middle_name,
+                  },
                   domProps: { value: _vm.formData.client.middle_name },
                   on: {
                     input: function ($event) {
@@ -34695,7 +35259,7 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["client.ext_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["client.middle_name"][0])),
+                      _vm._v(_vm._s(_vm.formError["client.ext_name"][0])),
                     ])
                   : _vm._e(),
               ]),
@@ -34709,36 +35273,63 @@ var render = function () {
                   _vm._v("Relationship to Beneficiary:"),
                 ]),
                 _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.formData.client.relationship_beneficiary,
-                      expression: "formData.client.relationship_beneficiary",
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.client.relationship_beneficiary,
+                        expression: "formData.client.relationship_beneficiary",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Relationship to Beneficiary" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData.client,
+                          "relationship_beneficiary",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
                     },
-                  ],
-                  staticClass: "form-control",
-                  attrs: {
-                    type: "text",
-                    placeholder: "Enter Relationship to Beneficiary",
                   },
-                  domProps: {
-                    value: _vm.formData.client.relationship_beneficiary,
-                  },
-                  on: {
-                    input: function ($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.$set(
-                        _vm.formData.client,
-                        "relationship_beneficiary",
-                        $event.target.value
-                      )
-                    },
-                  },
-                }),
+                  [
+                    _c("option", { attrs: { value: "Father" } }, [
+                      _vm._v("Father"),
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "Mother" } }, [
+                      _vm._v("Mother"),
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "option",
+                      { attrs: { value: "Grandfather/Grandmother" } },
+                      [_vm._v("Grandfather/Grandmother")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "Brother/Sister" } }, [
+                      _vm._v("Brother/Sister"),
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "Guardian" } }, [
+                      _vm._v("Guardian"),
+                    ]),
+                  ]
+                ),
                 _vm._v(" "),
                 _vm.formError["client.relationship_beneficiary"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
@@ -35229,6 +35820,132 @@ var render = function () {
               ]),
             ]),
           ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row gx-2" }, [
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "sector_id" } }, [
+                  _vm._v("Sector:"),
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.client.sector_id,
+                        expression: "formData.client.sector_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Sector" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData.client,
+                          "sector_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                    },
+                  },
+                  _vm._l(_vm.sectors, function (sector, key) {
+                    return _c(
+                      "option",
+                      { key: key, domProps: { value: sector.id } },
+                      [_vm._v(_vm._s(sector.name))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _vm.formError["formData.client.sector_id"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(
+                        _vm._s(_vm.formError["formData.client.sector_id"][0])
+                      ),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "sector_other_id" } }, [
+                  _vm._v("Other Sector:"),
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.client.sector_other_id,
+                        expression: "formData.client.sector_other_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Other Sector" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData.client,
+                          "sector_other_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                    },
+                  },
+                  [
+                    _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
+                    _vm._v(" "),
+                    _vm._l(_vm.sectorOthers, function (sector, key) {
+                      return _c(
+                        "option",
+                        { key: key, domProps: { value: sector.id } },
+                        [_vm._v(_vm._s(sector.name))]
+                      )
+                    }),
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _vm.formError["formData.client.sector_other_id"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(
+                        _vm._s(
+                          _vm.formError["formData.client.sector_other_id"][0]
+                        )
+                      ),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+          ]),
         ]),
         _vm._v(" "),
         _c("fieldset", { staticClass: "border p-2 my-2" }, [
@@ -35328,12 +36045,68 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
+                      value: _vm.formData.father.has_middle_name,
+                      expression: "formData.father.has_middle_name",
+                    },
+                  ],
+                  attrs: { type: "checkbox", id: "father_middle_name_check" },
+                  domProps: {
+                    checked: Array.isArray(_vm.formData.father.has_middle_name)
+                      ? _vm._i(_vm.formData.father.has_middle_name, null) > -1
+                      : _vm.formData.father.has_middle_name,
+                  },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$a = _vm.formData.father.has_middle_name,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 &&
+                              _vm.$set(
+                                _vm.formData.father,
+                                "has_middle_name",
+                                $$a.concat([$$v])
+                              )
+                          } else {
+                            $$i > -1 &&
+                              _vm.$set(
+                                _vm.formData.father,
+                                "has_middle_name",
+                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                              )
+                          }
+                        } else {
+                          _vm.$set(_vm.formData.father, "has_middle_name", $$c)
+                        }
+                      },
+                      function ($event) {
+                        return _vm.noMiddleName($event, "father")
+                      },
+                    ],
+                  },
+                }),
+                _vm._v(" "),
+                _vm._m(1),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
                       value: _vm.formData.father.middle_name,
                       expression: "formData.father.middle_name",
                     },
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text", placeholder: "Enter Middle Name" },
+                  attrs: {
+                    type: "text",
+                    placeholder: "Enter Middle Name",
+                    disabled: _vm.formData.father.has_middle_name,
+                  },
                   domProps: { value: _vm.formData.father.middle_name },
                   on: {
                     input: function ($event) {
@@ -35419,7 +36192,7 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["father.ext_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["father.middle_name"][0])),
+                      _vm._v(_vm._s(_vm.formError["father.ext_name"][0])),
                     ])
                   : _vm._e(),
               ]),
@@ -35560,12 +36333,68 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
+                      value: _vm.formData.mother.has_middle_name,
+                      expression: "formData.mother.has_middle_name",
+                    },
+                  ],
+                  attrs: { type: "checkbox", id: "mother_middle_name_check" },
+                  domProps: {
+                    checked: Array.isArray(_vm.formData.mother.has_middle_name)
+                      ? _vm._i(_vm.formData.mother.has_middle_name, null) > -1
+                      : _vm.formData.mother.has_middle_name,
+                  },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$a = _vm.formData.mother.has_middle_name,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 &&
+                              _vm.$set(
+                                _vm.formData.mother,
+                                "has_middle_name",
+                                $$a.concat([$$v])
+                              )
+                          } else {
+                            $$i > -1 &&
+                              _vm.$set(
+                                _vm.formData.mother,
+                                "has_middle_name",
+                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                              )
+                          }
+                        } else {
+                          _vm.$set(_vm.formData.mother, "has_middle_name", $$c)
+                        }
+                      },
+                      function ($event) {
+                        return _vm.noMiddleName($event, "mother")
+                      },
+                    ],
+                  },
+                }),
+                _vm._v(" "),
+                _vm._m(2),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
                       value: _vm.formData.mother.middle_name,
                       expression: "formData.mother.middle_name",
                     },
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text", placeholder: "Enter Middle Name" },
+                  attrs: {
+                    type: "text",
+                    placeholder: "Enter Middle Name",
+                    disabled: _vm.formData.mother.has_middle_name,
+                  },
                   domProps: { value: _vm.formData.mother.middle_name },
                   on: {
                     input: function ($event) {
@@ -35651,7 +36480,7 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["mother.ext_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["mother.middle_name"][0])),
+                      _vm._v(_vm._s(_vm.formError["mother.ext_name"][0])),
                     ])
                   : _vm._e(),
               ]),
@@ -35694,6 +36523,10 @@ var render = function () {
             ]),
           ]),
         ]),
+        _vm._v(" "),
+        _c("hr"),
+        _vm._v(" "),
+        _c("h2", [_vm._v("Beneficiaries")]),
         _vm._v(" "),
         _vm._l(_vm.formData.beneficiaries, function (beneficiary, key) {
           return _c("fieldset", { key: key, staticClass: "border p-2 my-2" }, [
@@ -35822,12 +36655,94 @@ var render = function () {
                       {
                         name: "model",
                         rawName: "v-model",
+                        value: _vm.formData.beneficiaries[key].has_middle_name,
+                        expression:
+                          "formData.beneficiaries[key].has_middle_name",
+                      },
+                    ],
+                    attrs: {
+                      type: "checkbox",
+                      id: "beneficiaries_" + key + "_middle_name_check",
+                    },
+                    domProps: {
+                      checked: Array.isArray(
+                        _vm.formData.beneficiaries[key].has_middle_name
+                      )
+                        ? _vm._i(
+                            _vm.formData.beneficiaries[key].has_middle_name,
+                            null
+                          ) > -1
+                        : _vm.formData.beneficiaries[key].has_middle_name,
+                    },
+                    on: {
+                      change: [
+                        function ($event) {
+                          var $$a =
+                              _vm.formData.beneficiaries[key].has_middle_name,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = null,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 &&
+                                _vm.$set(
+                                  _vm.formData.beneficiaries[key],
+                                  "has_middle_name",
+                                  $$a.concat([$$v])
+                                )
+                            } else {
+                              $$i > -1 &&
+                                _vm.$set(
+                                  _vm.formData.beneficiaries[key],
+                                  "has_middle_name",
+                                  $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                )
+                            }
+                          } else {
+                            _vm.$set(
+                              _vm.formData.beneficiaries[key],
+                              "has_middle_name",
+                              $$c
+                            )
+                          }
+                        },
+                        function ($event) {
+                          return _vm.noMiddleName($event, "beneficiaries", key)
+                        },
+                      ],
+                    },
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    {
+                      attrs: {
+                        for: "beneficiaries_" + key + "_middle_name_check",
+                      },
+                    },
+                    [
+                      _c("span", { staticStyle: { "font-size": "80%" } }, [
+                        _vm._v("No Middle Name"),
+                      ]),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
                         value: _vm.formData.beneficiaries[key].middle_name,
                         expression: "formData.beneficiaries[key].middle_name",
                       },
                     ],
                     staticClass: "form-control",
-                    attrs: { type: "text", placeholder: "Enter Middle Name" },
+                    attrs: {
+                      type: "text",
+                      placeholder: "Enter Middle Name",
+                      disabled: _vm.formData.beneficiaries[key].has_middle_name,
+                    },
                     domProps: {
                       value: _vm.formData.beneficiaries[key].middle_name,
                     },
@@ -35926,7 +36841,7 @@ var render = function () {
                         _vm._v(
                           _vm._s(
                             _vm.formError[
-                              "beneficiaries." + key + ".middle_name"
+                              "beneficiaries." + key + ".ext_name"
                             ][0]
                           )
                         ),
@@ -35986,7 +36901,7 @@ var render = function () {
               _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "gender" } }, [
-                    _vm._v("Student " + _vm._s(key + 1) + " Gender:"),
+                    _vm._v("Gender:"),
                   ]),
                   _vm._v(" "),
                   _c(
@@ -36110,7 +37025,7 @@ var render = function () {
                 ]),
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-4" }, [
+              _c("div", { staticClass: "col-md-8" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "school_name" } }, [
                     _vm._v("Student " + _vm._s(key + 1) + " School Name:"),
@@ -36157,7 +37072,9 @@ var render = function () {
                     : _vm._e(),
                 ]),
               ]),
-              _vm._v(" "),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row gx-2" }, [
               _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "status" } }, [
@@ -36211,6 +37128,10 @@ var render = function () {
                       _c("option", { attrs: { value: "No Requirements" } }, [
                         _vm._v("No Requirements"),
                       ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "Not Eligible" } }, [
+                        _vm._v("Not Eligible"),
+                      ]),
                     ]
                   ),
                   _vm._v(" "),
@@ -36227,57 +37148,9 @@ var render = function () {
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-2" }, [
-                _c(
-                  "div",
-                  { staticClass: "form-group" },
-                  [
-                    _c("label", { attrs: { for: "status_date" } }, [
-                      _vm._v("Status Date:"),
-                    ]),
-                    _vm._v(" "),
-                    _c("date-picker", {
-                      staticStyle: { width: "100%" },
-                      attrs: {
-                        format: "MM/DD/YYYY",
-                        type: "date",
-                        "value-type": "YYYY-MM-DD",
-                        placeholder: "MM/DD/YYYY",
-                      },
-                      model: {
-                        value: _vm.formData.beneficiaries[key].status_date,
-                        callback: function ($$v) {
-                          _vm.$set(
-                            _vm.formData.beneficiaries[key],
-                            "status_date",
-                            $$v
-                          )
-                        },
-                        expression: "formData.beneficiaries[key].status_date",
-                      },
-                    }),
-                    _vm._v(" "),
-                    _vm.formError["beneficiaries." + key + ".status_date"]
-                      ? _c("span", { staticStyle: { color: "red" } }, [
-                          _vm._v(
-                            _vm._s(
-                              _vm.formError[
-                                "beneficiaries." + key + ".status_date"
-                              ][0]
-                            )
-                          ),
-                        ])
-                      : _vm._e(),
-                  ],
-                  1
-                ),
-              ]),
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "row gx-2" }, [
-              _c("div", { staticClass: "col-md-3" }, [
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "sector_id" } }, [
-                    _vm._v("Student " + _vm._s(key + 1) + " Sector:"),
+                  _c("label", { attrs: { for: "payout_id" } }, [
+                    _vm._v("Status Date:"),
                   ]),
                   _vm._v(" "),
                   _c(
@@ -36287,12 +37160,12 @@ var render = function () {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.formData.beneficiaries[key].sector_id,
-                          expression: "formData.beneficiaries[key].sector_id",
+                          value: _vm.formData.beneficiaries[key].payout_id,
+                          expression: "formData.beneficiaries[key].payout_id",
                         },
                       ],
                       staticClass: "form-control",
-                      attrs: { placeholder: "Enter Sector" },
+                      attrs: { placeholder: "Enter School Level" },
                       on: {
                         change: function ($event) {
                           var $$selectedVal = Array.prototype.filter
@@ -36305,7 +37178,7 @@ var render = function () {
                             })
                           _vm.$set(
                             _vm.formData.beneficiaries[key],
-                            "sector_id",
+                            "payout_id",
                             $event.target.multiple
                               ? $$selectedVal
                               : $$selectedVal[0]
@@ -36313,22 +37186,26 @@ var render = function () {
                         },
                       },
                     },
-                    _vm._l(_vm.sectors, function (sector, key) {
-                      return _c(
-                        "option",
-                        { key: key, domProps: { value: sector.id } },
-                        [_vm._v(_vm._s(sector.name))]
-                      )
-                    }),
-                    0
+                    [
+                      _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
+                      _vm._v(" "),
+                      _vm._l(_vm.payouts, function (payout, key) {
+                        return _c(
+                          "option",
+                          { key: key, domProps: { value: payout.id } },
+                          [_vm._v(_vm._s(payout.payout_date))]
+                        )
+                      }),
+                    ],
+                    2
                   ),
                   _vm._v(" "),
-                  _vm.formError["beneficiaries." + key + ".sector_id"]
+                  _vm.formError["beneficiaries." + key + ".payout_id"]
                     ? _c("span", { staticStyle: { color: "red" } }, [
                         _vm._v(
                           _vm._s(
                             _vm.formError[
-                              "beneficiaries." + key + ".sector_id"
+                              "beneficiaries." + key + ".payout_id"
                             ][0]
                           )
                         ),
@@ -36337,51 +37214,22 @@ var render = function () {
                 ]),
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "sector_others" } }, [
-                    _vm._v("Sector Others:"),
+                  _c("label", { attrs: { for: "amount" } }, [
+                    _vm._v("Amount:"),
                   ]),
                   _vm._v(" "),
                   _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.formData.beneficiaries[key].sector_others,
-                        expression: "formData.beneficiaries[key].sector_others",
-                      },
-                    ],
                     staticClass: "form-control",
-                    attrs: { type: "text", placeholder: "Enter School Name" },
+                    attrs: { type: "text", readonly: "" },
                     domProps: {
-                      value: _vm.formData.beneficiaries[key].sector_others,
-                    },
-                    on: {
-                      input: function ($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.formData.beneficiaries[key],
-                          "sector_others",
-                          $event.target.value
-                        )
-                      },
+                      value: _vm.beneficiaryAmount(
+                        _vm.formData.beneficiaries[key].school_level_id,
+                        _vm.formData.beneficiaries[key].status
+                      ),
                     },
                   }),
-                  _vm._v(" "),
-                  _vm.formError["beneficiaries." + key + ".sector_others"]
-                    ? _c("span", { staticStyle: { color: "red" } }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.formError[
-                              "beneficiaries." + key + ".sector_others"
-                            ][0]
-                          )
-                        ),
-                      ])
-                    : _vm._e(),
                 ]),
               ]),
               _vm._v(" "),
@@ -36391,7 +37239,7 @@ var render = function () {
                     _vm._v("Remarks:"),
                   ]),
                   _vm._v(" "),
-                  _c("textarea", {
+                  _c("input", {
                     directives: [
                       {
                         name: "model",
@@ -36450,7 +37298,10 @@ var render = function () {
         _vm._v(" "),
         _c(
           "button",
-          { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+          {
+            staticClass: "btn btn-primary",
+            attrs: { type: "submit", disabled: _vm.submit },
+          },
           [_vm._v("Submit")]
         ),
       ],
@@ -36458,7 +37309,38 @@ var render = function () {
     ),
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "client_middle_name_check" } }, [
+      _c("span", { staticStyle: { "font-size": "80%" } }, [
+        _vm._v("No Middle Name"),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "father_middle_name_check" } }, [
+      _c("span", { staticStyle: { "font-size": "80%" } }, [
+        _vm._v("No Middle Name"),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "mother_middle_name_check" } }, [
+      _c("span", { staticStyle: { "font-size": "80%" } }, [
+        _vm._v("No Middle Name"),
+      ]),
+    ])
+  },
+]
 render._withStripped = true
 
 

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Psgc;
+use App\Models\SwadOffice;
 use League\Csv\Reader;
 
 
@@ -39,6 +40,9 @@ class PsgcSeeder extends Seeder
             $insert_data['subdistrict'] = $psgc_data[7];
             $insert_data['region_name'] = $psgc_data[8];
             $insert_data['region_psgc'] = $psgc_data[9];
+            $swad_office_name = $psgc_data[10];
+            $swad_office = SwadOffice::where('name', $swad_office_name)->first();
+            $insert_data['swad_office_id'] = $swad_office->id;
             $psgc = Psgc::create($insert_data);
             echo "created psgc: $psgc->brgy_psgc - $psgc->brgy_name \n";
         }
