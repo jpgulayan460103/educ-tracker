@@ -36,7 +36,13 @@ class CompositionRequest extends FormRequest
             'client.first_name' => ['required', 'string', 'max:255', new ValidStringName],
             'client.ext_name' => ['max:255', new ValidStringName],
             'client.street_number' => ['required', 'string', 'max:255'],
-            // 'client.psgc_id' => ['required'],
+            'client.brgy' => ['required'],
+            'client.city' => ['required'],
+            'client.province' => ['required'],
+            'client.psgc_id' => ['required'],
+            'client.swad_office_id' => ['required'],
+            'client.sector_id' => ['required'],
+            'client.sector_other_id' => ['required_if:client.sector_name,Others'],
             'client.mobile_number' => [new ValidCellphoneNumber],
             'client.birth_date' => ['required', 'date' , 'before:'.Carbon::now()->toDateString()],
             'client.age' => ['required', 'integer'],
@@ -53,6 +59,7 @@ class CompositionRequest extends FormRequest
             'beneficiaries.*.school_level_id' => ['required'],
             // 'beneficiaries.*.sector_id' => ['required'],
             'beneficiaries.*.status' => ['required'],
+            'beneficiaries.*.swad_office_id' => ['required'],
             'beneficiaries.*.payout_id' => ['required_if:beneficiaries.*.status,Claimed'],
             'beneficiaries.*.gender' => ['required'],
             'beneficiaries.*.school_name' => ['required'],
@@ -94,6 +101,7 @@ class CompositionRequest extends FormRequest
             }else{
                 $beneficiaries = request('beneficiaries');
                 $full_names = [];
+                $claimed = [];
                 foreach ($beneficiaries as $beneficiary) {
                     $full_name_array = [
                         (isset($beneficiary['first_name']) ? $beneficiary['first_name'] : ""),
@@ -102,11 +110,17 @@ class CompositionRequest extends FormRequest
                     ];
                     $full_name = implode(" ",$full_name_array);
                     $full_names[] = trim($full_name);
+                    if(isset($beneficiary['status']) && $beneficiary['status'] == "Claimed"){
+                        $claimed[] = $beneficiary['status'];
+                    }
                 }
 
                 $full_names = array_unique($full_names);
                 if(count($full_names) != count($beneficiaries)){
-                    $validator->errors()->add("beneficiary", "Beneficiary has duplicate entries.");
+                    $validator->errors()->add("beneficiary", "The beneficiary has duplicate entries.");
+                }
+                if(count($claimed) > 3){
+                    $validator->errors()->add("beneficiary", "The beneficiary has 4 or more claimed status.");
                 }
             }
         }

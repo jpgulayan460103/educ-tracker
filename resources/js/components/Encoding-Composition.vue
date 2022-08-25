@@ -150,20 +150,20 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="sector_id">Sector:</label>
-                            <select class="form-control" placeholder="Enter Sector" v-model="formData.client.sector_id">
+                            <select class="form-control" placeholder="Enter Sector" v-model="formData.client.sector_id" @change="handleChangeSector">
                                 <option v-for="(sector, key) in sectors" :key="key" :value="sector.id">{{ sector.name }}</option>
                             </select>
-                            <span style="color:red" v-if="formError[`formData.client.sector_id`]">{{ formError[`formData.client.sector_id`][0] }}</span>
+                            <span style="color:red" v-if="formError[`client.sector_id`]">{{ formError[`client.sector_id`][0] }}</span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" v-if="formData.client.sector_name == 'Others' && formData.client.sector_name != null">
                         <div class="form-group">
                             <label for="sector_other_id">Other Sector:</label>
                             <select class="form-control" placeholder="Enter Other Sector" v-model="formData.client.sector_other_id">
                                 <option value="">NONE</option>
                                 <option v-for="(sector, key) in sectorOthers" :key="key" :value="sector.id">{{ sector.name }}</option>
                             </select>
-                            <span style="color:red" v-if="formError[`formData.client.sector_other_id`]">{{ formError[`formData.client.sector_other_id`][0] }}</span>
+                            <span style="color:red" v-if="formError[`client.sector_other_id`]">{{ formError[`client.sector_other_id`][0] }}</span>
                         </div>
                     </div>
                 </div>
@@ -552,6 +552,13 @@ import debounce from 'lodash/debounce'
                     return school_level[0].amount;
                 }else{
                     return 0;
+                }
+            },
+            handleChangeSector(){
+                let sector = this.sectors.filter(item => item.id == this.formData.client.sector_id);
+                this.formData.client.sector_name = sector[0].name;
+                if(this.formData.client.sector_name != "Others"){
+                    this.formData.client.sector_other_id = null;
                 }
             }
         }

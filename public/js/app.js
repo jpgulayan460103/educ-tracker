@@ -6026,6 +6026,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       } else {
         return 0;
       }
+    },
+    handleChangeSector: function handleChangeSector() {
+      var _this5 = this;
+
+      var sector = this.sectors.filter(function (item) {
+        return item.id == _this5.formData.client.sector_id;
+      });
+      this.formData.client.sector_name = sector[0].name;
+
+      if (this.formData.client.sector_name != "Others") {
+        this.formData.client.sector_other_id = null;
+      }
     }
   }
 });
@@ -36746,23 +36758,26 @@ var render = function () {
                     staticClass: "form-control",
                     attrs: { placeholder: "Enter Sector" },
                     on: {
-                      change: function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.$set(
-                          _vm.formData.client,
-                          "sector_id",
-                          $event.target.multiple
-                            ? $$selectedVal
-                            : $$selectedVal[0]
-                        )
-                      },
+                      change: [
+                        function ($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function (o) {
+                              return o.selected
+                            })
+                            .map(function (o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.formData.client,
+                            "sector_id",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        },
+                        _vm.handleChangeSector,
+                      ],
                     },
                   },
                   _vm._l(_vm.sectors, function (sector, key) {
@@ -36775,80 +36790,81 @@ var render = function () {
                   0
                 ),
                 _vm._v(" "),
-                _vm.formError["formData.client.sector_id"]
+                _vm.formError["client.sector_id"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(
-                        _vm._s(_vm.formError["formData.client.sector_id"][0])
-                      ),
+                      _vm._v(_vm._s(_vm.formError["client.sector_id"][0])),
                     ])
                   : _vm._e(),
               ]),
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "sector_other_id" } }, [
-                  _vm._v("Other Sector:"),
-                ]),
-                _vm._v(" "),
-                _c(
-                  "select",
-                  {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.formData.client.sector_other_id,
-                        expression: "formData.client.sector_other_id",
-                      },
-                    ],
-                    staticClass: "form-control",
-                    attrs: { placeholder: "Enter Other Sector" },
-                    on: {
-                      change: function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.$set(
-                          _vm.formData.client,
-                          "sector_other_id",
-                          $event.target.multiple
-                            ? $$selectedVal
-                            : $$selectedVal[0]
-                        )
-                      },
-                    },
-                  },
-                  [
-                    _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
+            _vm.formData.client.sector_name == "Others" &&
+            _vm.formData.client.sector_name != null
+              ? _c("div", { staticClass: "col-md-3" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { for: "sector_other_id" } }, [
+                      _vm._v("Other Sector:"),
+                    ]),
                     _vm._v(" "),
-                    _vm._l(_vm.sectorOthers, function (sector, key) {
-                      return _c(
-                        "option",
-                        { key: key, domProps: { value: sector.id } },
-                        [_vm._v(_vm._s(sector.name))]
-                      )
-                    }),
-                  ],
-                  2
-                ),
-                _vm._v(" "),
-                _vm.formError["formData.client.sector_other_id"]
-                  ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(
-                        _vm._s(
-                          _vm.formError["formData.client.sector_other_id"][0]
-                        )
-                      ),
-                    ])
-                  : _vm._e(),
-              ]),
-            ]),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.formData.client.sector_other_id,
+                            expression: "formData.client.sector_other_id",
+                          },
+                        ],
+                        staticClass: "form-control",
+                        attrs: { placeholder: "Enter Other Sector" },
+                        on: {
+                          change: function ($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function (o) {
+                                return o.selected
+                              })
+                              .map(function (o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.formData.client,
+                              "sector_other_id",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          },
+                        },
+                      },
+                      [
+                        _c("option", { attrs: { value: "" } }, [
+                          _vm._v("NONE"),
+                        ]),
+                        _vm._v(" "),
+                        _vm._l(_vm.sectorOthers, function (sector, key) {
+                          return _c(
+                            "option",
+                            { key: key, domProps: { value: sector.id } },
+                            [_vm._v(_vm._s(sector.name))]
+                          )
+                        }),
+                      ],
+                      2
+                    ),
+                    _vm._v(" "),
+                    _vm.formError["client.sector_other_id"]
+                      ? _c("span", { staticStyle: { color: "red" } }, [
+                          _vm._v(
+                            _vm._s(_vm.formError["client.sector_other_id"][0])
+                          ),
+                        ])
+                      : _vm._e(),
+                  ]),
+                ])
+              : _vm._e(),
           ]),
         ]),
         _vm._v(" "),
