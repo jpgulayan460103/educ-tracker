@@ -12,6 +12,7 @@ class BioParentExist implements Rule
      *
      * @return void
      */
+    public $composition;
     public function __construct()
     {
         //
@@ -33,11 +34,16 @@ class BioParentExist implements Rule
         $middle_name = request("$field.middle_name");
         $id = request("$field.id");
 
-        $bio_parent = BioParent::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        $bio_parent_query = BioParent::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
         if($id && $id != ""){
-            $bio_parent->where('id', '<>', $id);
+            $bio_parent_query->where('id', '<>', $id);
         }
-        return $bio_parent->count() == 0;
+        $bio_parent_count = $bio_parent_query->count();
+        if($bio_parent_count != 0){
+            $bio_parent = $bio_parent_query->first();
+            $this->composition = $bio_parent->composition;
+        }
+        return $bio_parent_count == 0;
     }
 
     /**
@@ -47,6 +53,7 @@ class BioParentExist implements Rule
      */
     public function message()
     {
-        return 'The parent exist.';
+        $uuid = $this->composition->uuid;
+        return 'The parent exist.'."<a @click='viewBeneficiary(".'"'.$uuid.'"'.")' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
     }
 }

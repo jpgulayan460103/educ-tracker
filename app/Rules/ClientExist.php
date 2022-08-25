@@ -12,6 +12,7 @@ class ClientExist implements Rule
      *
      * @return void
      */
+    public $composition;
     public function __construct()
     {
         //
@@ -33,11 +34,16 @@ class ClientExist implements Rule
         $middle_name = request("$field.middle_name");
         $id = request("$field.id");
 
-        $client_count = Client::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        $client_query = Client::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
         if($id && $id != ""){
-            $client_count->where('id', '<>', $id);
+            $client_query->where('id', '<>', $id);
         }
-        return $client_count->count() == 0;
+        $client_count = $client_query->count();
+        if($client_count != 0){
+            $client = $client_query->first();
+            $this->composition = $client->composition;
+        }
+        return $client_count == 0;
     }
 
     /**
@@ -47,6 +53,7 @@ class ClientExist implements Rule
      */
     public function message()
     {
-        return 'The client exist message.';
+        $uuid = $this->composition->uuid;
+        return 'The client exist.'."<a @click='viewBeneficiary(".'"'.$uuid.'"'.")' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
     }
 }

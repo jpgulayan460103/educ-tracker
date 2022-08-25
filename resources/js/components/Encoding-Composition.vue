@@ -9,7 +9,7 @@
                         <div class="form-group">
                             <label for="last_name">Last Name:</label>
                             <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.client.last_name">
-                            <span style="color:red" v-if="formError['client.last_name']">{{ formError['client.last_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['client.last_name']"><span v-html="formError['client.last_name'][0]"></span></span>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -183,7 +183,7 @@
                         <div class="form-group">
                             <label for="last_name">Father Last Name:</label>
                             <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.father.last_name">
-                            <span style="color:red" v-if="formError['father.last_name']">{{ formError['father.last_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['father.last_name']"><span v-html="formError['father.last_name'][0]"></span></span>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -237,7 +237,7 @@
                         <div class="form-group">
                             <label for="last_name">Mother Last Name:</label>
                             <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.mother.last_name">
-                            <span style="color:red" v-if="formError['mother.last_name']">{{ formError['mother.last_name'][0] }}</span>
+                            <span style="color:red" v-if="formError['mother.last_name']"><span v-html="formError['mother.last_name'][0]"></span></span>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -294,7 +294,7 @@
                         <div class="form-group">
                             <label for="last_name">Student {{ key + 1 }} Last Name:</label>
                             <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.beneficiaries[key].last_name">
-                            <span style="color:red" v-if="formError[`beneficiaries.${key}.last_name`]">{{ formError[`beneficiaries.${key}.last_name`][0] }}</span>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.last_name`]"><span v-html="formError[`beneficiaries.${key}.last_name`][0]"></span></span>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -495,7 +495,7 @@ import cloneDeep from 'lodash/cloneDeep'
                 for (let index = 0; index < this.formData.beneficiaries.length; index++) {
                     this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
                 }
-                Axios.post(route('family-composition.store'))
+                Axios.post(route('family-composition.store'), this.formData)
                 .then(res => {
                     this.submit = false;
                     alert("Successfuly saved.");
@@ -661,6 +661,12 @@ import cloneDeep from 'lodash/cloneDeep'
                 })
                 .then(res => {})
                 ;
+            },
+            viewBeneficiary(uuid){
+                window.open(route('encoding', uuid),
+                    'newwindow',
+                    'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
+                return false; 
             }
         }
     }

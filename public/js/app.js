@@ -5995,7 +5995,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
       }
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store')).then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store'), this.formData).then(function (res) {
         _this2.submit = false;
         alert("Successfuly saved.");
         _this2.formData = {
@@ -6188,6 +6188,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           alert('No beneficiary found');
         }
       }).then(function (res) {});
+    },
+    viewBeneficiary: function viewBeneficiary(uuid) {
+      window.open(route('encoding', uuid), 'newwindow', 'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
+      return false;
     }
   }
 });
@@ -37883,7 +37887,13 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["client.last_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["client.last_name"][0])),
+                      _c("span", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.formError["client.last_name"][0]
+                          ),
+                        },
+                      }),
                     ])
                   : _vm._e(),
               ]),
@@ -38837,7 +38847,13 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["father.last_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["father.last_name"][0])),
+                      _c("span", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.formError["father.last_name"][0]
+                          ),
+                        },
+                      }),
                     ])
                   : _vm._e(),
               ]),
@@ -39123,7 +39139,13 @@ var render = function () {
                 _vm._v(" "),
                 _vm.formError["mother.last_name"]
                   ? _c("span", { staticStyle: { color: "red" } }, [
-                      _vm._v(_vm._s(_vm.formError["mother.last_name"][0])),
+                      _c("span", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.formError["mother.last_name"][0]
+                          ),
+                        },
+                      }),
                     ])
                   : _vm._e(),
               ]),
@@ -39437,13 +39459,15 @@ var render = function () {
                   _vm._v(" "),
                   _vm.formError["beneficiaries." + key + ".last_name"]
                     ? _c("span", { staticStyle: { color: "red" } }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.formError[
-                              "beneficiaries." + key + ".last_name"
-                            ][0]
-                          )
-                        ),
+                        _c("span", {
+                          domProps: {
+                            innerHTML: _vm._s(
+                              _vm.formError[
+                                "beneficiaries." + key + ".last_name"
+                              ][0]
+                            ),
+                          },
+                        }),
                       ])
                     : _vm._e(),
                 ]),

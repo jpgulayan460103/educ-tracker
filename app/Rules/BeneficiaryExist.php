@@ -12,9 +12,10 @@ class BeneficiaryExist implements Rule
      *
      * @return void
      */
+    public $composition;
     public function __construct()
     {
-        //
+        
     }
 
     /**
@@ -28,17 +29,22 @@ class BeneficiaryExist implements Rule
     {
         $att_split = explode('.',$attribute);
         $field = $att_split[0];
-        $index = $att_split[0];
+        $index = $att_split[1];
         $last_name = request("$field.$index.last_name");
         $first_name = request("$field.$index.first_name");
         $middle_name = request("$field.$index.middle_name");
         $id = request("$field.$index.id");
 
-        $beneficiary_count = Beneficiary::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        $beneficiary_query = Beneficiary::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
         if($id && $id != ""){
-            $beneficiary_count->where('id', '<>', $id);
+            $beneficiary_query->where('id', '<>', $id);
         }
-        return $beneficiary_count->count() == 0;
+        $beneficiary_count = $beneficiary_query->count();
+        if($beneficiary_count != 0){
+            $beneficiary = $beneficiary_query->first();
+            $this->composition = $beneficiary->composition;
+        }
+        return $beneficiary_count == 0;
     }
 
     /**
@@ -48,6 +54,7 @@ class BeneficiaryExist implements Rule
      */
     public function message()
     {
-        return 'The beneficiary exist.';
+        $uuid = $this->composition->uuid;
+        return 'The beneficiary exist.'."<a @click='viewBeneficiary(".'"'.$uuid.'"'.")' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
     }
 }
