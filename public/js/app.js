@@ -5938,7 +5938,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         };
       })["catch"](function (err) {
         _this.submit = false;
-        _this.formError = err.response.data.errors;
+
+        if (err.response.status == 422) {
+          _this.formError = err.response.data.errors;
+          alert("Please review submitted form.");
+        }
       }).then(function (res) {
         _this.submit = false;
       });
@@ -37427,6 +37431,12 @@ var render = function () {
         _c("hr"),
         _vm._v(" "),
         _c("h2", [_vm._v("Beneficiaries")]),
+        _vm._v(" "),
+        _vm.formError["beneficiary"]
+          ? _c("span", { staticStyle: { color: "red" } }, [
+              _vm._v(_vm._s(_vm.formError["beneficiary"][0])),
+            ])
+          : _vm._e(),
         _vm._v(" "),
         _vm._l(_vm.formData.beneficiaries, function (beneficiary, key) {
           return _c("fieldset", { key: key, staticClass: "border p-2 my-2" }, [

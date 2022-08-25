@@ -279,7 +279,7 @@
             </fieldset>
             <hr>
             <h2>Beneficiaries</h2>
-
+            <span style="color:red" v-if="formError['beneficiary']">{{ formError['beneficiary'][0] }}</span>
             <fieldset class="border p-2 my-2" v-for="(beneficiary, key) in formData.beneficiaries" :key="key">
                 <legend  class="w-auto">Student's {{ key + 1 }} Information <button type="button" class="btn btn-danger" @click="removeStudent(key)">Remove Student</button></legend>
                 
@@ -489,7 +489,10 @@ import debounce from 'lodash/debounce'
                 })
                 .catch(err => {
                     this.submit = false;
-                    this.formError = err.response.data.errors;
+                    if(err.response.status == 422){
+                        this.formError = err.response.data.errors;
+                        alert("Please review submitted form.");
+                    }
                 })
                 .then(res => {
                     this.submit = false;
