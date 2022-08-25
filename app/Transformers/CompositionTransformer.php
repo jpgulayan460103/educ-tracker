@@ -41,6 +41,7 @@ class CompositionTransformer extends TransformerAbstract
             'key' => $composition->id,
             'uuid' => $composition->uuid,
             'client_id' => $composition->client_id,
+            'user_id' => $composition->user_id,
         ];
     }
 

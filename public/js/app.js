@@ -5337,6 +5337,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_pagination_2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-pagination-2 */ "./node_modules/vue-pagination-2/compiled/main.js");
+/* harmony import */ var vue_pagination_2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_pagination_2__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5407,12 +5414,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    Pagination: (vue_pagination_2__WEBPACK_IMPORTED_MODULE_1___default())
+  },
   data: function data() {
     return {
       beneficiaries: [],
       keyword: "",
-      type: "client"
+      type: "client",
+      pagination: {
+        current_page: 1,
+        total: 1,
+        per_page: 1
+      }
     };
   },
   mounted: function mounted() {
@@ -5423,14 +5439,21 @@ __webpack_require__.r(__webpack_exports__);
     getBeneficiaries: function getBeneficiaries() {
       var _this = this;
 
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(route('beneficiaries.index'), {
         params: {
           keyword: this.keyword,
-          type: this.type
+          type: this.type,
+          page: page
         }
       }).then(function (res) {
         _this.beneficiaries = res.data.data;
+        _this.pagination = res.data.meta.pagination;
       })["catch"](function (err) {}).then(function (res) {});
+    },
+    viewBeneficiary: function viewBeneficiary(beneficiary) {
+      window.open(route('encoding', beneficiary.composition.uuid), 'newwindow', 'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
+      return false;
     }
   }
 });
@@ -5881,6 +5904,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5891,7 +5920,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   components: {
     DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ['psgcs', 'schoolLevels', 'sectors', 'payouts', 'sectorOthers', 'user'],
+  props: ['psgcs', 'schoolLevels', 'sectors', 'payouts', 'sectorOthers', 'user', 'uuid'],
   data: function data() {
     return {
       formData: {
@@ -5918,13 +5947,20 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       cities: [],
       brgys: [],
       submit: false,
-      filteredPsgc: []
+      filteredPsgc: [],
+      formType: "create"
     };
   },
   mounted: function mounted() {
     var _this = this;
 
     console.log('Component mounted.');
+
+    if (this.uuid != null && this.uuid != "") {
+      this.formType = "update";
+      this.getCompositionData();
+    }
+
     this.filteredPsgc = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_5___default()(this.psgcs);
 
     if (this.user.user_role != "Admin") {
@@ -5938,6 +5974,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   methods: {
     formSubmit: lodash_debounce__WEBPACK_IMPORTED_MODULE_4___default()(function () {
+      if (this.formType == "create") {
+        this.createComposition();
+      } else {
+        this.updateComposition();
+      }
+    }, 500),
+    createComposition: function createComposition() {
       var _this2 = this;
 
       this.submit = true;
@@ -5952,7 +5995,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
       }
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store'), this.formData).then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store')).then(function (res) {
         _this2.submit = false;
         alert("Successfuly saved.");
         _this2.formData = {
@@ -5985,7 +6028,56 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }).then(function (res) {
         _this2.submit = false;
       });
-    }, 500),
+    },
+    updateComposition: function updateComposition() {
+      var _this3 = this;
+
+      this.submit = true;
+      this.formError = {
+        client: {},
+        father: {},
+        mother: {},
+        beneficiaries: []
+      };
+
+      for (var index = 0; index < this.formData.beneficiaries.length; index++) {
+        this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+      }
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().put(route('family-composition.update', this.formData.id), this.formData).then(function (res) {
+        _this3.submit = false;
+        alert("Successfuly saved.");
+        _this3.formData = {
+          client: {
+            has_middle_name: false
+          },
+          father: {
+            has_middle_name: false
+          },
+          mother: {
+            has_middle_name: false
+          },
+          beneficiaries: [{
+            has_middle_name: false
+          }]
+        };
+        _this3.formError = {
+          client: {},
+          father: {},
+          mother: {},
+          beneficiaries: []
+        };
+      })["catch"](function (err) {
+        _this3.submit = false;
+
+        if (err.response.status == 422) {
+          _this3.formError = err.response.data.errors;
+          alert("Please review submitted form.");
+        }
+      }).then(function (res) {
+        _this3.submit = false;
+      });
+    },
     calcClientAge: function calcClientAge() {
       this.formData.client.age = this.getAge(this.formData.client.birth_date);
     },
@@ -6002,27 +6094,27 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return age;
     },
     populateCities: function populateCities() {
-      var _this3 = this;
+      var _this4 = this;
 
       var cities = this.filteredPsgc.filter(function (item) {
-        return item.province_psgc === _this3.formData.client.province;
+        return item.province_psgc === _this4.formData.client.province;
       });
       this.cities = lodash_uniqBy__WEBPACK_IMPORTED_MODULE_2___default()(cities, 'city_psgc');
       this.formData.client.brgy = null;
     },
     populateBarangay: function populateBarangay() {
-      var _this4 = this;
+      var _this5 = this;
 
       var brgys = this.filteredPsgc.filter(function (item) {
-        return item.city_psgc === _this4.formData.client.city;
+        return item.city_psgc === _this5.formData.client.city;
       });
       this.brgys = lodash_uniqBy__WEBPACK_IMPORTED_MODULE_2___default()(brgys, 'brgy_psgc');
     },
     setPsgcId: function setPsgcId() {
-      var _this5 = this;
+      var _this6 = this;
 
       var psgcs = this.filteredPsgc.filter(function (item) {
-        return item.brgy_psgc === _this5.formData.client.brgy;
+        return item.brgy_psgc === _this6.formData.client.brgy;
       });
 
       if (!lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3___default()(psgcs)) {
@@ -6070,16 +6162,32 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     handleChangeSector: function handleChangeSector() {
-      var _this6 = this;
+      var _this7 = this;
 
       var sector = this.sectors.filter(function (item) {
-        return item.id == _this6.formData.client.sector_id;
+        return item.id == _this7.formData.client.sector_id;
       });
       this.formData.client.sector_name = sector[0].name;
 
       if (this.formData.client.sector_name != "Others") {
         this.formData.client.sector_other_id = null;
       }
+    },
+    getCompositionData: function getCompositionData() {
+      var _this8 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get(route('family-composition.uuid', this.uuid)).then(function (res) {
+        // console.log(res.data);
+        _this8.formData = res.data;
+        _this8.formData.beneficiaries = res.data.beneficiaries.data; // this.formData.client.brgy = this.formData.client.psgc.brgy_name
+        // this.formData.client.city = this.formData.client.psgc.city_name
+        // this.formData.client.province = this.formData.client.psgc.province_name
+      })["catch"](function (err) {
+        // console.log(err.response.status);
+        if (err.response.status == 404) {
+          alert('No beneficiary found');
+        }
+      }).then(function (res) {});
     }
   }
 });
@@ -36187,6 +36295,100 @@ module.exports = uniqBy;
 
 /***/ }),
 
+/***/ "./node_modules/merge/lib/src/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/merge/lib/src/index.js ***!
+  \*********************************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isPlainObject = exports.clone = exports.recursive = exports.merge = exports.main = void 0;
+module.exports = exports = main;
+exports["default"] = main;
+function main() {
+    var items = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        items[_i] = arguments[_i];
+    }
+    return merge.apply(void 0, items);
+}
+exports.main = main;
+main.clone = clone;
+main.isPlainObject = isPlainObject;
+main.recursive = recursive;
+function merge() {
+    var items = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        items[_i] = arguments[_i];
+    }
+    return _merge(items[0] === true, false, items);
+}
+exports.merge = merge;
+function recursive() {
+    var items = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        items[_i] = arguments[_i];
+    }
+    return _merge(items[0] === true, true, items);
+}
+exports.recursive = recursive;
+function clone(input) {
+    if (Array.isArray(input)) {
+        var output = [];
+        for (var index = 0; index < input.length; ++index)
+            output.push(clone(input[index]));
+        return output;
+    }
+    else if (isPlainObject(input)) {
+        var output = {};
+        for (var index in input)
+            output[index] = clone(input[index]);
+        return output;
+    }
+    else {
+        return input;
+    }
+}
+exports.clone = clone;
+function isPlainObject(input) {
+    return input && typeof input === 'object' && !Array.isArray(input);
+}
+exports.isPlainObject = isPlainObject;
+function _recursiveMerge(base, extend) {
+    if (!isPlainObject(base))
+        return extend;
+    for (var key in extend) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype')
+            continue;
+        base[key] = (isPlainObject(base[key]) && isPlainObject(extend[key])) ?
+            _recursiveMerge(base[key], extend[key]) :
+            extend[key];
+    }
+    return base;
+}
+function _merge(isClone, isRecursive, items) {
+    var result;
+    if (isClone || !isPlainObject(result = items.shift()))
+        result = {};
+    for (var index = 0; index < items.length; ++index) {
+        var item = items[index];
+        if (!isPlainObject(item))
+            continue;
+        for (var key in item) {
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype')
+                continue;
+            var value = isClone ? clone(item[key]) : item[key];
+            result[key] = isRecursive ? _recursiveMerge(result[key], value) : value;
+        }
+    }
+    return result;
+}
+
+
+/***/ }),
+
 /***/ "./resources/sass/app.scss":
 /*!*********************************!*\
   !*** ./resources/sass/app.scss ***!
@@ -37345,188 +37547,229 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid px-4" }, [
-    _c("fieldset", { staticClass: "border p-2 my-2" }, [
-      _c("legend", { staticClass: "w-auto" }, [
-        _vm._v("Encoded Beneficiaries"),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-3" }, [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.keyword,
-                expression: "keyword",
-              },
-            ],
-            staticClass: "form-control",
-            attrs: { type: "text", placeholder: "Search" },
-            domProps: { value: _vm.keyword },
-            on: {
-              input: function ($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.keyword = $event.target.value
-              },
-            },
-          }),
+    _c(
+      "fieldset",
+      { staticClass: "border p-2 my-2" },
+      [
+        _c("legend", { staticClass: "w-auto" }, [
+          _vm._v("Encoded Beneficiaries"),
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col-md-2" }, [
-          _c(
-            "select",
-            {
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("input", {
               directives: [
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.type,
-                  expression: "type",
+                  value: _vm.keyword,
+                  expression: "keyword",
                 },
               ],
               staticClass: "form-control",
-              attrs: { placeholder: "Search" },
+              attrs: { type: "text", placeholder: "Search" },
+              domProps: { value: _vm.keyword },
               on: {
-                change: function ($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function (o) {
-                      return o.selected
-                    })
-                    .map(function (o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.type = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
+                input: function ($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.keyword = $event.target.value
                 },
               },
-            },
-            [
-              _c("option", { attrs: { value: "client" } }, [
-                _vm._v("Client Name"),
-              ]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "beneficiary" } }, [
-                _vm._v("Beneficiary Name"),
-              ]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "father" } }, [
-                _vm._v("Father Name"),
-              ]),
-              _vm._v(" "),
-              _c("option", { attrs: { value: "mother" } }, [
-                _vm._v("Mother Name"),
-              ]),
-            ]
-          ),
+            }),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-2" }, [
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.type,
+                    expression: "type",
+                  },
+                ],
+                staticClass: "form-control",
+                attrs: { placeholder: "Search" },
+                on: {
+                  change: function ($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function (o) {
+                        return o.selected
+                      })
+                      .map(function (o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.type = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  },
+                },
+              },
+              [
+                _c("option", { attrs: { value: "client" } }, [
+                  _vm._v("Client Name"),
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "beneficiary" } }, [
+                  _vm._v("Beneficiary Name"),
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "father" } }, [
+                  _vm._v("Father Name"),
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "mother" } }, [
+                  _vm._v("Mother Name"),
+                ]),
+              ]
+            ),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "button" },
+                on: { click: _vm.getBeneficiaries },
+              },
+              [_vm._v("Search")]
+            ),
+          ]),
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col-md-3" }, [
+        _c("br"),
+        _vm._v(" "),
+        _c("div", { staticClass: "table-responsive" }, [
           _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              attrs: { type: "button" },
-              on: { click: _vm.getBeneficiaries },
-            },
-            [_vm._v("Search")]
-          ),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("div", { staticClass: "table-responsive" }, [
-        _c(
-          "table",
-          { staticClass: "table table-hover" },
-          [
-            _vm._m(0),
-            _vm._v(" "),
-            _vm._l(_vm.beneficiaries, function (beneficiary) {
-              return _c("tbody", { key: beneficiary.key }, [
-                _c("tr", [
-                  _c("td", [_vm._v(_vm._s(beneficiary.swad_office.name))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(_vm._s(beneficiary.composition.client.full_name)),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(beneficiary.full_name))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("span", [
-                      _vm._v(
-                        _vm._s(beneficiary.composition.client.psgc.brgy_name)
-                      ),
+            "table",
+            { staticClass: "table table-hover" },
+            [
+              _vm._m(0),
+              _vm._v(" "),
+              _vm._l(_vm.beneficiaries, function (beneficiary) {
+                return _c("tbody", { key: beneficiary.key }, [
+                  _c("tr", [
+                    _c("td", [_vm._v(_vm._s(beneficiary.swad_office.name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(beneficiary.composition.client.full_name)),
                     ]),
-                    _vm._v(",\n                                "),
-                    _c("span", [
-                      _vm._v(
-                        _vm._s(beneficiary.composition.client.psgc.city_name)
-                      ),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(beneficiary.full_name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("span", [
+                        _vm._v(
+                          _vm._s(beneficiary.composition.client.psgc.brgy_name)
+                        ),
+                      ]),
+                      _vm._v(",\n                                "),
+                      _c("span", [
+                        _vm._v(
+                          _vm._s(beneficiary.composition.client.psgc.city_name)
+                        ),
+                      ]),
+                      _vm._v(",\n                                "),
+                      _c("span", [
+                        _vm._v(
+                          _vm._s(
+                            beneficiary.composition.client.psgc.province_name
+                          )
+                        ),
+                      ]),
                     ]),
-                    _vm._v(",\n                                "),
-                    _c("span", [
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(beneficiary.school_level.name))]),
+                    _vm._v(" "),
+                    _c("td", [
                       _vm._v(
                         _vm._s(
-                          beneficiary.composition.client.psgc.province_name
+                          beneficiary.status == "Claimed"
+                            ? beneficiary.school_level.amount
+                            : 0
                         )
                       ),
                     ]),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(beneficiary.school_level.name))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(
-                      _vm._s(
-                        beneficiary.status == "Claimed"
-                          ? beneficiary.school_level.amount
-                          : 0
-                      )
-                    ),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(beneficiary.status))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(
-                      _vm._s(
-                        beneficiary.payout ? beneficiary.payout.payout_date : ""
-                      )
-                    ),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(beneficiary.remarks))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("span", [
-                      _vm._v(_vm._s(beneficiary.composition.father.full_name)),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(beneficiary.status))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(
+                          beneficiary.payout
+                            ? beneficiary.payout.payout_date
+                            : ""
+                        )
+                      ),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(beneficiary.remarks))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("span", [
+                        _vm._v(
+                          _vm._s(beneficiary.composition.father.full_name)
+                        ),
+                      ]),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("span", [
+                        _vm._v(
+                          _vm._s(beneficiary.composition.mother.full_name)
+                        ),
+                      ]),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(beneficiary.composition.user.full_name)),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
+                          attrs: { href: "#" },
+                          on: {
+                            click: function ($event) {
+                              return _vm.viewBeneficiary(beneficiary)
+                            },
+                          },
+                        },
+                        [_vm._v("View")]
+                      ),
                     ]),
                   ]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("span", [
-                      _vm._v(_vm._s(beneficiary.composition.mother.full_name)),
-                    ]),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(_vm._s(beneficiary.composition.user.full_name)),
-                  ]),
-                ]),
-              ])
-            }),
-          ],
-          2
-        ),
-      ]),
-    ]),
+                ])
+              }),
+            ],
+            2
+          ),
+        ]),
+        _vm._v(" "),
+        _c("pagination", {
+          attrs: {
+            records: _vm.pagination.total,
+            "per-page": _vm.pagination.per_page,
+          },
+          on: { paginate: _vm.getBeneficiaries },
+          model: {
+            value: _vm.pagination.current_page,
+            callback: function ($$v) {
+              _vm.$set(_vm.pagination, "current_page", $$v)
+            },
+            expression: "pagination.current_page",
+          },
+        }),
+      ],
+      1
+    ),
   ])
 }
 var staticRenderFns = [
@@ -37559,6 +37802,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Mother's Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Encoded By")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")]),
       ]),
     ])
   },
@@ -37782,9 +38027,7 @@ var render = function () {
             _vm._v(" "),
             _c("div", { staticClass: "col-md-3" }, [
               _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "ext_name" } }, [
-                  _vm._v("Ext Name:"),
-                ]),
+                _c("label", { attrs: { for: "ext_name" } }, [_vm._v("Ext:")]),
                 _vm._v(" "),
                 _c(
                   "select",
@@ -37798,7 +38041,7 @@ var render = function () {
                       },
                     ],
                     staticClass: "form-control",
-                    attrs: { placeholder: "Enter Ext Name" },
+                    attrs: { placeholder: "Enter Ext" },
                     on: {
                       change: function ($event) {
                         var $$selectedVal = Array.prototype.filter
@@ -37972,7 +38215,12 @@ var render = function () {
             _c("div", { staticClass: "col-md-2" }, [
               _c("div", { staticClass: "form-group" }, [
                 _c("label", { attrs: { for: "province" } }, [
-                  _vm._v("Province:"),
+                  _vm._v("Province:\n                            "),
+                  _vm.formType == "update"
+                    ? _c("b", [
+                        _vm._v(_vm._s(_vm.formData.client.psgc.province_name)),
+                      ])
+                    : _vm._e(),
                 ]),
                 _vm._v(" "),
                 _c(
@@ -38031,7 +38279,14 @@ var render = function () {
             _vm._v(" "),
             _c("div", { staticClass: "col-md-2" }, [
               _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "city" } }, [_vm._v("City:")]),
+                _c("label", { attrs: { for: "city" } }, [
+                  _vm._v("City:\n                            "),
+                  _vm.formType == "update"
+                    ? _c("b", [
+                        _vm._v(_vm._s(_vm.formData.client.psgc.city_name)),
+                      ])
+                    : _vm._e(),
+                ]),
                 _vm._v(" "),
                 _c(
                   "select",
@@ -38089,7 +38344,14 @@ var render = function () {
             _vm._v(" "),
             _c("div", { staticClass: "col-md-2" }, [
               _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "brgy" } }, [_vm._v("Barangay:")]),
+                _c("label", { attrs: { for: "brgy" } }, [
+                  _vm._v("Barangay:\n                            "),
+                  _vm.formType == "update"
+                    ? _c("b", [
+                        _vm._v(_vm._s(_vm.formData.client.psgc.brgy_name)),
+                      ])
+                    : _vm._e(),
+                ]),
                 _vm._v(" "),
                 _c(
                   "select",
@@ -38624,7 +38886,7 @@ var render = function () {
             _c("div", { staticClass: "col-md-3" }, [
               _c("div", { staticClass: "form-group" }, [
                 _c("label", { attrs: { for: "middle_name" } }, [
-                  _vm._v("Father Middle Name:"),
+                  _vm._v("Middle Name:"),
                 ]),
                 _vm._v(" "),
                 _c("input", {
@@ -38719,9 +38981,7 @@ var render = function () {
             _vm._v(" "),
             _c("div", { staticClass: "col-md-1" }, [
               _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "ext_name" } }, [
-                  _vm._v("Ext Name:"),
-                ]),
+                _c("label", { attrs: { for: "ext_name" } }, [_vm._v("Ext:")]),
                 _vm._v(" "),
                 _c(
                   "select",
@@ -38735,7 +38995,7 @@ var render = function () {
                       },
                     ],
                     staticClass: "form-control",
-                    attrs: { placeholder: "Enter Ext Name" },
+                    attrs: { placeholder: "Enter Ext" },
                     on: {
                       change: function ($event) {
                         var $$selectedVal = Array.prototype.filter
@@ -38912,7 +39172,7 @@ var render = function () {
             _c("div", { staticClass: "col-md-3" }, [
               _c("div", { staticClass: "form-group" }, [
                 _c("label", { attrs: { for: "middle_name" } }, [
-                  _vm._v("Mother Middle Name:"),
+                  _vm._v("Middle Name:"),
                 ]),
                 _vm._v(" "),
                 _c("input", {
@@ -39007,9 +39267,7 @@ var render = function () {
             _vm._v(" "),
             _c("div", { staticClass: "col-md-1" }, [
               _c("div", { staticClass: "form-group" }, [
-                _c("label", { attrs: { for: "ext_name" } }, [
-                  _vm._v("Ext Name:"),
-                ]),
+                _c("label", { attrs: { for: "ext_name" } }, [_vm._v("Ext:")]),
                 _vm._v(" "),
                 _c(
                   "select",
@@ -39023,7 +39281,7 @@ var render = function () {
                       },
                     ],
                     staticClass: "form-control",
-                    attrs: { placeholder: "Enter Ext Name" },
+                    attrs: { placeholder: "Enter Ext" },
                     on: {
                       change: function ($event) {
                         var $$selectedVal = Array.prototype.filter
@@ -39125,19 +39383,21 @@ var render = function () {
           return _c("fieldset", { key: key, staticClass: "border p-2 my-2" }, [
             _c("legend", { staticClass: "w-auto" }, [
               _vm._v("Student's " + _vm._s(key + 1) + " Information "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function ($event) {
-                      return _vm.removeStudent(key)
+              _vm.formType == "create" || _vm.user.user_role == "Admin"
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function ($event) {
+                          return _vm.removeStudent(key)
+                        },
+                      },
                     },
-                  },
-                },
-                [_vm._v("Remove Student")]
-              ),
+                    [_vm._v("Remove Student")]
+                  )
+                : _vm._e(),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row gx-2" }, [
@@ -39240,7 +39500,7 @@ var render = function () {
               _c("div", { staticClass: "col-md-3" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "middle_name" } }, [
-                    _vm._v("Student " + _vm._s(key + 1) + " Middle Name:"),
+                    _vm._v("Middle Name:"),
                   ]),
                   _vm._v(" "),
                   _c("input", {
@@ -39369,9 +39629,7 @@ var render = function () {
               _vm._v(" "),
               _c("div", { staticClass: "col-md-1" }, [
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "ext_name" } }, [
-                    _vm._v("Ext Name:"),
-                  ]),
+                  _c("label", { attrs: { for: "ext_name" } }, [_vm._v("Ext:")]),
                   _vm._v(" "),
                   _c(
                     "select",
@@ -39385,7 +39643,7 @@ var render = function () {
                         },
                       ],
                       staticClass: "form-control",
-                      attrs: { placeholder: "Enter Ext Name" },
+                      attrs: { placeholder: "Enter Ext" },
                       on: {
                         change: function ($event) {
                           var $$selectedVal = Array.prototype.filter
@@ -39556,7 +39814,7 @@ var render = function () {
               _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "school_level_id" } }, [
-                    _vm._v("Student " + _vm._s(key + 1) + " School Level:"),
+                    _vm._v("School Level:"),
                   ]),
                   _vm._v(" "),
                   _c(
@@ -39877,26 +40135,32 @@ var render = function () {
           ])
         }),
         _vm._v(" "),
-        _c("h1", { staticStyle: { "text-align": "center" } }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-warning",
-              attrs: { type: "button" },
-              on: { click: _vm.addStudent },
-            },
-            [_vm._v("Add Student")]
-          ),
-        ]),
+        _vm.formType == "create" || _vm.user.user_role == "Admin"
+          ? _c("h1", { staticStyle: { "text-align": "center" } }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-warning",
+                  attrs: { type: "button" },
+                  on: { click: _vm.addStudent },
+                },
+                [_vm._v("Add Student")]
+              ),
+            ])
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-primary",
-            attrs: { type: "submit", disabled: _vm.submit },
-          },
-          [_vm._v("Submit")]
-        ),
+        _vm.formType == "create" ||
+        _vm.user.user_role == "Admin" ||
+        _vm.formData.user_id == _vm.user.id
+          ? _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "submit", disabled: _vm.submit },
+              },
+              [_vm._v("Submit")]
+            )
+          : _vm._e(),
       ],
       2
     ),
@@ -40594,6 +40858,697 @@ function normalizeComponent (
   }
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/Pagination.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/Pagination.js ***!
+  \**************************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+
+var _template = __webpack_require__(/*! ./template */ "./node_modules/vue-pagination-2/compiled/template.js");
+
+var _template2 = _interopRequireDefault(_template);
+
+var _RenderlessPagination = __webpack_require__(/*! ./RenderlessPagination */ "./node_modules/vue-pagination-2/compiled/RenderlessPagination.js");
+
+var _RenderlessPagination2 = _interopRequireDefault(_RenderlessPagination);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports["default"] = {
+    name: 'Pagination',
+    components: { RenderlessPagination: _RenderlessPagination2.default },
+    provide: function provide() {
+        var _this = this;
+
+        return {
+            Page: function Page() {
+                return _this.value;
+            },
+            perPage: function perPage() {
+                return _this.perPage;
+            },
+            records: function records() {
+                return _this.records;
+            }
+        };
+    },
+    render: function render(h) {
+        return h('renderless-pagination', { scopedSlots: {
+                default: function _default(props) {
+                    return props.override ? h(props.override, {
+                        attrs: { props: props }
+                    }) : (0, _template2.default)(props)(h);
+                }
+            }
+        });
+    },
+
+    props: {
+        value: {
+            type: Number,
+            required: true,
+            validator: function validator(val) {
+                return val > 0;
+            }
+        },
+        records: {
+            type: Number,
+            required: true
+        },
+        perPage: {
+            type: Number,
+            default: 25
+        },
+        options: {
+            type: Object
+        }
+    },
+    data: function data() {
+        return {
+            aProps: {
+                role: "button"
+            }
+        };
+    }
+};
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/RenderlessPagination.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/RenderlessPagination.js ***!
+  \************************************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _config = __webpack_require__(/*! ./config */ "./node_modules/vue-pagination-2/compiled/config.js");
+
+var _config2 = _interopRequireDefault(_config);
+
+var _merge = __webpack_require__(/*! merge */ "./node_modules/merge/lib/src/index.js");
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports["default"] = {
+    inject: ['Page', 'records', 'perPage'],
+    props: {
+        itemClass: {
+            required: false,
+            default: 'VuePagination__pagination-item'
+        }
+    },
+    render: function render() {
+        var _this = this;
+
+        return this.$scopedSlots.default({
+            override: this.opts.template,
+            showPagination: this.totalPages > 1,
+            pages: this.pages,
+            pageEvents: function pageEvents(page) {
+                return {
+                    click: function click() {
+                        return _this.setPage(page);
+                    },
+                    keydown: function keydown(e) {
+                        if (e.key === 'ArrowRight') {
+                            _this.next();
+                        }
+
+                        if (e.key === 'ArrowLeft') {
+                            _this.prev();
+                        }
+                    }
+                };
+            },
+            activeClass: this.activeClass,
+            hasEdgeNav: this.opts.edgeNavigation && this.totalChunks > 1,
+            setPage: this.setPage,
+            setFirstPage: this.setPage.bind(this, 1),
+            setLastPage: this.setPage.bind(this, this.totalPages),
+            hasChunksNav: this.opts.chunksNavigation === 'fixed',
+            setPrevChunk: this.prevChunk,
+            setNextChunk: this.nextChunk,
+            setPrevPage: this.prev,
+            firstPageProps: {
+                class: this.Theme.link,
+                disabled: this.page === 1
+            },
+            lastPageProps: {
+                class: this.Theme.link,
+                disabled: this.page === this.totalPages
+            },
+            prevProps: {
+                class: this.Theme.link,
+                disabled: !!this.allowedPageClass(this.page - 1)
+            },
+            nextProps: {
+                class: this.Theme.link,
+                disabled: !!this.allowedPageClass(this.page + 1)
+            },
+            pageClasses: function pageClasses(page) {
+                return _this.itemClass + ' ' + _this.Theme.item + ' ' + _this.activeClass(page);
+            },
+            prevChunkProps: {
+                class: this.Theme.link,
+                disabled: !this.allowedChunk(-1)
+            },
+            nextChunkProps: {
+                class: this.Theme.link,
+                disabled: !this.allowedChunk(1)
+            },
+            setNextPage: this.next,
+            theme: {
+                nav: this.Theme.nav,
+                list: 'VuePagination__pagination ' + this.Theme.list,
+                item: this.Theme.item,
+                disabled: this.Theme.disabled,
+                prev: this.itemClass + ' ' + this.itemClass + '-prev-page ' + this.Theme.item + ' ' + this.Theme.prev + ' ' + this.allowedPageClass(this.page - 1),
+                next: this.itemClass + '  ' + this.itemClass + '-next-page ' + this.Theme.item + ' ' + this.Theme.next + ' ' + this.allowedPageClass(this.page + 1),
+                prevChunk: this.itemClass + ' ' + this.Theme.item + ' ' + this.Theme.prev + ' ' + this.itemClass + '-prev-chunk ' + this.allowedChunkClass(-1),
+                nextChunk: this.itemClass + ' ' + this.Theme.item + ' ' + this.Theme.next + ' ' + this.itemClass + '-next-chunk ' + this.allowedChunkClass(1),
+                firstPage: this.itemClass + ' ' + this.Theme.item + ' ' + (this.page === 1 ? this.Theme.disabled : '') + ' ' + this.itemClass + '-first-page',
+                lastPage: this.itemClass + ' ' + this.Theme.item + ' ' + (this.page === this.totalPages ? this.Theme.disabled : '') + ' ' + this.itemClass + '-last-page',
+                link: this.Theme.link,
+                page: this.itemClass + ' ' + this.Theme.item,
+                wrapper: this.Theme.wrapper,
+                count: 'VuePagination__count ' + this.Theme.count
+            },
+            hasRecords: this.hasRecords,
+            count: this.count,
+            texts: this.opts.texts,
+            opts: this.opts,
+            allowedChunkClass: this.allowedChunkClass,
+            allowedPageClass: this.allowedPageClass,
+            setChunk: this.setChunk,
+            prev: this.prev,
+            next: this.next,
+            totalPages: this.totalPages,
+            totalChunks: this.totalChunks,
+            page: this.Page(),
+            records: this.records(),
+            perPage: this.perPage(),
+            formatNumber: this.formatNumber
+        });
+    },
+
+    data: function data() {
+        return {
+            firstPage: this.$parent.value,
+            For: this.$parent.for,
+            Options: this.$parent.options
+        };
+    },
+    watch: {
+        page: function page(val) {
+            if (this.opts.chunksNavigation === 'scroll' && this.allowedPage(val) && !this.inDisplay(val)) {
+                if (val === this.totalPages) {
+                    var first = val - this.opts.chunk + 1;
+                    this.firstPage = first >= 1 ? first : 1;
+                } else {
+                    this.firstPage = val;
+                }
+            }
+
+            this.$parent.$emit('paginate', val);
+        }
+    },
+    computed: {
+        Records: function Records() {
+            return this.records();
+        },
+        PerPage: function PerPage() {
+            return this.perPage();
+        },
+        opts: function opts() {
+            return _merge2.default.recursive((0, _config2.default)(), this.Options);
+        },
+        Theme: function Theme() {
+
+            if (_typeof(this.opts.theme) === 'object') {
+                return this.opts.theme;
+            }
+
+            var themes = {
+                bootstrap3: __webpack_require__(/*! ./themes/bootstrap3 */ "./node_modules/vue-pagination-2/compiled/themes/bootstrap3.js"),
+                bootstrap4: __webpack_require__(/*! ./themes/bootstrap4 */ "./node_modules/vue-pagination-2/compiled/themes/bootstrap4.js"),
+                bulma: __webpack_require__(/*! ./themes/bulma */ "./node_modules/vue-pagination-2/compiled/themes/bulma.js")
+            };
+
+            if (_typeof(themes[this.opts.theme]) === undefined) {
+                throw 'vue-pagination-2: the theme ' + this.opts.theme + ' does not exist';
+            }
+
+            return themes[this.opts.theme];
+        },
+        page: function page() {
+            return this.Page();
+        },
+
+        pages: function pages() {
+
+            if (!this.Records) return [];
+
+            return range(this.paginationStart, this.pagesInCurrentChunk);
+        },
+        totalPages: function totalPages() {
+            return this.Records ? Math.ceil(this.Records / this.PerPage) : 1;
+        },
+        totalChunks: function totalChunks() {
+            return Math.ceil(this.totalPages / this.opts.chunk);
+        },
+        currentChunk: function currentChunk() {
+            return Math.ceil(this.page / this.opts.chunk);
+        },
+        paginationStart: function paginationStart() {
+            if (this.opts.chunksNavigation === 'scroll') {
+                return this.firstPage;
+            }
+
+            return (this.currentChunk - 1) * this.opts.chunk + 1;
+        },
+        pagesInCurrentChunk: function pagesInCurrentChunk() {
+            return this.paginationStart + this.opts.chunk <= this.totalPages ? this.opts.chunk : this.totalPages - this.paginationStart + 1;
+        },
+        hasRecords: function hasRecords() {
+            return parseInt(this.Records) > 0;
+        },
+
+        count: function count() {
+
+            if (/{page}/.test(this.opts.texts.count)) {
+
+                if (this.totalPages <= 1) return '';
+
+                return this.opts.texts.count.replace('{page}', this.page).replace('{pages}', this.totalPages);
+            }
+
+            var parts = this.opts.texts.count.split('|');
+            var from = (this.page - 1) * this.PerPage + 1;
+            var to = this.page == this.totalPages ? this.Records : from + this.PerPage - 1;
+            var i = Math.min(this.Records == 1 ? 2 : this.totalPages == 1 ? 1 : 0, parts.length - 1);
+
+            return parts[i].replace('{count}', this.formatNumber(this.Records)).replace('{from}', this.formatNumber(from)).replace('{to}', this.formatNumber(to));
+        }
+    },
+    methods: {
+        setPage: function setPage(page) {
+            if (this.allowedPage(page)) {
+                this.paginate(page);
+            }
+        },
+        paginate: function paginate(page) {
+            var _this2 = this;
+
+            this.$parent.$emit('input', page);
+
+            this.$nextTick(function () {
+                if (_this2.$el) {
+                    var el = _this2.$el.querySelector('li.' + _this2.Theme.active + ' a');
+                    if (el) {
+                        el.focus();
+                    }
+                }
+            });
+        },
+
+        next: function next() {
+            return this.setPage(this.page + 1);
+        },
+        prev: function prev() {
+            return this.setPage(this.page - 1);
+        },
+        inDisplay: function inDisplay(page) {
+
+            var start = this.firstPage;
+            var end = start + this.opts.chunk - 1;
+
+            return page >= start && page <= end;
+        },
+
+        nextChunk: function nextChunk() {
+            return this.setChunk(1);
+        },
+        prevChunk: function prevChunk() {
+            return this.setChunk(-1);
+        },
+        setChunk: function setChunk(direction) {
+            this.setPage((this.currentChunk - 1 + direction) * this.opts.chunk + 1);
+        },
+        allowedPage: function allowedPage(page) {
+            return page >= 1 && page <= this.totalPages;
+        },
+        allowedChunk: function allowedChunk(direction) {
+            return direction == 1 && this.currentChunk < this.totalChunks || direction == -1 && this.currentChunk > 1;
+        },
+        allowedPageClass: function allowedPageClass(direction) {
+            return this.allowedPage(direction) ? '' : this.Theme.disabled;
+        },
+        allowedChunkClass: function allowedChunkClass(direction) {
+            return this.allowedChunk(direction) ? '' : this.Theme.disabled;
+        },
+        activeClass: function activeClass(page) {
+            return this.page == page ? this.Theme.active : '';
+        },
+        formatNumber: function formatNumber(num) {
+
+            if (!this.opts.format) return num;
+
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    }
+};
+
+
+function range(start, count) {
+    return Array.apply(0, Array(count)).map(function (element, index) {
+        return index + start;
+    });
+}
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/config.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/config.js ***!
+  \**********************************************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+
+exports["default"] = function () {
+    return {
+        format: true,
+        chunk: 10,
+        chunksNavigation: 'fixed',
+        edgeNavigation: false,
+        theme: 'bootstrap3',
+        template: null,
+        texts: {
+            count: 'Showing {from} to {to} of {count} records|{count} records|One record',
+            first: 'First',
+            last: 'Last',
+            nextPage: '>',
+            nextChunk: '>>',
+            prevPage: '<',
+            prevChunk: '<<'
+        }
+    };
+};
+
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/main.js":
+/*!********************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/main.js ***!
+  \********************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var _Pagination = __webpack_require__(/*! ./Pagination */ "./node_modules/vue-pagination-2/compiled/Pagination.js");
+
+var _Pagination2 = _interopRequireDefault(_Pagination);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports["default"] = _Pagination2.default;
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/template.js":
+/*!************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/template.js ***!
+  \************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = function (props) {
+
+    return function (h) {
+
+        var theme = this.theme;
+        var prevChunk = '';
+        var nextChunk = '';
+        var firstPage = '';
+        var lastPage = '';
+        var items = this.pages.map(function (page) {
+
+            return h(
+                'li',
+                { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + this.activeClass(page),
+                    on: {
+                        'click': this.setPage.bind(this, page)
+                    }
+                },
+                [h(
+                    'a',
+                    { 'class': theme.link + ' ' + this.activeClass(page),
+                        attrs: { role: 'button' }
+                    },
+                    [this.formatNumber(page)]
+                )]
+            );
+        }.bind(this));
+
+        if (this.opts.edgeNavigation && this.totalChunks > 1) {
+            firstPage = h(
+                'li',
+                { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + (this.page === 1 ? theme.disabled : '') + ' VuePagination__pagination-item-first-page',
+                    on: {
+                        'click': this.setPage.bind(this, 1)
+                    }
+                },
+                [h(
+                    'a',
+                    { 'class': theme.link,
+                        attrs: { disabled: this.page === 1 }
+                    },
+                    [this.opts.texts.first]
+                )]
+            );
+
+            lastPage = h(
+                'li',
+                { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + (this.page === this.totalPages ? theme.disabled : '') + ' VuePagination__pagination-item-last-page',
+                    on: {
+                        'click': this.setPage.bind(this, this.totalPages)
+                    }
+                },
+                [h(
+                    'a',
+                    { 'class': theme.link,
+                        attrs: { disabled: this.page === this.totalPages }
+                    },
+                    [this.opts.texts.last]
+                )]
+            );
+        }
+
+        if (this.opts.chunksNavigation === 'fixed') {
+
+            prevChunk = h(
+                'li',
+                { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + theme.prev + ' VuePagination__pagination-item-prev-chunk ' + this.allowedChunkClass(-1),
+                    on: {
+                        'click': this.setChunk.bind(this, -1)
+                    }
+                },
+                [h(
+                    'a',
+                    { 'class': theme.link,
+                        attrs: { disabled: !!this.allowedChunkClass(-1) }
+                    },
+                    [this.opts.texts.prevChunk]
+                )]
+            );
+
+            nextChunk = h(
+                'li',
+                { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + theme.next + ' VuePagination__pagination-item-next-chunk ' + this.allowedChunkClass(1),
+                    on: {
+                        'click': this.setChunk.bind(this, 1)
+                    }
+                },
+                [h(
+                    'a',
+                    { 'class': theme.link,
+                        attrs: { disabled: !!this.allowedChunkClass(1) }
+                    },
+                    [this.opts.texts.nextChunk]
+                )]
+            );
+        }
+
+        return h(
+            'div',
+            { 'class': 'VuePagination ' + theme.wrapper },
+            [h(
+                'nav',
+                { 'class': '' + theme.nav },
+                [h(
+                    'ul',
+                    {
+                        directives: [{
+                            name: 'show',
+                            value: this.totalPages > 1
+                        }],
+
+                        'class': theme.list + ' VuePagination__pagination' },
+                    [firstPage, prevChunk, h(
+                        'li',
+                        { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + theme.prev + ' VuePagination__pagination-item-prev-page ' + this.allowedPageClass(this.page - 1),
+                            on: {
+                                'click': this.prev.bind(this)
+                            }
+                        },
+                        [h(
+                            'a',
+                            { 'class': theme.link,
+                                attrs: { disabled: !!this.allowedPageClass(this.page - 1)
+                                }
+                            },
+                            [this.opts.texts.prevPage]
+                        )]
+                    ), items, h(
+                        'li',
+                        { 'class': 'VuePagination__pagination-item ' + theme.item + ' ' + theme.next + ' VuePagination__pagination-item-next-page ' + this.allowedPageClass(this.page + 1),
+                            on: {
+                                'click': this.next.bind(this)
+                            }
+                        },
+                        [h(
+                            'a',
+                            { 'class': theme.link,
+                                attrs: { disabled: !!this.allowedPageClass(this.page + 1)
+                                }
+                            },
+                            [this.opts.texts.nextPage]
+                        )]
+                    ), nextChunk, lastPage]
+                ), h(
+                    'p',
+                    {
+                        directives: [{
+                            name: 'show',
+                            value: parseInt(this.records)
+                        }],
+
+                        'class': 'VuePagination__count ' + theme.count },
+                    [this.count]
+                )]
+            )]
+        );
+    }.bind(props);
+};
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/themes/bootstrap3.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/themes/bootstrap3.js ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = {
+    nav: '',
+    count: '',
+    wrapper: '',
+    list: 'pagination',
+    item: 'page-item',
+    link: 'page-link',
+    next: '',
+    prev: '',
+    active: 'active',
+    disabled: 'disabled'
+};
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/themes/bootstrap4.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/themes/bootstrap4.js ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = {
+    nav: '',
+    count: '',
+    wrapper: '',
+    list: 'pagination',
+    item: 'page-item',
+    link: 'page-link',
+    next: '',
+    prev: '',
+    active: 'active',
+    disabled: 'disabled'
+};
+
+/***/ }),
+
+/***/ "./node_modules/vue-pagination-2/compiled/themes/bulma.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/vue-pagination-2/compiled/themes/bulma.js ***!
+  \****************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = {
+    nav: '',
+    count: '',
+    wrapper: 'pagination',
+    list: 'pagination-list',
+    item: '',
+    link: 'pagination-link',
+    next: '',
+    prev: '',
+    active: 'is-current',
+    disabled: '' // uses the disabled HTML attirbute
+};
 
 /***/ }),
 

@@ -9,6 +9,7 @@
         :payouts="{{ json_encode($payouts) }}"
         :sector-others="{{ json_encode($sector_others) }}"
         :user="{{ json_encode($user) }}"
+        uuid="{{ $uuid }}"
     />
 </div>
 @endsection

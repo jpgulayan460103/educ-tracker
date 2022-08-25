@@ -57,7 +57,7 @@ class BeneficiaryController extends Controller
                     break;
             }
         }
-        $beneficiaries = $beneficiaries->paginate(10);
+        $beneficiaries = $beneficiaries->paginate(50);
 
         return fractal($beneficiaries, new BeneficiaryTransformer)->parseIncludes('
             composition.father,

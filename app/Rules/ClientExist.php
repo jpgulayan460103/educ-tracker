@@ -31,9 +31,13 @@ class ClientExist implements Rule
         $last_name = request("$field.last_name");
         $first_name = request("$field.first_name");
         $middle_name = request("$field.middle_name");
+        $id = request("$field.id");
 
-        $client_count = Client::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name)->count();
-        return $client_count == 0;
+        $client_count = Client::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        if($id && $id != ""){
+            $client_count->where('id', '<>', $id);
+        }
+        return $client_count->count() == 0;
     }
 
     /**

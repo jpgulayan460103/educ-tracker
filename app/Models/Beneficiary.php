@@ -25,6 +25,7 @@ class Beneficiary extends Model
         'swad_office_id',
         'payout_id',
         'sector_others',
+        // 'school_name',
         'remarks',
     ];
 

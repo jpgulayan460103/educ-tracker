@@ -25,6 +25,7 @@
         "webpack-cli": "^4.10.0"
     },
     "dependencies": {
+        "vue-pagination-2": "^3.1.0",
         "vue2-datepicker": "^3.11.0"
     }
 }

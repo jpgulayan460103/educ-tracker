@@ -44,7 +44,7 @@ class HomeController extends Controller
         return view('beneficiaries');
     }
 
-    public function encoding()
+    public function encoding(Request $request, $uuid = null)
     {
         $psgcs = Psgc::all();
         $school_levels = SchoolLevel::all();
@@ -59,6 +59,7 @@ class HomeController extends Controller
             'payouts' => $payouts,
             'sector_others' => $sector_others,
             'user' => $user,
+            'uuid' => $uuid,
         ];
         return view('composition', $data);
     }

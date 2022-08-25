@@ -32,9 +32,13 @@ class BeneficiaryExist implements Rule
         $last_name = request("$field.$index.last_name");
         $first_name = request("$field.$index.first_name");
         $middle_name = request("$field.$index.middle_name");
+        $id = request("$field.$index.id");
 
-        $beneficiary_count = Beneficiary::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name)->count();
-        return $beneficiary_count == 0;
+        $beneficiary_count = Beneficiary::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        if($id && $id != ""){
+            $beneficiary_count->where('id', '<>', $id);
+        }
+        return $beneficiary_count->count() == 0;
     }
 
     /**

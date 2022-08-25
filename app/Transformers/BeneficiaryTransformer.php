@@ -46,6 +46,7 @@ class BeneficiaryTransformer extends TransformerAbstract
             'full_name' => $beneficiary->full_name,
             'school_level_id' => $beneficiary->school_level_id,
             'mobile_number' => $beneficiary->mobile_number,
+            'school_name' => $beneficiary->school_name,
             'birth_date' => $beneficiary->birth_date,
             'age' => $beneficiary->age,
             'gender' => $beneficiary->gender,
@@ -56,6 +57,7 @@ class BeneficiaryTransformer extends TransformerAbstract
             'remarks' => $beneficiary->remarks,
             'status' => $beneficiary->status,
             'status_date' => $beneficiary->status_date,
+            'school_name' => $beneficiary->school_name,
             'payout_id' => $beneficiary->payout_id,
             'swad_office_id' => $beneficiary->swad_office_id,
         ];

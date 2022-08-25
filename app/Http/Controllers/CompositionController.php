@@ -95,6 +95,32 @@ class CompositionController extends Controller
         )->findOrFail($id);
     }
 
+    public function showUuid(Composition $composition, $uuid)
+    {
+        $composition =  Composition::with(
+            'beneficiaries.payout',
+            'beneficiaries.swad_office',
+            'father',
+            'mother',
+            'client.psgc',
+            'client.sector',
+            'client.sector_other',
+        )->where('uuid', $uuid)->first();
+        if($composition){
+            return fractal($composition, new CompositionTransformer)->parseIncludes([
+                'beneficiaries.payout',
+                'beneficiaries.swad_office',
+                'father',
+                'mother',
+                'client.psgc',
+                'client.sector',
+                'client.sector_other',
+            ]);
+        }else{
+            abort(404);
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -113,9 +139,25 @@ class CompositionController extends Controller
      * @param  \App\Models\Composition  $composition
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Composition $composition)
+    public function update(CompositionRequest $request, $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $form_data = $request->all();
+            $composition = Composition::findOrFail($id);
+            Client::findOrFail($composition->client_id)->update($form_data['client']);
+            $beneficiaries = [];
+            foreach ($form_data['beneficiaries'] as $beneficiary_data) {
+                Beneficiary::findOrFail($beneficiary_data['id'])->update($beneficiary_data);
+            }
+            BioParent::find($form_data['father']['id'])->update($form_data['father']);
+            BioParent::find($form_data['mother']['id'])->update($form_data['mother']);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/encoded-beneficiaries', [App\Http\Controllers\HomeController::class, 'beneficiaries'])->name('beneficiaries');
-Route::get('/encoding', [App\Http\Controllers\HomeController::class, 'encoding'])->name('encoding');
+Route::get('/encoding/{uuid?}', [App\Http\Controllers\HomeController::class, 'encoding'])->name('encoding');
 Route::get('/users', [App\Http\Controllers\HomeController::class, 'users'])->name('users');
 
 // Route::post('login', 'Auth\LoginController@login');
@@ -31,6 +31,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['prefix' => '/data'], function () {
     Route::put('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+    Route::get('/family-composition/{uuid}/uuid', [CompositionController::class, 'showUuid'])->name('family-composition.uuid');
     Route::resources([
         'family-composition' => CompositionController::class,
         'beneficiaries' => BeneficiaryController::class,

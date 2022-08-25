@@ -31,8 +31,8 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="ext_name">Ext Name:</label>
-                            <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.client.ext_name">
+                            <label for="ext_name">Ext:</label>
+                            <select  class="form-control" placeholder="Enter Ext" v-model="formData.client.ext_name">
                                 <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
@@ -72,7 +72,9 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="province">Province:</label>
+                            <label for="province">Province:
+                                <b v-if="formType == 'update'">{{ formData.client.psgc.province_name }}</b>
+                            </label>
                             <select class="form-control" placeholder="Enter Province" v-model="formData.client.province" @change="populateCities">
                                 <option v-for="(province, key) in provinces" :key="key" :value="province.province_psgc">{{ province.province_name }}</option>
                             </select>
@@ -81,7 +83,9 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="city">City:</label>
+                            <label for="city">City:
+                                <b v-if="formType == 'update'">{{ formData.client.psgc.city_name }}</b>
+                            </label>
                             <select class="form-control" placeholder="Enter City" v-model="formData.client.city" @change="populateBarangay">
                                 <option v-for="(city, key) in cities" :key="key" :value="city.city_psgc">{{ city.city_name }}</option>
                             </select>
@@ -90,7 +94,9 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="brgy">Barangay:</label>
+                            <label for="brgy">Barangay:
+                                <b v-if="formType == 'update'">{{ formData.client.psgc.brgy_name }}</b>
+                            </label>
                             <select class="form-control" placeholder="Enter Barangay" v-model="formData.client.brgy" @change="setPsgcId">
                                 <option v-for="(brgy, key) in brgys" :key="key" :value="brgy.brgy_psgc">{{ brgy.brgy_name }}</option>
                             </select>
@@ -189,7 +195,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="middle_name">Father Middle Name:</label>
+                            <label for="middle_name">Middle Name:</label>
                             <input type="checkbox" id="father_middle_name_check" v-model="formData.father.has_middle_name" @change="noMiddleName($event,'father')"/>
                             <label for="father_middle_name_check"><span style="font-size: 80%;">No Middle Name</span></label>
 
@@ -199,8 +205,8 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <label for="ext_name">Ext Name:</label>
-                            <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.father.ext_name">
+                            <label for="ext_name">Ext:</label>
+                            <select  class="form-control" placeholder="Enter Ext" v-model="formData.father.ext_name">
                                 <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
@@ -243,7 +249,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="middle_name">Mother Middle Name:</label>
+                            <label for="middle_name">Middle Name:</label>
                             <input type="checkbox" id="mother_middle_name_check" v-model="formData.mother.has_middle_name" @change="noMiddleName($event,'mother')"/>
                             <label for="mother_middle_name_check"><span style="font-size: 80%;">No Middle Name</span></label>
 
@@ -253,8 +259,8 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <label for="ext_name">Ext Name:</label>
-                            <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.mother.ext_name">
+                            <label for="ext_name">Ext:</label>
+                            <select  class="form-control" placeholder="Enter Ext" v-model="formData.mother.ext_name">
                                 <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
@@ -281,7 +287,7 @@
             <h2>Beneficiaries</h2>
             <span style="color:red" v-if="formError['beneficiary']">{{ formError['beneficiary'][0] }}</span>
             <fieldset class="border p-2 my-2" v-for="(beneficiary, key) in formData.beneficiaries" :key="key">
-                <legend  class="w-auto">Student's {{ key + 1 }} Information <button type="button" class="btn btn-danger" @click="removeStudent(key)">Remove Student</button></legend>
+                <legend  class="w-auto">Student's {{ key + 1 }} Information <button type="button" class="btn btn-danger" @click="removeStudent(key)" v-if="formType == 'create' || user.user_role == 'Admin'">Remove Student</button></legend>
                 
                 <div class="row gx-2">
                     <div class="col-md-3">
@@ -300,7 +306,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="middle_name">Student {{ key + 1 }} Middle Name:</label>
+                            <label for="middle_name">Middle Name:</label>
                             <input type="checkbox" :id="`beneficiaries_${key}_middle_name_check`" v-model="formData.beneficiaries[key].has_middle_name" @change="noMiddleName($event,'beneficiaries', key)"/>
                             <label :for="`beneficiaries_${key}_middle_name_check`"><span style="font-size: 80%;">No Middle Name</span></label>
 
@@ -310,8 +316,8 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <label for="ext_name">Ext Name:</label>
-                            <select  class="form-control" placeholder="Enter Ext Name" v-model="formData.beneficiaries[key].ext_name">
+                            <label for="ext_name">Ext:</label>
+                            <select  class="form-control" placeholder="Enter Ext" v-model="formData.beneficiaries[key].ext_name">
                                 <option value="">NONE</option>
                                 <option value="JR">JR</option>
                                 <option value="SR">SR</option>
@@ -347,7 +353,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="school_level_id">Student {{ key + 1 }} School Level:</label>
+                            <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id">
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
                             </select>
@@ -400,10 +406,10 @@
                     </div>
                 </div>
             </fieldset>
-            <h1 style="text-align: center;">
+            <h1 style="text-align: center;"  v-if="formType == 'create' || user.user_role == 'Admin'">
                 <button type="button" class="btn btn-warning" @click="addStudent">Add Student</button>
             </h1>
-            <button type="submit" class="btn btn-primary" :disabled="submit">Submit</button>
+            <button type="submit" class="btn btn-primary" :disabled="submit" v-if="formType == 'create' || user.user_role == 'Admin' || formData.user_id == user.id">Submit</button>
         </form>
     </div>
 </template>
@@ -425,6 +431,7 @@ import cloneDeep from 'lodash/cloneDeep'
             'payouts',
             'sectorOthers',
             'user',
+            'uuid',
         ],
         data(){
             return {
@@ -453,10 +460,15 @@ import cloneDeep from 'lodash/cloneDeep'
                 brgys: [],
                 submit: false,
                 filteredPsgc: [],
+                formType: "create",
             }
         },
         mounted() {
             console.log('Component mounted.');
+            if(this.uuid != null && this.uuid != ""){
+                this.formType = "update";
+                this.getCompositionData();
+            }
             this.filteredPsgc = cloneDeep(this.psgcs);
             if(this.user.user_role != "Admin"){
                 let psgc = this.filteredPsgc.filter(item => item.swad_office_id == this.user.swad_office_id);
@@ -466,6 +478,13 @@ import cloneDeep from 'lodash/cloneDeep'
         },
         methods: {
             formSubmit: debounce(function(){
+                if(this.formType == "create"){
+                    this.createComposition();
+                }else{
+                    this.updateComposition();
+                }
+            }, 500),
+            createComposition(){
                 this.submit = true;
                 this.formError = {
                     client: {},
@@ -476,7 +495,7 @@ import cloneDeep from 'lodash/cloneDeep'
                 for (let index = 0; index < this.formData.beneficiaries.length; index++) {
                     this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
                 }
-                Axios.post(route('family-composition.store'), this.formData)
+                Axios.post(route('family-composition.store'))
                 .then(res => {
                     this.submit = false;
                     alert("Successfuly saved.");
@@ -511,7 +530,54 @@ import cloneDeep from 'lodash/cloneDeep'
                 .then(res => {
                     this.submit = false;
                 });
-            }, 500),
+            },
+            updateComposition(){
+                this.submit = true;
+                this.formError = {
+                    client: {},
+                    father: {},
+                    mother: {},
+                    beneficiaries: [],
+                }
+                for (let index = 0; index < this.formData.beneficiaries.length; index++) {
+                    this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+                }
+                Axios.put(route('family-composition.update', this.formData.id), this.formData)
+                .then(res => {
+                    this.submit = false;
+                    alert("Successfuly saved.");
+                    this.formData = {
+                        client: {
+                            has_middle_name: false,
+                        },
+                        father: {
+                            has_middle_name: false,
+                        },
+                        mother: {
+                            has_middle_name: false,
+                        },
+                        beneficiaries: [{
+                            has_middle_name: false,
+                        }],
+                    };
+                    this.formError = {
+                        client: {},
+                        father: {},
+                        mother: {},
+                        beneficiaries: [],
+                    }
+                })
+                .catch(err => {
+                    this.submit = false;
+                    if(err.response.status == 422){
+                        this.formError = err.response.data.errors;
+                        alert("Please review submitted form.");
+                    }
+                })
+                .then(res => {
+                    this.submit = false;
+                });
+            },
             calcClientAge(){
                 this.formData.client.age = this.getAge(this.formData.client.birth_date);
             },
@@ -576,6 +642,25 @@ import cloneDeep from 'lodash/cloneDeep'
                 if(this.formData.client.sector_name != "Others"){
                     this.formData.client.sector_other_id = null;
                 }
+            },
+            getCompositionData(){
+                Axios.get(route('family-composition.uuid', this.uuid))
+                .then(res => {
+                    // console.log(res.data);
+                    this.formData = res.data;
+                    this.formData.beneficiaries = res.data.beneficiaries.data;
+                    // this.formData.client.brgy = this.formData.client.psgc.brgy_name
+                    // this.formData.client.city = this.formData.client.psgc.city_name
+                    // this.formData.client.province = this.formData.client.psgc.province_name
+                })
+                .catch(err => {
+                    // console.log(err.response.status);
+                    if(err.response.status == 404){
+                        alert('No beneficiary found');
+                    }
+                })
+                .then(res => {})
+                ;
             }
         }
     }
