@@ -76,4 +76,13 @@ class HomeController extends Controller
         ];
         return view('users', $data);
     }
+    
+    public function changePassword()
+    {
+        $user = Auth::user();
+        $data = [
+            'user' => $user,
+        ];
+        return view('change-password', $data);
+    }
 }

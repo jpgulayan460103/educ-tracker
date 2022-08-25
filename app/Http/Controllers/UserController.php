@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserChangePassword;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Transformers\UserTransformer;
@@ -27,7 +28,7 @@ class UserController extends Controller
         return $user;
     }
 
-    public function resetPassword(Request $request, $id)
+    public function resetPassword(UserChangePassword $request, $id)
     {
         $user = User::findOrFail($id);
         $user->update($request->only('password'));

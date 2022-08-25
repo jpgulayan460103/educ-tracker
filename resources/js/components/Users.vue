@@ -210,7 +210,8 @@ import debounce from 'lodash/debounce'
 
             resetPassword(user){
                 Axios.put(route('users.resetPassword', user.id), {
-                    password: "dswd12345"
+                    password: "dswd12345",
+                    password_confirmation: "dswd12345",
                 })
                 .then(res => {
                     this.getUsers();
