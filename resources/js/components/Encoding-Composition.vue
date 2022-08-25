@@ -352,11 +352,16 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group">
+                        <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                             <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id">
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
                             </select>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
+                        </div>
+                        <div class="form-group"  v-else>
+                            <label for="school_level_id">School Level:</label>
+                            <input class="form-control" placeholder="Enter School Level" :value="formData.beneficiaries[key].school_level.name" readonly />
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
                         </div>
                     </div>
@@ -369,8 +374,8 @@
                     </div>
                 </div>
                 <div class="row gx-2">
-                    <div class="col-md-2">
-                        <div class="form-group">
+                    <div class="col-md-2" v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
+                        <div class="form-group" >
                             <label for="status">Claim Status:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status">
                                 <option value="Claimed">Claimed</option>
@@ -378,6 +383,13 @@
                                 <option value="No Requirements">No Requirements</option>
                                 <option value="Not Eligible">Not Eligible</option>
                             </select>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.status`]">{{ formError[`beneficiaries.${key}.status`][0] }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-else>
+                        <div class="form-group" >
+                            <label for="status">Claim Status:</label>
+                            <input class="form-control" placeholder="Enter School Level" :value="formData.beneficiaries[key].status" readonly/>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.status`]">{{ formError[`beneficiaries.${key}.status`][0] }}</span>
                         </div>
                     </div>

@@ -100,6 +100,7 @@ class CompositionController extends Controller
         $composition =  Composition::with(
             'beneficiaries.payout',
             'beneficiaries.swad_office',
+            'beneficiaries.school_level',
             'father',
             'mother',
             'client.psgc',
@@ -110,6 +111,7 @@ class CompositionController extends Controller
             return fractal($composition, new CompositionTransformer)->parseIncludes([
                 'beneficiaries.payout',
                 'beneficiaries.swad_office',
+                'beneficiaries.school_level',
                 'father',
                 'mother',
                 'client.psgc',
@@ -147,9 +149,7 @@ class CompositionController extends Controller
             $composition = Composition::findOrFail($id);
             Client::findOrFail($composition->client_id)->update($form_data['client']);
             $beneficiaries = [];
-            foreach ($form_data['beneficiaries'] as $beneficiary_data) {
-                Beneficiary::findOrFail($beneficiary_data['id'])->update($beneficiary_data);
-            }
+            $this->updateBeneficiaries($id);
             BioParent::find($form_data['father']['id'])->update($form_data['father']);
             BioParent::find($form_data['mother']['id'])->update($form_data['mother']);
 
@@ -157,6 +157,31 @@ class CompositionController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
+        }
+    }
+
+    public function updateBeneficiaries($id)
+    {
+        $item_ids_form = array();
+        $item_ids = Beneficiary::where('composition_id',$id)->pluck('id')->toArray();
+        $new_items = array();
+        foreach (request('beneficiaries') as $key => $item) {
+            if(isset($item['id'])){
+                Beneficiary::find($item['id'])->update($item);
+                $item_ids_form[] = $item['id']; 
+            }else{
+                $new_items[$key] = new Beneficiary($item);
+                $new_items[$key]->save();
+            }
+        }
+        $this->removeItems($item_ids,$item_ids_form);
+    }
+
+    public function removeItems($item_ids,$item_ids_form)
+    {
+        $removed_item_ids = array_diff($item_ids,$item_ids_form);
+        foreach ($removed_item_ids as $removed_item_id) {
+            Beneficiary::where('id', $removed_item_id)->first()->delete();
         }
     }
 

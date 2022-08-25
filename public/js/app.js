@@ -5910,6 +5910,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -39836,68 +39848,100 @@ var render = function () {
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "school_level_id" } }, [
-                    _vm._v("School Level:"),
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                _vm.formType == "create" ||
+                _vm.user.user_role == "Admin" ||
+                _vm.formData.beneficiaries[key].status != "Claimed"
+                  ? _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "school_level_id" } }, [
+                        _vm._v("School Level:"),
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value:
+                                _vm.formData.beneficiaries[key].school_level_id,
+                              expression:
+                                "formData.beneficiaries[key].school_level_id",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          attrs: { placeholder: "Enter School Level" },
+                          on: {
+                            change: function ($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function (o) {
+                                  return o.selected
+                                })
+                                .map(function (o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.formData.beneficiaries[key],
+                                "school_level_id",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            },
+                          },
+                        },
+                        _vm._l(_vm.schoolLevels, function (schoolLevel, key) {
+                          return _c(
+                            "option",
+                            { key: key, domProps: { value: schoolLevel.id } },
+                            [_vm._v(_vm._s(schoolLevel.name))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _vm.formError["beneficiaries." + key + ".school_level_id"]
+                        ? _c("span", { staticStyle: { color: "red" } }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.formError[
+                                  "beneficiaries." + key + ".school_level_id"
+                                ][0]
+                              )
+                            ),
+                          ])
+                        : _vm._e(),
+                    ])
+                  : _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "school_level_id" } }, [
+                        _vm._v("School Level:"),
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        staticClass: "form-control",
+                        attrs: {
+                          placeholder: "Enter School Level",
+                          readonly: "",
+                        },
+                        domProps: {
                           value:
-                            _vm.formData.beneficiaries[key].school_level_id,
-                          expression:
-                            "formData.beneficiaries[key].school_level_id",
+                            _vm.formData.beneficiaries[key].school_level.name,
                         },
-                      ],
-                      staticClass: "form-control",
-                      attrs: { placeholder: "Enter School Level" },
-                      on: {
-                        change: function ($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function (o) {
-                              return o.selected
-                            })
-                            .map(function (o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.formData.beneficiaries[key],
-                            "school_level_id",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        },
-                      },
-                    },
-                    _vm._l(_vm.schoolLevels, function (schoolLevel, key) {
-                      return _c(
-                        "option",
-                        { key: key, domProps: { value: schoolLevel.id } },
-                        [_vm._v(_vm._s(schoolLevel.name))]
-                      )
-                    }),
-                    0
-                  ),
-                  _vm._v(" "),
-                  _vm.formError["beneficiaries." + key + ".school_level_id"]
-                    ? _c("span", { staticStyle: { color: "red" } }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.formError[
-                              "beneficiaries." + key + ".school_level_id"
-                            ][0]
-                          )
-                        ),
-                      ])
-                    : _vm._e(),
-                ]),
+                      }),
+                      _vm._v(" "),
+                      _vm.formError["beneficiaries." + key + ".school_level_id"]
+                        ? _c("span", { staticStyle: { color: "red" } }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.formError[
+                                  "beneficiaries." + key + ".school_level_id"
+                                ][0]
+                              )
+                            ),
+                          ])
+                        : _vm._e(),
+                    ]),
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-8" }, [
@@ -39950,77 +39994,114 @@ var render = function () {
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row gx-2" }, [
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "status" } }, [
-                    _vm._v("Claim Status:"),
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.formData.beneficiaries[key].status,
-                          expression: "formData.beneficiaries[key].status",
-                        },
-                      ],
-                      staticClass: "form-control",
-                      attrs: { placeholder: "Enter School Level" },
-                      on: {
-                        change: function ($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function (o) {
-                              return o.selected
-                            })
-                            .map(function (o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.formData.beneficiaries[key],
-                            "status",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        },
-                      },
-                    },
-                    [
-                      _c("option", { attrs: { value: "Claimed" } }, [
-                        _vm._v("Claimed"),
+              _vm.formType == "create" ||
+              _vm.user.user_role == "Admin" ||
+              _vm.formData.beneficiaries[key].status != "Claimed"
+                ? _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "status" } }, [
+                        _vm._v("Claim Status:"),
                       ]),
                       _vm._v(" "),
                       _c(
-                        "option",
-                        { attrs: { value: "For Scheduled Payout" } },
-                        [_vm._v("For Scheduled Payout")]
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.formData.beneficiaries[key].status,
+                              expression: "formData.beneficiaries[key].status",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          attrs: { placeholder: "Enter School Level" },
+                          on: {
+                            change: function ($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function (o) {
+                                  return o.selected
+                                })
+                                .map(function (o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.formData.beneficiaries[key],
+                                "status",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            },
+                          },
+                        },
+                        [
+                          _c("option", { attrs: { value: "Claimed" } }, [
+                            _vm._v("Claimed"),
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            { attrs: { value: "For Scheduled Payout" } },
+                            [_vm._v("For Scheduled Payout")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            { attrs: { value: "No Requirements" } },
+                            [_vm._v("No Requirements")]
+                          ),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "Not Eligible" } }, [
+                            _vm._v("Not Eligible"),
+                          ]),
+                        ]
                       ),
                       _vm._v(" "),
-                      _c("option", { attrs: { value: "No Requirements" } }, [
-                        _vm._v("No Requirements"),
+                      _vm.formError["beneficiaries." + key + ".status"]
+                        ? _c("span", { staticStyle: { color: "red" } }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.formError[
+                                  "beneficiaries." + key + ".status"
+                                ][0]
+                              )
+                            ),
+                          ])
+                        : _vm._e(),
+                    ]),
+                  ])
+                : _c("div", { staticClass: "col-md-2" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "status" } }, [
+                        _vm._v("Claim Status:"),
                       ]),
                       _vm._v(" "),
-                      _c("option", { attrs: { value: "Not Eligible" } }, [
-                        _vm._v("Not Eligible"),
-                      ]),
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _vm.formError["beneficiaries." + key + ".status"]
-                    ? _c("span", { staticStyle: { color: "red" } }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.formError["beneficiaries." + key + ".status"][0]
-                          )
-                        ),
-                      ])
-                    : _vm._e(),
-                ]),
-              ]),
+                      _c("input", {
+                        staticClass: "form-control",
+                        attrs: {
+                          placeholder: "Enter School Level",
+                          readonly: "",
+                        },
+                        domProps: {
+                          value: _vm.formData.beneficiaries[key].status,
+                        },
+                      }),
+                      _vm._v(" "),
+                      _vm.formError["beneficiaries." + key + ".status"]
+                        ? _c("span", { staticStyle: { color: "red" } }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm.formError[
+                                  "beneficiaries." + key + ".status"
+                                ][0]
+                              )
+                            ),
+                          ])
+                        : _vm._e(),
+                    ]),
+                  ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
