@@ -41,7 +41,7 @@ class User extends Authenticatable
             ];
             $full_name = implode(" ",$full_name_array);
             $model->full_name = trim($full_name);
-            $model->is_active = 0;
+            $model->is_active = 1;
         });
         self::updating(function($model) {
             $full_name_array = [
