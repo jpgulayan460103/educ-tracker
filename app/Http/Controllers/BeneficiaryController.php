@@ -125,19 +125,19 @@ class BeneficiaryController extends Controller
                     'swad_office_id',
                 )
                 ->groupBy('swad_office_id')
-                ->where('status', $claimed_status);
+                ->where('beneficiaries.status', $claimed_status);
             $total_served_query = $school_level
                 ->beneficiaries()
-                ->where('status', $claimed_status);
+                ->where('beneficiaries.status', $claimed_status);
             if($request->payout_id){
                 $payout_id = $request->payout_id;
-                $beneficiaries_query->where('payout_id', $payout_id);
-                $total_served_query->where('payout_id', $payout_id);
+                $beneficiaries_query->where('beneficiaries.payout_id', $payout_id);
+                $total_served_query->where('beneficiaries.payout_id', $payout_id);
             }
             if($request->swad_office_id){
                 $swad_office_id = $request->swad_office_id;
-                $beneficiaries_query->where('swad_office_id', $swad_office_id);
-                $total_served_query->where('swad_office_id', $swad_office_id);
+                $beneficiaries_query->where('beneficiaries.swad_office_id', $swad_office_id);
+                $total_served_query->where('beneficiaries.swad_office_id', $swad_office_id);
             }
             $school_level->swad_offices = $beneficiaries_query->get();
             $school_level->total_beneficiaries_served = $total_served_query->count();
