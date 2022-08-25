@@ -414,10 +414,18 @@ import DatePicker from 'vue2-datepicker';
 import uniqBy from 'lodash/uniqBy'
 import isEmpty from 'lodash/isEmpty'
 import debounce from 'lodash/debounce'
+import cloneDeep from 'lodash/cloneDeep'
 
     export default {
         components: { DatePicker },
-        props: ['psgcs', 'schoolLevels', 'sectors', 'payouts', 'sectorOthers'],
+        props: [
+            'psgcs',
+            'schoolLevels',
+            'sectors',
+            'payouts',
+            'sectorOthers',
+            'user',
+        ],
         data(){
             return {
                 formData:{
@@ -444,11 +452,17 @@ import debounce from 'lodash/debounce'
                 cities: [],
                 brgys: [],
                 submit: false,
+                filteredPsgc: [],
             }
         },
         mounted() {
             console.log('Component mounted.');
-            this.provinces = uniqBy(this.psgcs, 'province_psgc');
+            this.filteredPsgc = cloneDeep(this.psgcs);
+            if(this.user.user_role != "Admin"){
+                let psgc = this.filteredPsgc.filter(item => item.swad_office_id == this.user.swad_office_id);
+                this.filteredPsgc = psgc;
+            }
+            this.provinces = uniqBy(this.filteredPsgc, 'province_psgc');
         },
         methods: {
             formSubmit: debounce(function(){
@@ -512,18 +526,20 @@ import debounce from 'lodash/debounce'
                 return age;
             },
             populateCities(){
-                let cities = this.psgcs.filter(item => item.province_psgc === this.formData.client.province);
+                let cities = this.filteredPsgc.filter(item => item.province_psgc === this.formData.client.province);
                 this.cities = uniqBy(cities, 'city_psgc');
                 this.formData.client.brgy = null;
             },
             populateBarangay(){
-                let brgys = this.psgcs.filter(item => item.city_psgc === this.formData.client.city);
+                let brgys = this.filteredPsgc.filter(item => item.city_psgc === this.formData.client.city);
                 this.brgys = uniqBy(brgys, 'brgy_psgc');
             },
             setPsgcId(){
-                let psgcs = this.psgcs.filter(item => item.brgy_psgc === this.formData.client.brgy);
-                this.formData.client.psgc_id = psgcs[0].id;
-                this.formData.client.swad_office_id = psgcs[0].swad_office_id;
+                let psgcs = this.filteredPsgc.filter(item => item.brgy_psgc === this.formData.client.brgy);
+                if(!isEmpty(psgcs)){
+                    this.formData.client.psgc_id = psgcs[0].id;
+                    this.formData.client.swad_office_id = psgcs[0].swad_office_id;
+                }
             },
             addStudent(){
                 this.formData.beneficiaries = [...this.formData.beneficiaries, {has_middle_name: false}];

@@ -2,6 +2,23 @@
     <div class="container-fluid  px-4">
         <fieldset class="border p-2 my-2">
             <legend  class="w-auto">Encoded Beneficiaries</legend>
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control" placeholder="Search" v-model="type">
+                        <option value="client">Client Name</option>
+                        <option value="beneficiary">Beneficiary Name</option>
+                        <option value="father">Father Name</option>
+                        <option value="mother">Mother Name</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary" @click="getBeneficiaries">Search</button>
+                </div>
+            </div>
+            <br>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -57,6 +74,8 @@ import Axios from 'axios';
         data(){
             return {
                 beneficiaries: [],
+                keyword: "",
+                type: "client",
             }
         },
         mounted() {
@@ -65,7 +84,12 @@ import Axios from 'axios';
         },
         methods: {
             getBeneficiaries(){
-                Axios.get(route('beneficiaries.index'))
+                Axios.get(route('beneficiaries.index'), {
+                    params: {
+                        keyword: this.keyword,
+                        type: this.type,
+                    }
+                })
                 .then(res => {
                     this.beneficiaries = res.data.data;
                 })

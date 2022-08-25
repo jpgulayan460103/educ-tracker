@@ -32,6 +32,7 @@ class CreateBeneficiariesTable extends Migration
             $table->string('sector_others')->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();
+            $table->fulltext('full_name');
         });
     }
 

@@ -20,7 +20,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('index');
     }
 
     /**
@@ -36,20 +36,12 @@ class HomeController extends Controller
             'swad_offices' => $swad_offices,
             'payouts' => $payouts,
         ];
-        if(Auth::check()){
-            return view('dashboard', $data);
-        }else{
-            return view('login');
-        }
+        return view('dashboard', $data);
     }
 
     public function beneficiaries()
     {
-        if(Auth::check()){
-            return view('beneficiaries');
-        }else{
-            return view('login');
-        }
+        return view('beneficiaries');
     }
 
     public function encoding()
@@ -59,17 +51,28 @@ class HomeController extends Controller
         $sectors = Sector::all();
         $sector_others = SectorOther::all();
         $payouts = Payout::all();
+        $user = Auth::user();
         $data = [
             'psgcs' => $psgcs,
             'school_levels' => $school_levels,
             'sectors' => $sectors,
             'payouts' => $payouts,
             'sector_others' => $sector_others,
+            'user' => $user,
         ];
-        if(Auth::check()){
-            return view('composition', $data);
-        }else{
-            return view('login');
+        return view('composition', $data);
+    }
+
+    public function users()
+    {
+        $user = Auth::user();
+        if($user->user_role != "Admin"){
+            abort(403);
         }
+        $swad_offices = SwadOffice::all();
+        $data = [
+            'swad_offices' => $swad_offices,
+        ];
+        return view('users', $data);
     }
 }

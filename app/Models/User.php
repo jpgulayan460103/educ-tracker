@@ -17,7 +17,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id_number',
         'last_name',
         'first_name',
         'middle_name',
@@ -25,8 +24,8 @@ class User extends Authenticatable
         'username',
         'password',
         'user_role',
-        'psgc_scope',
         'is_active',
+        'swad_office_id',
     ];
 
 
@@ -68,5 +67,10 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function swad_office()
+    {
+        return $this->belongsTo(SwadOffice::class);
     }
 }

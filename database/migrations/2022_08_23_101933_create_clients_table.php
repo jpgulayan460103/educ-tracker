@@ -35,6 +35,7 @@ class CreateClientsTable extends Migration
             $table->timestamps();
             $table->string('uuid')->nullable();
             $table->index('uuid');
+            $table->fulltext('full_name');
         });
     }
 

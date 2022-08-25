@@ -47,8 +47,8 @@ class CompositionRequest extends FormRequest
             'client.birth_date' => ['required', 'date' , 'before:'.Carbon::now()->toDateString()],
             'client.age' => ['required', 'integer'],
             'client.gender' => ['required'],
-            'client.occupation' => ['required', 'string', 'max:255'],
-            'client.monthly_salary' => ['required', 'string', 'max:255'],
+            // 'client.occupation' => ['required', 'string', 'max:255'],
+            // 'client.monthly_salary' => ['required', 'string', 'max:255'],
             'client.relationship_beneficiary' => ['required', 'string', 'max:255'],
 
             'beneficiaries.*.last_name' => ['required', 'string', 'max:255', new ValidStringName, new BeneficiaryExist],

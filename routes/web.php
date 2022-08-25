@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\CompositionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/encoded-beneficiaries', [App\Http\Controllers\HomeController::class, 'beneficiaries'])->name('beneficiaries');
 Route::get('/encoding', [App\Http\Controllers\HomeController::class, 'encoding'])->name('encoding');
+Route::get('/users', [App\Http\Controllers\HomeController::class, 'users'])->name('users');
 
 // Route::post('login', 'Auth\LoginController@login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -25,8 +27,13 @@ Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::resources([
-    'family-composition' => CompositionController::class,
-    'beneficiaries' => BeneficiaryController::class,
-]);
 
+
+Route::group(['prefix' => '/data'], function () {
+    Route::put('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+    Route::resources([
+        'family-composition' => CompositionController::class,
+        'beneficiaries' => BeneficiaryController::class,
+        'users' => UserController::class,
+    ]);
+});

@@ -16,7 +16,7 @@ class BeneficiaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $beneficiaries = Beneficiary::with(
             'composition.father',
@@ -29,6 +29,34 @@ class BeneficiaryController extends Controller
             'swad_office',
         );
         $beneficiaries->orderBy('id', 'desc');
+        if(request()->has('type') && request('type') != "" && request()->has('keyword') && request('keyword') != ""){
+            $keyword = $request->keyword;
+            $type = $request->type;
+            switch ($type) {
+                case 'client':
+                    $beneficiaries->whereHas("composition.client", function($q) use ($keyword){
+                        $q->where("full_name", 'like', "%$keyword%");
+                    });
+                    break;
+                case 'father':
+                    $beneficiaries->whereHas("composition.father", function($q) use ($keyword){
+                        $q->where("full_name", 'like', "%$keyword%");
+                    });
+                    break;
+                case 'mother':
+                    $beneficiaries->whereHas("composition.mother", function($q) use ($keyword){
+                        $q->where("full_name", 'like', "%$keyword%");
+                    });
+                    break;
+                case 'beneficiary':
+                    $beneficiaries->where("full_name", 'like', "%$keyword%");
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
         $beneficiaries = $beneficiaries->paginate(10);
 
         return fractal($beneficiaries, new BeneficiaryTransformer)->parseIncludes('

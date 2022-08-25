@@ -23,6 +23,7 @@ class CreateBioParentsTable extends Migration
             $table->date('birth_date')->nullable();
             $table->string('relationship_beneficiary')->nullable();
             $table->unsignedBigInteger('composition_id')->nullable();
+            $table->fulltext('full_name');
             $table->timestamps();
         });
     }

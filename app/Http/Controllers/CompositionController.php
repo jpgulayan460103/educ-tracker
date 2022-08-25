@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Composition;
 use App\Transformers\CompositionTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompositionController extends Controller
 {
@@ -52,22 +53,30 @@ class CompositionController extends Controller
      */
     public function store(CompositionRequest $request)
     {
-        $form_data = $request->all();
-        $client = Client::create($form_data['client']);
+        try {
+            DB::beginTransaction();
+            $form_data = $request->all();
+            $client = Client::create($form_data['client']);
 
-        $beneficiaries = [];
-        foreach ($form_data['beneficiaries'] as $beneficiary_data) {
-            $beneficiaries[] = new Beneficiary($beneficiary_data);
+            $beneficiaries = [];
+            foreach ($form_data['beneficiaries'] as $beneficiary_data) {
+                $beneficiaries[] = new Beneficiary($beneficiary_data);
+            }
+
+            $father = new BioParent($form_data['father']);
+            $father->relationship_beneficiary = "father";
+            $mother = new BioParent($form_data['mother']);
+            $mother->relationship_beneficiary = "mother";
+            $composition = $client->composition()->create();
+            $composition->beneficiaries()->saveMany($beneficiaries);
+            $composition->father()->save($father);
+            $composition->mother()->save($mother);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-
-        $father = new BioParent($form_data['father']);
-        $father->relationship_beneficiary = "father";
-        $mother = new BioParent($form_data['mother']);
-        $mother->relationship_beneficiary = "mother";
-        $composition = $client->composition()->create();
-        $composition->beneficiaries()->saveMany($beneficiaries);
-        $composition->father()->save($father);
-        $composition->mother()->save($mother);
     }
 
     /**
