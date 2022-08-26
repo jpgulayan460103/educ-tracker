@@ -149,9 +149,9 @@ import map from 'lodash/map'
                 }
 
                 if(format == "currency"){
-                    return this.formatCurrency(value);
+                    return this.formatCurrency(parseFloat(value));
                 }else{
-                    return value;
+                    return parseFloat(value);
                 }
             },
             totalData(prop, swad_office_id, format){
@@ -159,19 +159,19 @@ import map from 'lodash/map'
                 
                 if(swad_office_id == null){
                     value = this.schoolLevels.reduce((sum, t) => {
-                        return sum += Number(t[prop]);
+                        return sum += parseFloat(t[prop]);
                     }, 0);
                 }else{
                     let swadReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id);
                     value = swadReport.reduce((sum, t) => {
-                        return sum += Number(t[prop]);
+                        return sum += parseFloat(t[prop]);
                     }, 0);
                 }
 
                 if(format == "currency"){
-                    return this.formatCurrency(value);
+                    return this.formatCurrency(parseFloat(value));
                 }else{
-                    return value;
+                    return parseFloat(value);
                 }
             },
             async filterDashboard(){
