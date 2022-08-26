@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Composition;
 use App\Transformers\CompositionTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CompositionController extends Controller
@@ -62,12 +63,14 @@ class CompositionController extends Controller
             foreach ($form_data['beneficiaries'] as $beneficiary_data) {
                 $beneficiaries[] = new Beneficiary($beneficiary_data);
             }
-
+            $user = Auth::user();
             $father = new BioParent($form_data['father']);
             $father->relationship_beneficiary = "father";
             $mother = new BioParent($form_data['mother']);
             $mother->relationship_beneficiary = "mother";
-            $composition = $client->composition()->create();
+            $composition = $client->composition()->create([
+                'user_id' => $user->id
+            ]);
             $composition->beneficiaries()->saveMany($beneficiaries);
             $composition->father()->save($father);
             $composition->mother()->save($mother);
@@ -106,6 +109,7 @@ class CompositionController extends Controller
             'client.psgc',
             'client.sector',
             'client.sector_other',
+            'client.client_sector',
         )->where('uuid', $uuid)->first();
         if($composition){
             return fractal($composition, new CompositionTransformer)->parseIncludes([
@@ -117,6 +121,7 @@ class CompositionController extends Controller
                 'client.psgc',
                 'client.sector',
                 'client.sector_other',
+                'client.client_sector',
             ]);
         }else{
             abort(404);

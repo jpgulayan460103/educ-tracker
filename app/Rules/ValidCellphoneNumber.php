@@ -28,6 +28,9 @@ class ValidCellphoneNumber implements Rule
         if(trim($value) == ""){
             return true;
         }
+        if(strlen(trim($value)) != 11){
+            return false;
+        }
         if(substr($value, 0, 2) != "09"){
             return false;
         }
@@ -41,6 +44,6 @@ class ValidCellphoneNumber implements Rule
      */
     public function message()
     {
-        return "The cellphone number must start with 09";
+        return "The invalid mobile number format";
     }
 }

@@ -52,12 +52,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="relationship_beneficiary">Relationship to Beneficiary:</label>
-                            <select class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary">
+                            <select class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary" @change="populateParent">
                                 <option value="Father">Father</option>
                                 <option value="Mother">Mother</option>
                                 <option value="Grandfather/Grandmother">Grandfather/Grandmother</option>
                                 <option value="Brother/Sister">Brother/Sister</option>
                                 <option value="Guardian">Guardian</option>
+                                <option value="Beneficiary">Beneficiary</option>
                             </select>
                             <!-- <input type="text" class="form-control" placeholder="Enter Relationship to Beneficiary" v-model="formData.client.relationship_beneficiary"> -->
                             <span style="color:red" v-if="formError['client.relationship_beneficiary']">{{ formError['client.relationship_beneficiary'][0] }}</span>
@@ -73,7 +74,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="province">Province:
-                                <b v-if="formType == 'update'">{{ formData.client.psgc.province_name }}</b>
+                                <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.province_name }}</b> -->
                             </label>
                             <select class="form-control" placeholder="Enter Province" v-model="formData.client.province" @change="populateCities">
                                 <option v-for="(province, key) in provinces" :key="key" :value="province.province_psgc">{{ province.province_name }}</option>
@@ -84,7 +85,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="city">City:
-                                <b v-if="formType == 'update'">{{ formData.client.psgc.city_name }}</b>
+                                <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.city_name }}</b> -->
                             </label>
                             <select class="form-control" placeholder="Enter City" v-model="formData.client.city" @change="populateBarangay">
                                 <option v-for="(city, key) in cities" :key="key" :value="city.city_psgc">{{ city.city_name }}</option>
@@ -95,7 +96,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="brgy">Barangay:
-                                <b v-if="formType == 'update'">{{ formData.client.psgc.brgy_name }}</b>
+                                <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.brgy_name }}</b> -->
                             </label>
                             <select class="form-control" placeholder="Enter Barangay" v-model="formData.client.brgy" @change="setPsgcId">
                                 <option v-for="(brgy, key) in brgys" :key="key" :value="brgy.brgy_psgc">{{ brgy.brgy_name }}</option>
@@ -108,9 +109,9 @@
                 <div class="row gx-2">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="cellphone_number">Cellphone Number:</label>
-                            <input type="text" class="form-control" placeholder="Enter Cellphone Number" v-model="formData.client.cellphone_number">
-                            <span style="color:red" v-if="formError['client.cellphone_number']">{{ formError['client.cellphone_number'][0] }}</span>
+                            <label for="mobile_number">Cellphone Number:</label>
+                            <input type="text" class="form-control" placeholder="Enter Cellphone Number" v-model="formData.client.mobile_number">
+                            <span style="color:red" v-if="formError['client.mobile_number']">{{ formError['client.mobile_number'][0] }}</span>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -153,6 +154,15 @@
                     </div>
                 </div>
                 <div class="row gx-2">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="client_sector_id">Client Sector:</label>
+                            <select class="form-control" placeholder="Enter Sector" v-model="formData.client.client_sector_id" @change="handleChangeSector">
+                                <option v-for="(clientSector, key) in clientSectors" :key="key" :value="clientSector.id">{{ clientSector.name }}</option>
+                            </select>
+                            <span style="color:red" v-if="formError[`client.client_sector_id`]">{{ formError[`client.client_sector_id`][0] }}</span>
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="sector_id">Sector:</label>
@@ -354,7 +364,7 @@
                     <div class="col-md-2">
                         <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                             <label for="school_level_id">School Level:</label>
-                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id"  @change="changeBeneficiaryAmount(key)">
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id" >
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
@@ -377,7 +387,7 @@
                     <div class="col-md-2" v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                         <div class="form-group" >
                             <label for="status">Claim Status:</label>
-                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status" @change="changeBeneficiaryAmount(key)">
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status">
                                 <option value="Claimed">Claimed</option>
                                 <option value="For Scheduled Payout">For Scheduled Payout</option>
                                 <option value="No Requirements">No Requirements</option>
@@ -469,6 +479,7 @@ import cloneDeep from 'lodash/cloneDeep'
             'sectorOthers',
             'user',
             'uuid',
+            'clientSectors',
         ],
         data(){
             return {
@@ -697,13 +708,16 @@ import cloneDeep from 'lodash/cloneDeep'
                     // console.log(res.data);
                     this.formData = res.data;
                     this.formData.beneficiaries = res.data.beneficiaries.data;
-                    // this.formData.client.brgy = this.formData.client.psgc.brgy_name
-                    // this.formData.client.city = this.formData.client.psgc.city_name
-                    // this.formData.client.province = this.formData.client.psgc.province_name
+                    this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
+                    this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
+                    this.cities = [this.formData.client.psgc];
+                    this.brgys = [this.formData.client.psgc];
+                    this.formData.client.city = this.formData.client.psgc.city_psgc;
+                    this.formData.client.province = this.formData.client.psgc.province_psgc;
                 })
                 .catch(err => {
                     // console.log(err.response.status);
-                    if(err.response.status == 404){
+                    if(err.response && err.response.status == 404){
                         alert('No beneficiary found');
                     }
                 })
@@ -737,6 +751,35 @@ import cloneDeep from 'lodash/cloneDeep'
                     return newItem;
                 });
                 return schools;
+            },
+
+            populateParent(){
+                if(this.formData.client.relationship_beneficiary == "Father"){
+                    this.formData.father.last_name = this.formData.client.last_name;
+                    this.formData.father.first_name = this.formData.client.first_name;
+                    this.formData.father.has_middle_name = this.formData.client.has_middle_name;
+                    this.formData.father.middle_name = this.formData.client.middle_name;
+                    this.formData.father.ext_name = this.formData.client.ext_name;
+                    this.formData.father.birth_date = this.formData.client.birth_date;
+                }
+
+                if(this.formData.client.relationship_beneficiary == "Mother"){
+                    this.formData.mother.last_name = this.formData.client.last_name;
+                    this.formData.mother.first_name = this.formData.client.first_name;
+                    this.formData.mother.has_middle_name = this.formData.client.has_middle_name;
+                    this.formData.mother.middle_name = this.formData.client.middle_name;
+                    this.formData.mother.ext_name = this.formData.client.ext_name;
+                    this.formData.mother.birth_date = this.formData.client.birth_date;
+                }
+
+                if(this.formData.client.relationship_beneficiary == "Beneficiary"){
+                    this.formData.beneficiaries[0].last_name = this.formData.client.last_name;
+                    this.formData.beneficiaries[0].first_name = this.formData.client.first_name;
+                    this.formData.beneficiaries[0].has_middle_name = this.formData.client.has_middle_name;
+                    this.formData.beneficiaries[0].middle_name = this.formData.client.middle_name;
+                    this.formData.beneficiaries[0].ext_name = this.formData.client.ext_name;
+                    this.formData.beneficiaries[0].birth_date = this.formData.client.birth_date;
+                }
             }
         },
         computed: {

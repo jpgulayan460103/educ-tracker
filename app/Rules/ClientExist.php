@@ -54,6 +54,6 @@ class ClientExist implements Rule
     public function message()
     {
         $uuid = $this->composition->uuid;
-        return 'The client exist.'."<a @click='viewBeneficiary(".'"'.$uuid.'"'.")' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
+        return 'The client exist.'."<a target='_blank' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
     }
 }

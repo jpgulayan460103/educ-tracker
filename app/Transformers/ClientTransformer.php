@@ -25,6 +25,7 @@ class ClientTransformer extends TransformerAbstract
         'psgc',
         'sector',
         'sector_other',
+        'client_sector',
     ];
     
     /**
@@ -53,6 +54,7 @@ class ClientTransformer extends TransformerAbstract
             'relationship_beneficiary' => $client->relationship_beneficiary,
             'sector_id' => $client->sector_id,
             'sector_other_id' => $client->sector_other_id,
+            'client_sector_id' => $client->client_sector_id,
         ];
     }
     public function includePsgc(Client $client)
@@ -71,6 +73,12 @@ class ClientTransformer extends TransformerAbstract
     {
         if($client->sector_other){
             return $this->item($client->sector_other, new SectorOtherTransformer);
+        }
+    }
+    public function includeClientSector(Client $client)
+    {
+        if($client->client_sector){
+            return $this->item($client->client_sector, new ClientSectorTransformer);
         }
     }
 }

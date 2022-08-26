@@ -10,6 +10,7 @@
         :sector-others="{{ json_encode($sector_others) }}"
         :user="{{ json_encode($user) }}"
         uuid="{{ $uuid }}"
+        :client-sectors="{{ json_encode($client_sectors) }}"
     />
 </div>
 @endsection

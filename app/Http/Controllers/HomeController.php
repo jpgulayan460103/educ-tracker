@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClientSector;
 use App\Models\Office;
 use App\Models\Payout;
 use App\Models\Psgc;
@@ -53,6 +54,7 @@ class HomeController extends Controller
         $sector_others = SectorOther::all();
         $payouts = Payout::all();
         $user = Auth::user();
+        $client_sectors = ClientSector::all();
         $data = [
             'psgcs' => $psgcs,
             'school_levels' => $school_levels,
@@ -61,6 +63,7 @@ class HomeController extends Controller
             'sector_others' => $sector_others,
             'user' => $user,
             'uuid' => $uuid,
+            'client_sectors' => $client_sectors,
         ];
         return view('composition', $data);
     }

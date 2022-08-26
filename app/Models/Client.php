@@ -25,6 +25,7 @@ class Client extends Model
         'occupation',
         'monthly_salary',
         'relationship_beneficiary',
+        'client_sector_id',
         'sector_id',
         'sector_other_id',
     ];
@@ -67,6 +68,10 @@ class Client extends Model
     public function sector()
     {
         return $this->belongsTo(Sector::class);
+    }
+    public function client_sector()
+    {
+        return $this->belongsTo(ClientSector::class);
     }
 
     public function sector_other()

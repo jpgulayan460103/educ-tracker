@@ -18,11 +18,9 @@ class Composition extends Model
 
     public static function boot()
     {
-        $user = Auth::user();
         parent::boot();
-        self::creating(function ($model) use ($user) {
+        self::creating(function ($model) {
             $model->uuid = (string) Str::uuid();
-            $model->user_id = $user->id;
         });
         self::updating(function($model) {
 

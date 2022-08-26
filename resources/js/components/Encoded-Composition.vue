@@ -40,8 +40,8 @@
                     </thead>
                     <tbody v-for="beneficiary in beneficiaries" :key="beneficiary.key">
                             <tr>
-                                <td>{{ beneficiary.swad_office.name }}</td>
-                                <td>{{ beneficiary.composition.client.full_name }}</td>
+                                <td>{{ beneficiary.swad_office && beneficiary.swad_office.name }}</td>
+                                <td>{{ beneficiary.composition && beneficiary.composition.client && beneficiary.composition.client.full_name }}</td>
                                 <td>{{ beneficiary.full_name }}</td>
                                 <td>
                                     <span>{{ beneficiary.composition.client.psgc.brgy_name }}</span>,
@@ -54,12 +54,12 @@
                                 <td>{{ beneficiary.payout ? beneficiary.payout.payout_date : "" }}</td>
                                 <td>{{ beneficiary.remarks }}</td>
                                 <td>
-                                    <span>{{ beneficiary.composition.father.full_name }}</span>
+                                    <span>{{ beneficiary.composition && beneficiary.composition.father && beneficiary.composition.father.full_name }}</span>
                                 </td>
                                 <td>
-                                    <span>{{ beneficiary.composition.mother.full_name }}</span>
+                                    <span>{{ beneficiary.composition && beneficiary.composition.mother && beneficiary.composition.mother.full_name }}</span>
                                 </td>
-                                <td>{{ beneficiary.composition.user.full_name }}</td>
+                                <td>{{ beneficiary.composition && beneficiary.composition.user && beneficiary.composition.user.full_name }}</td>
                                 <td>
                                     <a href="#" @click="viewBeneficiary(beneficiary)">View</a>
                                 </td>

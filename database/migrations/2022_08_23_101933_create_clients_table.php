@@ -29,6 +29,7 @@ class CreateClientsTable extends Migration
             $table->string('occupation')->nullable();
             $table->float('monthly_salary', 15, 2)->nullable();
             $table->string('relationship_beneficiary')->nullable();
+            $table->unsignedBigInteger('client_sector_id')->nullable();
             $table->unsignedBigInteger('sector_id')->nullable();
             $table->unsignedBigInteger('sector_other_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
