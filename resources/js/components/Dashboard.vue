@@ -144,7 +144,7 @@ import map from 'lodash/map'
                     if(isEmpty(swadOfficeReport)){
                         value = 0;
                     }else{
-                        value = swadOfficeReport[0][prop];
+                        value = parseFloat(swadOfficeReport[0][prop]);
                     }
                 }
 
