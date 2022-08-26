@@ -29,6 +29,7 @@ class Beneficiary extends Model
         'school_name',
         'amount_granted',
         'remarks',
+        'control_number',
     ];
 
     public static function boot()

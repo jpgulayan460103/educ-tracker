@@ -93,6 +93,15 @@ class BeneficiaryCsvSeeder extends Seeder
             $insert_data['payout_id'] = 1;
             $insert_data['composition_id'] = $composition->id;
             $insert_data['status'] = "Claimed";
+            $format = $swad_office->code."-01-";
+            $next_control_number = 1;
+            $last_beneficiary = Beneficiary::where('control_number', 'like', "$format%")->orderBy('id','desc')->first();
+            if($last_beneficiary){
+                $last_control_number_split = explode("-", $last_beneficiary->control_number);
+                $last_control_number = end($last_control_number_split);
+                $next_control_number = (int)$last_control_number + 1;
+            }
+            $insert_data['control_number'] = $format.str_pad($next_control_number, 6, "0", STR_PAD_LEFT);
             $beneficiary = Beneficiary::create($insert_data);
             echo "created beneficiary: $beneficiary->last_name \n";
         }

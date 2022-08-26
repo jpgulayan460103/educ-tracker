@@ -7,6 +7,7 @@ use App\Models\Beneficiary;
 use App\Models\BioParent;
 use App\Models\Client;
 use App\Models\Composition;
+use App\Models\SwadOffice;
 use App\Transformers\CompositionTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,11 +60,21 @@ class CompositionController extends Controller
             $form_data = $request->all();
             $client = Client::create($form_data['client']);
 
+            $user = Auth::user();
             $beneficiaries = [];
             foreach ($form_data['beneficiaries'] as $beneficiary_data) {
+                $swad_office = SwadOffice::findOrFail($beneficiary_data['swad_office_id']);
+                $format = $swad_office->code."-".str_pad($user->id, 2, "0", STR_PAD_LEFT)."-";
+                $next_control_number = 1;
+                $last_beneficiary = Beneficiary::where('control_number', 'like', "$format%")->orderBy('id','desc')->first();
+                if($last_beneficiary){
+                    $last_control_number_split = explode("-", $last_beneficiary->control_number);
+                    $last_control_number = end($last_control_number_split);
+                    $next_control_number = (int)$last_control_number + 1;
+                }
+                $beneficiary_data['control_number'] = $format.str_pad($next_control_number, 6, "0", STR_PAD_LEFT);
                 $beneficiaries[] = new Beneficiary($beneficiary_data);
             }
-            $user = Auth::user();
             $father = new BioParent($form_data['father']);
             $father->relationship_beneficiary = "father";
             $mother = new BioParent($form_data['mother']);
@@ -171,12 +182,23 @@ class CompositionController extends Controller
         $item_ids_form = array();
         $item_ids = Beneficiary::where('composition_id',$id)->pluck('id')->toArray();
         $new_items = array();
+        $user = Auth::user();
         foreach (request('beneficiaries') as $key => $item) {
             if(isset($item['id'])){
                 Beneficiary::find($item['id'])->update($item);
                 $item_ids_form[] = $item['id']; 
             }else{
                 $item['composition_id'] = $composition->id;
+                $swad_office = SwadOffice::findOrFail($item['swad_office_id']);
+                $format = $swad_office->code."-".str_pad($user->id, 2, "0", STR_PAD_LEFT)."-";
+                $next_control_number = 1;
+                $last_beneficiary = Beneficiary::where('control_number', 'like', "$format%")->orderBy('id','desc')->first();
+                if($last_beneficiary){
+                    $last_control_number_split = explode("-", $last_beneficiary->control_number);
+                    $last_control_number = end($last_control_number_split);
+                    $next_control_number = (int)$last_control_number + 1;
+                }
+                $item['control_number'] = $format.str_pad($next_control_number, 6, "0", STR_PAD_LEFT);
                 $new_items[$key] = new Beneficiary($item);
                 $new_items[$key]->save();
             }

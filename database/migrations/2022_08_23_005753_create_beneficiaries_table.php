@@ -33,6 +33,7 @@ class CreateBeneficiariesTable extends Migration
             $table->string('sector_others')->nullable();
             $table->float('amount_granted', 15, 2)->nullable();
             $table->text('remarks')->nullable();
+            $table->text('control_number')->nullable();
             $table->string('uuid')->nullable();
             $table->timestamps();
             $table->fulltext('full_name');

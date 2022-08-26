@@ -62,6 +62,7 @@ class BeneficiaryTransformer extends TransformerAbstract
             'payout_id' => $beneficiary->payout_id,
             'swad_office_id' => $beneficiary->swad_office_id,
             'uuid' => $beneficiary->uuid,
+            'control_number' => $beneficiary->control_number,
         ];
     }
 

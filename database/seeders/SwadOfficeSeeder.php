@@ -15,18 +15,34 @@ class SwadOfficeSeeder extends Seeder
     public function run()
     {
         $swad_offices = [
-            'Province of Davao de Oro',
-            'Province of Davao del Norte',
-            'Province of Davao del Sur',
-            'Province of Davao Occidental',
-            'Province of Davao Oriental',
-            'Regional Office',
+            [
+                'name' => 'Province of Davao de Oro',
+                'code' => 'DDO',
+            ],
+            [
+                'name' => 'Province of Davao del Norte',
+                'code' => 'DDN',
+            ],
+            [
+                'name' => 'Province of Davao del Sur',
+                'code' => 'DDS',
+            ],
+            [
+                'name' => 'Province of Davao Occidental',
+                'code' => 'DOc',
+            ],
+            [
+                'name' => 'Province of Davao Oriental',
+                'code' => 'DOr',
+            ],
+            [
+                'name' => 'Regional Office',
+                'code' => 'RO',
+            ],
         ];
 
         foreach ($swad_offices as $swad_office) {
-            SwadOffice::create([
-                'name' => $swad_office
-            ]);
+            SwadOffice::create($swad_office);
         }
     }
 }

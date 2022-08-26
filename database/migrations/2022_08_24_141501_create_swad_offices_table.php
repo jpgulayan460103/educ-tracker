@@ -16,6 +16,7 @@ class CreateSwadOfficesTable extends Migration
         Schema::create('swad_offices', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('code')->nullable();
             $table->timestamps();
         });
     }
