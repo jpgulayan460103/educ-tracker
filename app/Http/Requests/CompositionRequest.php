@@ -111,8 +111,10 @@ class CompositionRequest extends FormRequest
                     $school_level_id = $school_level_amount['id'];
                     $total_amount = $school_level_amount['total_amount'];
                     $payout_id = 2;
-                    $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
-                    $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
+                    $amount_granted = Beneficiary::where('payout_id', $payout_id)->sum('amount_granted');
+                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)->sum('allocated_amount');
+                    // $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
+                    // $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
 
                     $remaining = $allocated_amount - $amount_granted;
                     // dd([

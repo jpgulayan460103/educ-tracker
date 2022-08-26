@@ -30,7 +30,7 @@ class FundAllocationRequest extends FormRequest
         $school_level_id = request('school_level_id');
         return [
             'swad_office_id' => ['required'],
-            'school_level_id' => ['required'],
+            // 'school_level_id' => ['required'],
             'allocated_amount' => ['required', 'numeric', 'min:0'],
             'payout_id' => [
                 'required',

@@ -62,7 +62,7 @@
                         <tr v-for="(allocation, key) in allocations" :key="key">
                             <td>{{ allocation.payout.payout_date }}</td>
                             <td>{{ allocation.swad_office.name }}</td>
-                            <td>{{ allocation.school_level.name }}</td>
+                            <td>{{ allocation.school_level ? allocation.school_level.name : "" }}</td>
                             <td>{{ formatCurrency(allocation.allocated_amount) }}</td>
                             <td>{{ allocation.user.full_name }}</td>
                             <td>
