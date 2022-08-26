@@ -159,12 +159,12 @@ import map from 'lodash/map'
                 
                 if(swad_office_id == null){
                     value = this.schoolLevels.reduce((sum, t) => {
-                        return sum += t[prop];
+                        return sum += Number(t[prop]);
                     }, 0);
                 }else{
                     let swadReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id);
                     value = swadReport.reduce((sum, t) => {
-                        return sum += t[prop];
+                        return sum += Number(t[prop]);
                     }, 0);
                 }
 

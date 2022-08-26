@@ -737,7 +737,7 @@ import cloneDeep from 'lodash/cloneDeep'
                     if(!isEmpty(beneficiaries_school_level)){
                         // let beneficiaries_school_level_claimed = beneficiaries_school_level.filter(beneficiary => beneficiary.status == "Claimed");
                         total_amount = beneficiaries_school_level.reduce((sum, t) => {
-                            return sum += t.amount_granted;
+                            return sum += Number(t.amount_granted);
                         }, 0);
                         item.total_amount = total_amount;
                     }else{
