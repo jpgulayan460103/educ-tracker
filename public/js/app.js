@@ -6448,12 +6448,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['swadOffices'],
+  props: ['swadOffices', 'offices'],
   data: function data() {
     return {
       formData: {
@@ -40424,13 +40441,18 @@ var render = function () {
                     [
                       _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
                       _vm._v(" "),
-                      _vm._l(_vm.payouts, function (payout, key) {
-                        return _c(
-                          "option",
-                          { key: key, domProps: { value: payout.id } },
-                          [_vm._v(_vm._s(payout.payout_date))]
-                        )
-                      }),
+                      _vm._l(
+                        _vm.payouts.filter(function (item) {
+                          return item.is_active == 1
+                        }),
+                        function (payout, key) {
+                          return _c(
+                            "option",
+                            { key: key, domProps: { value: payout.id } },
+                            [_vm._v(_vm._s(payout.payout_date))]
+                          )
+                        }
+                      ),
                     ],
                     2
                   ),
@@ -40940,7 +40962,7 @@ var render = function () {
                 ]),
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "col-md-6" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "password" } }, [
                     _vm._v("Password:"),
@@ -40975,8 +40997,10 @@ var render = function () {
                     : _vm._e(),
                 ]),
               ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-3" }, [
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row gx-2" }, [
+              _c("div", { staticClass: "col-md-6" }, [
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", { attrs: { for: "user_role" } }, [
                     _vm._v("SWAD Office:"),
@@ -41032,6 +41056,67 @@ var render = function () {
                     : _vm._e(),
                 ]),
               ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-6" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "office_id" } }, [
+                    _vm._v("Office:"),
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.formData.office_id,
+                          expression: "formData.office_id",
+                        },
+                      ],
+                      staticClass: "form-control",
+                      attrs: { placeholder: "Enter Office" },
+                      on: {
+                        change: function ($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function (o) {
+                              return o.selected
+                            })
+                            .map(function (o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.formData,
+                            "office_id",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        },
+                      },
+                    },
+                    _vm._l(_vm.offices, function (office, key) {
+                      return _c(
+                        "option",
+                        { key: key, domProps: { value: office.id } },
+                        [
+                          _vm._v(
+                            _vm._s(office.name) + " - " + _vm._s(office.title)
+                          ),
+                        ]
+                      )
+                    }),
+                    0
+                  ),
+                  _vm._v(" "),
+                  _vm.formError["office_id"]
+                    ? _c("span", { staticStyle: { color: "red" } }, [
+                        _vm._v(_vm._s(_vm.formError["office_id"][0])),
+                      ])
+                    : _vm._e(),
+                ]),
+              ]),
             ]),
           ]),
           _vm._v(" "),
@@ -41069,6 +41154,8 @@ var render = function () {
                 _c("td", [
                   _vm._v(_vm._s(user.swad_office ? user.swad_office.name : "")),
                 ]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(user.office ? user.office.name : ""))]),
                 _vm._v(" "),
                 _c("td", [
                   _c(
@@ -41120,6 +41207,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Role")]),
         _vm._v(" "),
         _c("th", [_vm._v("SWAD Office")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Office")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")]),
       ]),

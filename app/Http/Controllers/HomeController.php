@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Office;
 use App\Models\Payout;
 use App\Models\Psgc;
 use App\Models\SchoolLevel;
@@ -71,8 +72,10 @@ class HomeController extends Controller
             abort(403);
         }
         $swad_offices = SwadOffice::all();
+        $offices = Office::all();
         $data = [
             'swad_offices' => $swad_offices,
+            'offices' => $offices,
         ];
         return view('users', $data);
     }

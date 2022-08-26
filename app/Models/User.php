@@ -26,6 +26,7 @@ class User extends Authenticatable
         'user_role',
         'is_active',
         'swad_office_id',
+        'office_id',
     ];
 
 
@@ -72,5 +73,9 @@ class User extends Authenticatable
     public function swad_office()
     {
         return $this->belongsTo(SwadOffice::class);
+    }
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
     }
 }

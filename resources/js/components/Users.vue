@@ -62,14 +62,17 @@
                                 <span style="color:red" v-if="formError['user_role']">{{ formError['user_role'][0] }}</span>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password">Password:</label>
                                 <input type="text" class="form-control" placeholder="Enter Password" v-model="formData.password">
                                 <span style="color:red" v-if="formError['password']">{{ formError['password'][0] }}</span>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                    </div>
+
+                    <div class="row gx-2">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="user_role">SWAD Office:</label>
                                 <select  class="form-control" placeholder="Enter SWAD Office" v-model="formData.swad_office_id">
@@ -78,7 +81,19 @@
                                 <span style="color:red" v-if="formError['swad_office_id']">{{ formError['swad_office_id'][0] }}</span>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="office_id">Office:</label>
+                                <select  class="form-control" placeholder="Enter Office" v-model="formData.office_id">
+                                    <option v-for="(office, key) in offices" :key="key" :value="office.id">{{ office.name }} - {{ office.title }}</option>
+                                </select>
+                                <span style="color:red" v-if="formError['office_id']">{{ formError['office_id'][0] }}</span>
+                            </div>
+                        </div>
                     </div>
+
+
                 </div>
                 <br>
                 <button type="submit" class="btn btn-primary" :disabled="submit">Submit</button>
@@ -94,6 +109,7 @@
                             <th>FullName</th>
                             <th>Role</th>
                             <th>SWAD Office</th>
+                            <th>Office</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -103,6 +119,7 @@
                             <td>{{ user.full_name }}</td>
                             <td>{{ user.user_role }}</td>
                             <td>{{ user.swad_office ? user.swad_office.name : "" }}</td>
+                            <td>{{ user.office ? user.office.name : "" }}</td>
                             <td>
                                 <a href="#" @click="editUser(user)">Edit</a> |
                                 <a href="#" @click="resetPassword(user)">Reset Password</a>
@@ -122,7 +139,8 @@ import isEmpty from 'lodash/isEmpty'
 import debounce from 'lodash/debounce'
     export default {
         props: [
-            'swadOffices'
+            'swadOffices',
+            'offices'
         ],
         data(){
             return {

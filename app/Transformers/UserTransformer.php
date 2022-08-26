@@ -45,12 +45,19 @@ class UserTransformer extends TransformerAbstract
             'psgc_scope' => $user->psgc_scope,
             'is_active' => $user->is_active,
             'swad_office_id' => $user->swad_office_id,
+            'office_id' => $user->office_id,
         ];
     }
     public function includeSwadOffice(User $user)
     {
         if($user->swad_office){
             return $this->item($user->swad_office, new SwadOfficeTransformer);
+        }
+    }
+    public function includeOffice(User $user)
+    {
+        if($user->office){
+            return $this->item($user->office, new OfficeTransformer);
         }
     }
 }

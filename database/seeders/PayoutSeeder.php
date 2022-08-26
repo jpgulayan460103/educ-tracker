@@ -26,6 +26,7 @@ class PayoutSeeder extends Seeder
         foreach ($dates as $date) {
             Payout::create([
                 'payout_date' => $date,
+                'is_active' => 1,
             ]);
         }
     }

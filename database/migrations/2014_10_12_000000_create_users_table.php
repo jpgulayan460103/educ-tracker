@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('user_role')->nullable();
             $table->boolean('is_active')->nullable();
             $table->unsignedBigInteger('swad_office_id')->nullable();
+            $table->unsignedBigInteger('office_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

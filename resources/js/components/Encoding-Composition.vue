@@ -398,7 +398,7 @@
                             <label for="payout_id">Status Date:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].payout_id">
                                 <option value="">NONE</option>
-                                <option v-for="(payout, key) in payouts" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
+                                <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.payout_id`]">{{ formError[`beneficiaries.${key}.payout_id`][0] }}</span>
                         </div>

@@ -16,6 +16,7 @@ class CreatePayoutsTable extends Migration
         Schema::create('payouts', function (Blueprint $table) {
             $table->id();
             $table->date('payout_date')->nullable();
+            $table->boolean('is_active')->nullable();
             $table->timestamps();
         });
     }
