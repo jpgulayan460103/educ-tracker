@@ -43,6 +43,7 @@ class BioParentTransformer extends TransformerAbstract
             'birth_date' => $bioParent->birth_date,
             'relationship_beneficiary' => $bioParent->relationship_beneficiary,
             'composition_id' => $bioParent->composition_id,
+            'uuid' => $bioParent->uuid,
         ];
     }
 }

@@ -31,7 +31,9 @@ class CreateBeneficiariesTable extends Migration
             $table->unsignedBigInteger('sector_id')->nullable();
             $table->string('school_name')->nullable();
             $table->string('sector_others')->nullable();
+            $table->float('amount_granted', 15, 2)->nullable();
             $table->text('remarks')->nullable();
+            $table->string('uuid')->nullable();
             $table->timestamps();
             $table->fulltext('full_name');
         });

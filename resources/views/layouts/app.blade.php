@@ -60,6 +60,9 @@
                             @endif
                         @else
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('allocations') }}">{{ __('Fund allocation') }}</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('users') }}">{{ __('Users') }}</a>
                             </li>
                             <li class="nav-item dropdown">

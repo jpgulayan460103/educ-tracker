@@ -36,9 +36,15 @@ class AddForeignKeys1 extends Migration
         Schema::table('fund_allocations', function (Blueprint $table) {
             $table->foreign('payout_id')->references('id')->on('payouts')->onDelete('cascade');;
             $table->foreign('swad_office_id')->references('id')->on('swad_offices')->onDelete('cascade');;
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('school_level_id')->references('id')->on('school_levels')->onDelete('cascade');
         });
         Schema::table('psgcs', function (Blueprint $table) {
             $table->foreign('swad_office_id')->references('id')->on('swad_offices')->onDelete('cascade');;
+        });
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('swad_office_id')->references('id')->on('swad_offices')->onDelete('cascade');;
+            $table->foreign('office_id')->references('id')->on('offices')->onDelete('cascade');;
         });
     }
 
@@ -69,9 +75,15 @@ class AddForeignKeys1 extends Migration
         Schema::table('fund_allocations', function (Blueprint $table) {
             $table->dropForeign(['payout_id']);
             $table->dropForeign(['swad_office_id']);
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['school_level_id']);
         });
         Schema::table('psgcs', function (Blueprint $table) {
             $table->dropForeign(['swad_office_id']);
+        });
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['swad_office_id']);
+            $table->dropForeign(['office_id']);
         });
     }
 }

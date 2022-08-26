@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class BioParent extends Model
 {
@@ -32,6 +33,7 @@ class BioParent extends Model
             ];
             $full_name = implode(" ",$full_name_array);
             $model->full_name = trim($full_name);
+            $model->uuid = (string) Str::uuid();
         });
         self::updating(function($model) {
             $full_name_array = [

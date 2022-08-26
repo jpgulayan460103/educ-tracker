@@ -17,7 +17,9 @@ class CreateFundAllocationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('payout_id')->nullable();
             $table->unsignedBigInteger('swad_office_id')->nullable();
+            $table->unsignedBigInteger('school_level_id')->nullable();
             $table->float('allocated_amount', 15, 2)->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
         });
     }

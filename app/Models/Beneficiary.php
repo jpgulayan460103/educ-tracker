@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Beneficiary extends Model
 {
@@ -25,7 +26,8 @@ class Beneficiary extends Model
         'swad_office_id',
         'payout_id',
         'sector_others',
-        // 'school_name',
+        'school_name',
+        'amount_granted',
         'remarks',
     ];
 
@@ -41,6 +43,7 @@ class Beneficiary extends Model
             ];
             $full_name = implode(" ",$full_name_array);
             $model->full_name = trim($full_name);
+            $model->uuid = (string) Str::uuid();
         });
         self::updating(function($model) {
             $full_name_array = [
@@ -77,5 +80,10 @@ class Beneficiary extends Model
     public function swad_office()
     {
         return $this->belongsTo(SwadOffice::class);
+    }
+
+    public function total_allocated($school_level_id, $payout_id)
+    {
+        # code...
     }
 }

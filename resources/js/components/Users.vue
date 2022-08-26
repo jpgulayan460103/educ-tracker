@@ -195,6 +195,7 @@ import debounce from 'lodash/debounce'
                 Axios.put(route('users.update', this.formData.id), this.formData)
                 .then(res => {
                     this.submit = false;
+                    this.formType = "create";
                     this.getUsers();
                     alert("Successfuly saved.");
                     this.formData = {};

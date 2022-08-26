@@ -162,6 +162,7 @@ class CompositionController extends Controller
 
     public function updateBeneficiaries($id)
     {
+        $composition = Composition::findOrFail($id);
         $item_ids_form = array();
         $item_ids = Beneficiary::where('composition_id',$id)->pluck('id')->toArray();
         $new_items = array();
@@ -170,6 +171,7 @@ class CompositionController extends Controller
                 Beneficiary::find($item['id'])->update($item);
                 $item_ids_form[] = $item['id']; 
             }else{
+                $item['composition_id'] = $composition->id;
                 $new_items[$key] = new Beneficiary($item);
                 $new_items[$key]->save();
             }

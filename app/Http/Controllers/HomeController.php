@@ -47,7 +47,7 @@ class HomeController extends Controller
 
     public function encoding(Request $request, $uuid = null)
     {
-        $psgcs = Psgc::all();
+        $psgcs = Psgc::with('swad_office')->get();
         $school_levels = SchoolLevel::all();
         $sectors = Sector::all();
         $sector_others = SectorOther::all();
@@ -87,5 +87,18 @@ class HomeController extends Controller
             'user' => $user,
         ];
         return view('change-password', $data);
+    }
+
+    public function allocations(Request $request)
+    {
+        $swad_offices = SwadOffice::all();
+        $payouts = Payout::all();
+        $school_levels = SchoolLevel::all();
+        $data = [
+            'swad_offices' => $swad_offices,
+            'payouts' => $payouts,
+            'school_levels' => $school_levels,
+        ];
+        return view('allocation', $data);
     }
 }

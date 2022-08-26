@@ -5036,6 +5036,204 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lodash_uniqBy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash/uniqBy */ "./node_modules/lodash/uniqBy.js");
+/* harmony import */ var lodash_uniqBy__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash_uniqBy__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lodash_isEmpty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash/isEmpty */ "./node_modules/lodash/isEmpty.js");
+/* harmony import */ var lodash_isEmpty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash_isEmpty__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lodash/debounce */ "./node_modules/lodash/debounce.js");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_3__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['payouts', 'swadOffices', 'schoolLevels'],
+  data: function data() {
+    return {
+      formData: {},
+      formError: {},
+      submit: false,
+      allocations: [],
+      formType: "create"
+    };
+  },
+  mounted: function mounted() {
+    console.log('Component mounted.');
+    this.getAllocations();
+  },
+  methods: {
+    formSubmit: lodash_debounce__WEBPACK_IMPORTED_MODULE_3___default()(function (params) {
+      if (this.formType == "update") {
+        this.updateAllocation();
+      } else {
+        this.createAllocation();
+      }
+    }, 500),
+    createAllocation: function createAllocation() {
+      var _this = this;
+
+      this.submit = true;
+      this.formError = {};
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('fund-allocations.store'), this.formData).then(function (res) {
+        _this.submit = false;
+
+        _this.getAllocations();
+
+        alert("Successfuly saved.");
+        _this.formData = {};
+        _this.formError = {};
+      })["catch"](function (err) {
+        _this.submit = false;
+
+        if (err.response.status == 422) {
+          _this.formError = err.response.data.errors;
+          alert("Please review submitted form.");
+        }
+      }).then(function (res) {});
+    },
+    updateAllocation: function updateAllocation() {
+      var _this2 = this;
+
+      this.submit = true;
+      this.formError = {};
+      axios__WEBPACK_IMPORTED_MODULE_0___default().put(route('fund-allocations.update', this.formData.id), this.formData).then(function (res) {
+        _this2.submit = false;
+
+        _this2.getAllocations();
+
+        alert("Successfuly saved.");
+        _this2.formData = {};
+        _this2.formError = {};
+        _this2.formType = "create";
+      })["catch"](function (err) {
+        _this2.submit = false;
+
+        if (err.response.status == 422) {
+          _this2.formError = err.response.data.errors;
+          alert("Please review submitted form.");
+        }
+      }).then(function (res) {});
+    },
+    getAllocations: function getAllocations() {
+      var _this3 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get(route('fund-allocations.index')).then(function (res) {
+        _this3.allocations = res.data;
+      })["catch"](function (res) {}).then(function (res) {});
+    },
+    formatCurrency: function formatCurrency(value) {
+      if (typeof value !== "number") {
+        return value;
+      }
+
+      var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+      return formatter.format(value).replace('$', '');
+    },
+    editAllocation: function editAllocation(allocation) {
+      this.formType = "update";
+      this.formData = allocation;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChangePassword.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChangePassword.vue?vue&type=script&lang=js& ***!
@@ -5989,6 +6187,31 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6053,6 +6276,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   methods: {
     formSubmit: lodash_debounce__WEBPACK_IMPORTED_MODULE_4___default()(function () {
+      this.formData.school_level_amounts = this.schoolLevelAmounts();
+
+      for (var index = 0; index < this.formData.beneficiaries.length; index++) {
+        this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+        this.formData.beneficiaries[index].payout_id = this.formData.payout_id;
+      }
+
       if (this.formType == "create") {
         this.createComposition();
       } else {
@@ -6069,11 +6299,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         mother: {},
         beneficiaries: []
       };
-
-      for (var index = 0; index < this.formData.beneficiaries.length; index++) {
-        this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
-      }
-
       axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('family-composition.store'), this.formData).then(function (res) {
         _this2.submit = false;
         alert("Successfuly saved.");
@@ -6125,6 +6350,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       axios__WEBPACK_IMPORTED_MODULE_0___default().put(route('family-composition.update', this.formData.id), this.formData).then(function (res) {
         _this3.submit = false;
+        _this3.formType = "create";
         alert("Successfuly saved.");
         _this3.formData = {
           client: {
@@ -6199,6 +6425,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (!lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3___default()(psgcs)) {
         this.formData.client.psgc_id = psgcs[0].id;
         this.formData.client.swad_office_id = psgcs[0].swad_office_id;
+        this.formData.client.swad_office_name = psgcs[0].swad_office.name;
       }
     },
     addStudent: function addStudent() {
@@ -6227,18 +6454,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
     },
+    changeBeneficiaryAmount: function changeBeneficiaryAmount(key) {
+      this.beneficiaryAmount(this.formData.beneficiaries[key].school_level_id, this.formData.beneficiaries[key].status, key);
+    },
     beneficiaryAmount: function beneficiaryAmount() {
       var school_level_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var key = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
       var school_level = this.schoolLevels.filter(function (item) {
         return item.id == school_level_id;
       });
+      var amount = 0;
 
       if (status == "Claimed" && school_level_id != null && status != null) {
-        return school_level[0].amount;
+        amount = school_level[0].amount;
       } else {
-        return 0;
+        amount = 0;
       }
+
+      this.formData.beneficiaries[key].amount_granted = amount;
+      return amount;
     },
     handleChangeSector: function handleChangeSector() {
       var _this7 = this;
@@ -6271,8 +6506,38 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     viewBeneficiary: function viewBeneficiary(uuid) {
       window.open(route('encoding', uuid), 'newwindow', 'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
       return false;
+    },
+    schoolLevelAmounts: function schoolLevelAmounts() {
+      var _this9 = this;
+
+      var schools = lodash_cloneDeep__WEBPACK_IMPORTED_MODULE_5___default()(this.schoolLevels).map(function (item) {
+        var beneficiaries_school_level = _this9.formData.beneficiaries.filter(function (beneficiary) {
+          return beneficiary.school_level_id == item.id;
+        });
+
+        var total_amount = 0;
+
+        if (!lodash_isEmpty__WEBPACK_IMPORTED_MODULE_3___default()(beneficiaries_school_level)) {
+          // let beneficiaries_school_level_claimed = beneficiaries_school_level.filter(beneficiary => beneficiary.status == "Claimed");
+          total_amount = beneficiaries_school_level.reduce(function (sum, t) {
+            return sum += t.amount_granted;
+          }, 0);
+          item.total_amount = total_amount;
+        } else {
+          item.total_amount = total_amount;
+        }
+
+        var newItem = {
+          total_amount: total_amount,
+          id: item.id,
+          name: item.name
+        };
+        return newItem;
+      });
+      return schools;
     }
-  }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -6525,6 +6790,7 @@ __webpack_require__.r(__webpack_exports__);
       this.formError = {};
       axios__WEBPACK_IMPORTED_MODULE_0___default().put(route('users.update', this.formData.id), this.formData).then(function (res) {
         _this2.submit = false;
+        _this2.formType = "create";
 
         _this2.getUsers();
 
@@ -6657,23 +6923,26 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _Encoding_Composition__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Encoding-Composition */ "./resources/js/components/Encoding-Composition.vue");
 /* harmony import */ var _Encoded_Composition__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Encoded-Composition */ "./resources/js/components/Encoded-Composition.vue");
 /* harmony import */ var _Dashboard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Dashboard */ "./resources/js/components/Dashboard.vue");
 /* harmony import */ var _Users__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Users */ "./resources/js/components/Users.vue");
 /* harmony import */ var _ChangePassword__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ChangePassword */ "./resources/js/components/ChangePassword.vue");
+/* harmony import */ var _Allocation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Allocation */ "./resources/js/components/Allocation.vue");
 
 
 
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].component('encoding-composition', _Encoding_Composition__WEBPACK_IMPORTED_MODULE_0__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].component('encoded-composition', _Encoded_Composition__WEBPACK_IMPORTED_MODULE_1__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].component('dashboard', _Dashboard__WEBPACK_IMPORTED_MODULE_2__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].component('users', _Users__WEBPACK_IMPORTED_MODULE_3__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].component('change-password', _ChangePassword__WEBPACK_IMPORTED_MODULE_4__["default"]);
+
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('encoding-composition', _Encoding_Composition__WEBPACK_IMPORTED_MODULE_0__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('encoded-composition', _Encoded_Composition__WEBPACK_IMPORTED_MODULE_1__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('dashboard', _Dashboard__WEBPACK_IMPORTED_MODULE_2__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('users', _Users__WEBPACK_IMPORTED_MODULE_3__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('change-password', _ChangePassword__WEBPACK_IMPORTED_MODULE_4__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].component('allocation', _Allocation__WEBPACK_IMPORTED_MODULE_5__["default"]);
 
 /***/ }),
 
@@ -37039,6 +37308,45 @@ module.exports = function (list, options) {
 
 /***/ }),
 
+/***/ "./resources/js/components/Allocation.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/Allocation.vue ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Allocation.vue?vue&type=template&id=870ee4ea& */ "./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea&");
+/* harmony import */ var _Allocation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Allocation.vue?vue&type=script&lang=js& */ "./resources/js/components/Allocation.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Allocation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__.render,
+  _Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Allocation.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/ChangePassword.vue":
 /*!****************************************************!*\
   !*** ./resources/js/components/ChangePassword.vue ***!
@@ -37275,6 +37583,22 @@ component.options.__file = "resources/js/components/Users.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/Allocation.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/Allocation.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Allocation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Allocation.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Allocation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/ChangePassword.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************!*\
   !*** ./resources/js/components/ChangePassword.vue?vue&type=script&lang=js& ***!
@@ -37384,6 +37708,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea& ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Allocation_vue_vue_type_template_id_870ee4ea___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Allocation.vue?vue&type=template&id=870ee4ea& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/ChangePassword.vue?vue&type=template&id=2a1fc016&":
 /*!***********************************************************************************!*\
   !*** ./resources/js/components/ChangePassword.vue?vue&type=template&id=2a1fc016& ***!
@@ -37482,6 +37823,346 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Users_vue_vue_type_template_id_30c27aa6___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Users_vue_vue_type_template_id_30c27aa6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Users.vue?vue&type=template&id=30c27aa6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Users.vue?vue&type=template&id=30c27aa6&");
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Allocation.vue?vue&type=template&id=870ee4ea& ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container-fluid px-4" }, [
+    _c(
+      "form",
+      {
+        attrs: { id: "server-form" },
+        on: {
+          submit: function ($event) {
+            $event.preventDefault()
+            return _vm.formSubmit.apply(null, arguments)
+          },
+        },
+      },
+      [
+        _c("fieldset", { staticClass: "border p-2 my-2" }, [
+          _c("legend", { staticClass: "w-auto" }, [_vm._v("Add Allocations")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row gx-2" }, [
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "payout_id" } }, [
+                  _vm._v("Payout Date:"),
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.payout_id,
+                        expression: "formData.payout_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Last Name" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData,
+                          "payout_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                    },
+                  },
+                  _vm._l(_vm.payouts, function (payout, key) {
+                    return _c(
+                      "option",
+                      { key: key, domProps: { value: payout.id } },
+                      [_vm._v(_vm._s(payout.payout_date))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _vm.formError["payout_id"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(_vm._s(_vm.formError["payout_id"][0])),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "swad_office_id" } }, [
+                  _vm._v("Swad Office:"),
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.swad_office_id,
+                        expression: "formData.swad_office_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Swad Office" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData,
+                          "swad_office_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                    },
+                  },
+                  _vm._l(_vm.swadOffices, function (swadOffice, key) {
+                    return _c(
+                      "option",
+                      { key: key, domProps: { value: swadOffice.id } },
+                      [_vm._v(_vm._s(swadOffice.name))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _vm.formError["swad_office_id"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(_vm._s(_vm.formError["swad_office_id"][0])),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "school_level_id" } }, [
+                  _vm._v("School Level:"),
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.formData.school_level_id,
+                        expression: "formData.school_level_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Enter Swad Office" },
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.formData,
+                          "school_level_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                    },
+                  },
+                  _vm._l(_vm.schoolLevels, function (schoolLevel, key) {
+                    return _c(
+                      "option",
+                      { key: key, domProps: { value: schoolLevel.id } },
+                      [_vm._v(_vm._s(schoolLevel.name))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _vm.formError["school_level_id"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(_vm._s(_vm.formError["school_level_id"][0])),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "allocated_amount" } }, [
+                  _vm._v("Amount:"),
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formData.allocated_amount,
+                      expression: "formData.allocated_amount",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "number",
+                    min: "0",
+                    placeholder: "Enter Amount",
+                  },
+                  domProps: { value: _vm.formData.allocated_amount },
+                  on: {
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.formData,
+                        "allocated_amount",
+                        $event.target.value
+                      )
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _vm.formError["allocated_amount"]
+                  ? _c("span", { staticStyle: { color: "red" } }, [
+                      _vm._v(_vm._s(_vm.formError["allocated_amount"][0])),
+                    ])
+                  : _vm._e(),
+              ]),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: { type: "submit", disabled: _vm.submit },
+            },
+            [_vm._v("Submit")]
+          ),
+        ]),
+        _vm._v(" "),
+        _c("fieldset", { staticClass: "border p-2 my-2" }, [
+          _c("legend", { staticClass: "w-auto" }, [_vm._v("Users")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "table-responsive" }, [
+            _c("table", { staticClass: "table table-hover" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.allocations, function (allocation, key) {
+                  return _c("tr", { key: key }, [
+                    _c("td", [_vm._v(_vm._s(allocation.payout.payout_date))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(allocation.swad_office.name))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(allocation.school_level.name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(_vm.formatCurrency(allocation.allocated_amount))
+                      ),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(allocation.user.full_name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
+                          attrs: { href: "#" },
+                          on: {
+                            click: function ($event) {
+                              return _vm.editAllocation(allocation)
+                            },
+                          },
+                        },
+                        [_vm._v("Edit")]
+                      ),
+                      _vm._v(" |\n                        "),
+                    ]),
+                  ])
+                }),
+                0
+              ),
+            ]),
+          ]),
+        ]),
+      ]
+    ),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Payout Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("SWAD Office")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("School Level")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Amount")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Added by")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")]),
+      ]),
+    ])
+  },
+]
+render._withStripped = true
+
 
 
 /***/ }),
@@ -40168,23 +40849,28 @@ var render = function () {
                           staticClass: "form-control",
                           attrs: { placeholder: "Enter School Level" },
                           on: {
-                            change: function ($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function (o) {
-                                  return o.selected
-                                })
-                                .map(function (o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                _vm.formData.beneficiaries[key],
-                                "school_level_id",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
-                            },
+                            change: [
+                              function ($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function (o) {
+                                    return o.selected
+                                  })
+                                  .map(function (o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.formData.beneficiaries[key],
+                                  "school_level_id",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              function ($event) {
+                                return _vm.changeBeneficiaryAmount(key)
+                              },
+                            ],
                           },
                         },
                         _vm._l(_vm.schoolLevels, function (schoolLevel, key) {
@@ -40313,23 +40999,28 @@ var render = function () {
                           staticClass: "form-control",
                           attrs: { placeholder: "Enter School Level" },
                           on: {
-                            change: function ($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function (o) {
-                                  return o.selected
-                                })
-                                .map(function (o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                _vm.formData.beneficiaries[key],
-                                "status",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
-                            },
+                            change: [
+                              function ($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function (o) {
+                                    return o.selected
+                                  })
+                                  .map(function (o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.formData.beneficiaries[key],
+                                  "status",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              function ($event) {
+                                return _vm.changeBeneficiaryAmount(key)
+                              },
+                            ],
                           },
                         },
                         [
@@ -40399,77 +41090,7 @@ var render = function () {
                     ]),
                   ]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-2" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "payout_id" } }, [
-                    _vm._v("Status Date:"),
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.formData.beneficiaries[key].payout_id,
-                          expression: "formData.beneficiaries[key].payout_id",
-                        },
-                      ],
-                      staticClass: "form-control",
-                      attrs: { placeholder: "Enter School Level" },
-                      on: {
-                        change: function ($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function (o) {
-                              return o.selected
-                            })
-                            .map(function (o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.formData.beneficiaries[key],
-                            "payout_id",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        },
-                      },
-                    },
-                    [
-                      _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
-                      _vm._v(" "),
-                      _vm._l(
-                        _vm.payouts.filter(function (item) {
-                          return item.is_active == 1
-                        }),
-                        function (payout, key) {
-                          return _c(
-                            "option",
-                            { key: key, domProps: { value: payout.id } },
-                            [_vm._v(_vm._s(payout.payout_date))]
-                          )
-                        }
-                      ),
-                    ],
-                    2
-                  ),
-                  _vm._v(" "),
-                  _vm.formError["beneficiaries." + key + ".payout_id"]
-                    ? _c("span", { staticStyle: { color: "red" } }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.formError[
-                              "beneficiaries." + key + ".payout_id"
-                            ][0]
-                          )
-                        ),
-                      ])
-                    : _vm._e(),
-                ]),
-              ]),
+              _c("div", { staticClass: "col-md-2" }),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-2" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -40483,7 +41104,8 @@ var render = function () {
                     domProps: {
                       value: _vm.beneficiaryAmount(
                         _vm.formData.beneficiaries[key].school_level_id,
-                        _vm.formData.beneficiaries[key].status
+                        _vm.formData.beneficiaries[key].status,
+                        key
                       ),
                     },
                   }),
@@ -40554,6 +41176,125 @@ var render = function () {
               ),
             ])
           : _vm._e(),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "row gx-2" },
+          [
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("label", { attrs: { for: "payout_id" } }, [
+                _vm._v("Payout Date:"),
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formData.payout_id,
+                      expression: "formData.payout_id",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: { placeholder: "Enter School Level" },
+                  on: {
+                    change: function ($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function (o) {
+                          return o.selected
+                        })
+                        .map(function (o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        _vm.formData,
+                        "payout_id",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
+                    },
+                  },
+                },
+                [
+                  _c("option", { attrs: { value: "" } }, [_vm._v("NONE")]),
+                  _vm._v(" "),
+                  _vm._l(
+                    _vm.payouts.filter(function (item) {
+                      return item.is_active == 1
+                    }),
+                    function (payout, key) {
+                      return _c(
+                        "option",
+                        { key: key, domProps: { value: payout.id } },
+                        [_vm._v(_vm._s(payout.payout_date))]
+                      )
+                    }
+                  ),
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _vm.formError["payout_id"]
+                ? _c("span", { staticStyle: { color: "red" } }, [
+                    _vm._v(_vm._s(_vm.formError["payout_id"][0])),
+                  ])
+                : _vm._e(),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _c("label", { attrs: { for: "payout_id" } }, [
+                _vm._v("SWAD OFFICE:"),
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                staticClass: "form-control",
+                attrs: {
+                  type: "text",
+                  placeholder: "Swad Office",
+                  readonly: "",
+                },
+                domProps: { value: _vm.formData.client.swad_office_name },
+              }),
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.schoolLevelAmounts(), function (schoolLevelAmount, key) {
+              return _c("div", { key: key, staticClass: "col-md-3" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [
+                    _vm._v(
+                      "Total of " + _vm._s(schoolLevelAmount.name) + " Amount:"
+                    ),
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Amount",
+                      readonly: "",
+                    },
+                    domProps: { value: schoolLevelAmount.total_amount },
+                  }),
+                  _vm._v(" "),
+                  _vm.formError["school_level_amount." + key]
+                    ? _c("span", { staticStyle: { color: "red" } }, [
+                        _vm._v(
+                          _vm._s(_vm.formError["school_level_amount." + key][0])
+                        ),
+                      ])
+                    : _vm._e(),
+                ]),
+              ])
+            }),
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _c("br"),
         _vm._v(" "),
         _vm.formType == "create" ||
         _vm.user.user_role == "Admin" ||

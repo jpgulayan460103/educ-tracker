@@ -354,7 +354,7 @@
                     <div class="col-md-2">
                         <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                             <label for="school_level_id">School Level:</label>
-                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id">
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id"  @change="changeBeneficiaryAmount(key)">
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
@@ -377,7 +377,7 @@
                     <div class="col-md-2" v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                         <div class="form-group" >
                             <label for="status">Claim Status:</label>
-                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status">
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status" @change="changeBeneficiaryAmount(key)">
                                 <option value="Claimed">Claimed</option>
                                 <option value="For Scheduled Payout">For Scheduled Payout</option>
                                 <option value="No Requirements">No Requirements</option>
@@ -394,19 +394,19 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="payout_id">Status Date:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].payout_id">
                                 <option value="">NONE</option>
                                 <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.payout_id`]">{{ formError[`beneficiaries.${key}.payout_id`][0] }}</span>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="amount">Amount:</label>
-                            <input type="text" class="form-control" :value="beneficiaryAmount(formData.beneficiaries[key].school_level_id, formData.beneficiaries[key].status)" readonly>
+                            <input type="text" class="form-control" :value="beneficiaryAmount(formData.beneficiaries[key].school_level_id, formData.beneficiaries[key].status, key)" readonly>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -421,6 +421,31 @@
             <h1 style="text-align: center;"  v-if="formType == 'create' || user.user_role == 'Admin'">
                 <button type="button" class="btn btn-warning" @click="addStudent">Add Student</button>
             </h1>
+
+            <div class="row gx-2">
+                <div class="col-md-3">
+                    <label for="payout_id">Payout Date:</label>
+                    <select class="form-control" placeholder="Enter School Level" v-model="formData.payout_id">
+                        <option value="">NONE</option>
+                        <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
+                    </select>
+                    <span style="color:red" v-if="formError[`payout_id`]">{{ formError[`payout_id`][0] }}</span>
+                </div>
+                <div class="col-md-3">
+                    <label for="payout_id">SWAD OFFICE:</label>
+                    <input type="text" class="form-control" placeholder="Swad Office" :value="formData.client.swad_office_name" readonly>
+                    <!-- <span style="color:red" v-if="formError[`client.swad_office_name`]">{{ formError[`client.swad_office_name`][0] }}</span> -->
+                </div>
+                <div class="col-md-3" v-for="(schoolLevelAmount, key) in schoolLevelAmounts()" :key="key">
+                    <div class="form-group">
+                        <label>Total of {{ schoolLevelAmount.name }} Amount:</label>
+                        <input type="text" class="form-control" placeholder="Amount" :value="schoolLevelAmount.total_amount" readonly>
+                        <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span>
+                    </div>
+                </div>
+            </div>
+            <br>
+
             <button type="submit" class="btn btn-primary" :disabled="submit" v-if="formType == 'create' || user.user_role == 'Admin' || formData.user_id == user.id">Submit</button>
         </form>
     </div>
@@ -490,6 +515,11 @@ import cloneDeep from 'lodash/cloneDeep'
         },
         methods: {
             formSubmit: debounce(function(){
+                this.formData.school_level_amounts = this.schoolLevelAmounts();
+                for (let index = 0; index < this.formData.beneficiaries.length; index++) {
+                    this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
+                    this.formData.beneficiaries[index].payout_id = this.formData.payout_id;
+                }
                 if(this.formType == "create"){
                     this.createComposition();
                 }else{
@@ -503,9 +533,6 @@ import cloneDeep from 'lodash/cloneDeep'
                     father: {},
                     mother: {},
                     beneficiaries: [],
-                }
-                for (let index = 0; index < this.formData.beneficiaries.length; index++) {
-                    this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
                 }
                 Axios.post(route('family-composition.store'), this.formData)
                 .then(res => {
@@ -557,6 +584,7 @@ import cloneDeep from 'lodash/cloneDeep'
                 Axios.put(route('family-composition.update', this.formData.id), this.formData)
                 .then(res => {
                     this.submit = false;
+                    this.formType = "create";
                     alert("Successfuly saved.");
                     this.formData = {
                         client: {
@@ -617,6 +645,7 @@ import cloneDeep from 'lodash/cloneDeep'
                 if(!isEmpty(psgcs)){
                     this.formData.client.psgc_id = psgcs[0].id;
                     this.formData.client.swad_office_id = psgcs[0].swad_office_id;
+                    this.formData.client.swad_office_name = psgcs[0].swad_office.name;
                 }
             },
             addStudent(){
@@ -640,13 +669,20 @@ import cloneDeep from 'lodash/cloneDeep'
                 }
             },
 
-            beneficiaryAmount(school_level_id = null, status = null){
+            changeBeneficiaryAmount(key){
+                this.beneficiaryAmount(this.formData.beneficiaries[key].school_level_id, this.formData.beneficiaries[key].status, key);
+            },
+
+            beneficiaryAmount(school_level_id = null, status = null, key = null){
                 let school_level = this.schoolLevels.filter(item => item.id == school_level_id);
+                let amount = 0;
                 if(status == "Claimed" && school_level_id != null && status != null){
-                    return school_level[0].amount;
+                    amount = school_level[0].amount;
                 }else{
-                    return 0;
+                    amount = 0;
                 }
+                this.formData.beneficiaries[key].amount_granted = amount;
+                return amount;
             },
             handleChangeSector(){
                 let sector = this.sectors.filter(item => item.id == this.formData.client.sector_id);
@@ -679,7 +715,32 @@ import cloneDeep from 'lodash/cloneDeep'
                     'newwindow',
                     'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
                 return false; 
+            },
+            schoolLevelAmounts(){
+                let schools =  cloneDeep(this.schoolLevels).map(item => {
+                    let beneficiaries_school_level = this.formData.beneficiaries.filter(beneficiary => beneficiary.school_level_id == item.id);
+                    let total_amount = 0;
+                    if(!isEmpty(beneficiaries_school_level)){
+                        // let beneficiaries_school_level_claimed = beneficiaries_school_level.filter(beneficiary => beneficiary.status == "Claimed");
+                        total_amount = beneficiaries_school_level.reduce((sum, t) => {
+                            return sum += t.amount_granted;
+                        }, 0);
+                        item.total_amount = total_amount;
+                    }else{
+                        item.total_amount = total_amount;
+                    }
+                    let newItem = {
+                        total_amount,
+                        id: item.id,
+                        name: item.name,
+                    }
+                    return newItem;
+                });
+                return schools;
             }
+        },
+        computed: {
+            
         }
     }
 </script>

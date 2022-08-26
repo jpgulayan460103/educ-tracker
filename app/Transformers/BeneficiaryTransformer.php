@@ -58,8 +58,10 @@ class BeneficiaryTransformer extends TransformerAbstract
             'status' => $beneficiary->status,
             'status_date' => $beneficiary->status_date,
             'school_name' => $beneficiary->school_name,
+            'amount_granted' => $beneficiary->amount_granted,
             'payout_id' => $beneficiary->payout_id,
             'swad_office_id' => $beneficiary->swad_office_id,
+            'uuid' => $beneficiary->uuid,
         ];
     }
 

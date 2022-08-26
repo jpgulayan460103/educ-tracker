@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Beneficiary;
+use App\Models\FundAllocation;
 use App\Rules\BeneficiaryExist;
 use App\Rules\BioParentExist;
 use App\Rules\ClientExist;
@@ -47,6 +49,7 @@ class CompositionRequest extends FormRequest
             'client.birth_date' => ['required', 'date' , 'before:'.Carbon::now()->toDateString()],
             'client.age' => ['required', 'integer'],
             'client.gender' => ['required'],
+            'client.swad_office_name' => ['required'],
             // 'client.occupation' => ['required', 'string', 'max:255'],
             // 'client.monthly_salary' => ['required', 'string', 'max:255'],
             'client.relationship_beneficiary' => ['required', 'string', 'max:255'],
@@ -82,7 +85,7 @@ class CompositionRequest extends FormRequest
             'mother.middle_name' => ['required_if:mother.has_middle_name,false', 'max:255', new ValidStringName],
             'mother.ext_name' => ['max:255', new ValidStringName],
             'mother.birth_date' => ['required', 'date' , 'before:'.Carbon::now()->toDateString()],
-            // 'mother.relationship_beneficiary' => ['required', 'string', 'max:255'],
+            'payout_id' => ['required'],
         ];
     }
 
@@ -90,7 +93,36 @@ class CompositionRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $this->validateBeneficaryFullNames($validator);
+            $this->validateFundAllocated($validator);
         });
+    }
+
+    public function validateFundAllocated($validator)
+    {
+        if(request()->has('school_level_amounts')){
+            if(request('school_level_amounts') == array()){
+                $validator->errors()->add("school_level_amounts", "No Amounts .");
+            }else{
+                $school_level_amounts = request('school_level_amounts');
+                foreach ($school_level_amounts as $key => $school_level_amount) {
+                    if($school_level_amount['total_amount'] == 0){
+                        continue;
+                    }
+                    $school_level_id = $school_level_amount['id'];
+                    $payout_id = 2;
+                    $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
+                    $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
+                    // dd([
+                    //     'allocated_amount' => $allocated_amount,
+                    //     'amount_granted' => $amount_granted,
+                    // ]);
+                    if($allocated_amount < $amount_granted || $allocated_amount == 0){
+                        $validator->errors()->add("school_level_amount.$key", "Not enough allocation.");
+                    }
+
+                }
+            }
+        }
     }
 
     public function validateBeneficaryFullNames($validator)

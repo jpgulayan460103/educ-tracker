@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FundAllocationRequest;
 use App\Models\FundAllocation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FundAllocationController extends Controller
 {
@@ -14,7 +16,11 @@ class FundAllocationController extends Controller
      */
     public function index()
     {
-        //
+        return FundAllocation::with('user', 'payout', 'swad_office', 'school_level')
+        ->orderBy('payout_id')
+        ->orderBy('swad_office_id')
+        ->orderBy('school_level_id')
+        ->get();
     }
 
     /**
@@ -33,9 +39,12 @@ class FundAllocationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FundAllocationRequest $request)
     {
-        //
+        $user = Auth::user();
+        $fund_allocation = FundAllocation::create($request->all());
+        $fund_allocation->user_id = $user->id;
+        $fund_allocation->save();
     }
 
     /**
@@ -67,9 +76,10 @@ class FundAllocationController extends Controller
      * @param  \App\Models\FundAllocation  $fundAllocation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FundAllocation $fundAllocation)
+    public function update(FundAllocationRequest $request, $id)
     {
-        //
+        $fund_allocation = FundAllocation::findOrFail($id);
+        $fund_allocation->update($request->all());
     }
 
     /**

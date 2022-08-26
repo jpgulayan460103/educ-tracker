@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Psgc extends Model
 {
     use HasFactory;
+
+    public function swad_office()
+    {
+        return $this->belongsTo(SwadOffice::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\CompositionController;
+use App\Http\Controllers\FundAllocationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,7 @@ Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLogi
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/change-password', [App\Http\Controllers\HomeController::class, 'changePassword'])->name('changePassword');
+Route::get('/fund-allocation', [App\Http\Controllers\HomeController::class, 'allocations'])->name('allocations');
 
 
 Route::group(['prefix' => '/data'], function () {
@@ -37,5 +39,6 @@ Route::group(['prefix' => '/data'], function () {
         'family-composition' => CompositionController::class,
         'beneficiaries' => BeneficiaryController::class,
         'users' => UserController::class,
+        'fund-allocations' => FundAllocationController::class,
     ]);
 });
