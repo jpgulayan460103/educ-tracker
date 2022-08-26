@@ -91,6 +91,10 @@ class HomeController extends Controller
 
     public function allocations(Request $request)
     {
+        $user = Auth::user();
+        if($user->user_role != "Admin"){
+            abort(403);
+        }
         $swad_offices = SwadOffice::all();
         $payouts = Payout::all();
         $school_levels = SchoolLevel::all();
