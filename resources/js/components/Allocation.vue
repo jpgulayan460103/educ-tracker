@@ -22,7 +22,7 @@
                             <span style="color:red" v-if="formError['swad_office_id']">{{ formError['swad_office_id'][0] }}</span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <div class="form-group">
                             <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter Swad Office" v-model="formData.school_level_id">
@@ -30,7 +30,7 @@
                             </select>
                             <span style="color:red" v-if="formError['school_level_id']">{{ formError['school_level_id'][0] }}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="allocated_amount">Amount:</label>
