@@ -6,6 +6,7 @@ use App\Http\Requests\FundAllocationRequest;
 use App\Models\FundAllocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FundAllocationController extends Controller
 {
@@ -21,6 +22,21 @@ class FundAllocationController extends Controller
         ->orderBy('swad_office_id')
         ->orderBy('school_level_id')
         ->get();
+    }
+
+    public function report(Request $request)
+    {
+        $fund_allocations = FundAllocation::query();
+        if($request->payout_id){
+            $fund_allocations->where('payout_id', $request->payout_id);
+        }
+        if($request->swad_office_id){
+            $fund_allocations->where('swad_office_id', $request->swad_office_id);
+        }
+        $fund_allocations->select('swad_office_id', DB::raw("SUM(allocated_amount) as total_allocated_amount"));
+        $fund_allocations->groupBy('swad_office_id');
+
+        return $fund_allocations->get();
     }
 
     /**

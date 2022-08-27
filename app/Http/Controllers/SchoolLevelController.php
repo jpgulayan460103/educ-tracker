@@ -12,9 +12,13 @@ class SchoolLevelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $school_levels = SchoolLevel::query();
+        if($request->id){
+            $school_levels->where('id', $request->id);
+        }
+        return $school_levels->get();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beneficiary;
+use App\Models\FundAllocation;
 use App\Models\SchoolLevel;
 use App\Models\SwadOffice;
 use App\Transformers\BeneficiaryTransformer;
@@ -155,22 +156,62 @@ class BeneficiaryController extends Controller
 
     public function report(Request $request)
     {
+
+        $report_query = Beneficiary::where('status', 'Claimed');
+        $report_query->select(
+            DB::raw("count(*) as beneficiary_served"),
+            DB::raw("sum(amount_granted) as sum_amount_granted"),
+            'swad_office_id',
+            'school_level_id',
+        );
+        $report_query->groupBy('swad_office_id');
+        $report_query->groupBy('school_level_id');
+
+        if($request->payout_id){
+            $payout_id = $request->payout_id;
+            $report_query->where('beneficiaries.payout_id', $payout_id);
+        }
+        if($request->swad_office_id){
+            $swad_office_id = $request->swad_office_id;
+            $report_query->where('beneficiaries.swad_office_id', $swad_office_id);
+        }
+
+
+        $fund_allocations = FundAllocation::query();
+        if($request->payout_id){
+            $fund_allocations->where('payout_id', $request->payout_id);
+        }
+        if($request->swad_office_id){
+            $fund_allocations->where('swad_office_id', $request->swad_office_id);
+        }
+        $fund_allocations->select('swad_office_id', DB::raw("SUM(allocated_amount) as total_allocated_amount"));
+        $fund_allocations->groupBy('swad_office_id');
+
+
+        return [
+            'beneficiaries' => $report_query->get(),
+            'fund_allocations' => $fund_allocations->get(),
+        ];
+    }
+
+    public function resport(Request $request)
+    {
         // DB::enableQueryLog();
-        $school_levels = SchoolLevel::all();
-        $swad_office = SwadOffice::all();
+        $swad_offices = SwadOffice::all();
+        $school_level = SchoolLevel::all();
         $claimed_status = "Claimed";
-        foreach ($school_levels as $school_level) {
-            $beneficiaries_query = $school_level
+        foreach ($swad_offices as $swad_office) {
+            $beneficiaries_query = $swad_office
                 ->beneficiaries()
-                ->with('swad_office')
+                ->with('school_level')
                 ->select(
                     DB::raw('count(*) as beneficiary_served'),
-                    DB::raw('(count(*) * '.$school_level->amount.') as sum_amount_granted'),
-                    'swad_office_id',
+                    DB::raw('(count(*) * '.$swad_office->amount.') as sum_amount_granted'),
+                    'school_level_id',
                 )
-                ->groupBy('swad_office_id')
+                ->groupBy('school_level_id')
                 ->where('beneficiaries.status', $claimed_status);
-            $total_served_query = $school_level
+            $total_served_query = $swad_office
                 ->beneficiaries()
                 ->where('beneficiaries.status', $claimed_status);
             if($request->payout_id){
@@ -178,17 +219,17 @@ class BeneficiaryController extends Controller
                 $beneficiaries_query->where('beneficiaries.payout_id', $payout_id);
                 $total_served_query->where('beneficiaries.payout_id', $payout_id);
             }
-            if($request->swad_office_id){
-                $swad_office_id = $request->swad_office_id;
-                $beneficiaries_query->where('beneficiaries.swad_office_id', $swad_office_id);
-                $total_served_query->where('beneficiaries.swad_office_id', $swad_office_id);
+            if($request->school_level_id){
+                $school_level_id = $request->school_level_id;
+                $beneficiaries_query->where('beneficiaries.school_level_id', $school_level_id);
+                $total_served_query->where('beneficiaries.school_level_id', $school_level_id);
             }
-            $school_level->swad_offices = $beneficiaries_query->get();
-            $school_level->total_beneficiaries_served = $total_served_query->count();
-            $school_level->total_amount_granted = $school_level->total_beneficiaries_served * $school_level->amount;
+            $swad_office->school_levels = $beneficiaries_query->get();
+            $swad_office->total_beneficiaries_served = $total_served_query->count();
+            $swad_office->total_amount_granted = $swad_office->total_beneficiaries_served * $swad_office->amount;
         }
         // return DB::getQueryLog();
-        return $school_levels;
+        return $swad_offices;
     }
 
     public function export(Request $request, $type)
