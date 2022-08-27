@@ -453,6 +453,13 @@
                         <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Total Amount:</label>
+                        <input type="text" class="form-control" placeholder="Amount" :value="totalSchoolLevelAmounts" readonly>
+                        <!-- <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span> -->
+                    </div>
+                </div>
             </div>
             <br>
 
@@ -783,7 +790,11 @@ import cloneDeep from 'lodash/cloneDeep'
             }
         },
         computed: {
-            
+            totalSchoolLevelAmounts(){
+                return this.schoolLevelAmounts().reduce((sum, t) => {
+                    return sum += parseFloat(t.total_amount);
+                }, 0);
+            }
         }
     }
 </script>

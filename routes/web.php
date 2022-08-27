@@ -35,6 +35,7 @@ Route::get('/fund-allocation', [App\Http\Controllers\HomeController::class, 'all
 Route::group(['prefix' => '/data'], function () {
     Route::put('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
     Route::get('/family-composition/{uuid}/uuid', [CompositionController::class, 'showUuid'])->name('family-composition.uuid');
+    Route::post('/export/beneficiaries/{type}', [BeneficiaryController::class, 'export'])->name('export.beneficiary');
     Route::resources([
         'family-composition' => CompositionController::class,
         'beneficiaries' => BeneficiaryController::class,

@@ -14,8 +14,11 @@
                         <option value="mother">Mother Name</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <button type="button" class="btn btn-primary" @click="getBeneficiaries">Search</button>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 d-md-block">
+                        <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries">Search</button>
+                        <button type="button" class="btn btn-warning btn-block" @click="exportBeneficiaries" :disabled="exporting">Download {{ exportPercentage }}</button>
+                    </div>
                 </div>
             </div>
             <br>
@@ -74,6 +77,7 @@
 
 <script>
 import Axios from 'axios';
+import cloneDeep from 'lodash/cloneDeep'
 import Pagination from 'vue-pagination-2';
     export default {
         components: {
@@ -85,6 +89,15 @@ import Pagination from 'vue-pagination-2';
                 keyword: "",
                 type: "client",
                 pagination: {
+                    current_page: 1,
+                    total: 1,
+                    per_page: 1,
+                },
+                exporting: false,
+                exportedPage: 1,
+                exportData: {},
+                exportedFilename: "",
+                exportPagination: {
                     current_page: 1,
                     total: 1,
                     per_page: 1,
@@ -116,7 +129,67 @@ import Pagination from 'vue-pagination-2';
                     'newwindow',
                     'location=yes,width=960,height=1080,scrollbars=yes,status=yes');
                 return false; 
-            }
+            },
+
+            exportBeneficiaries(){
+                if(this.exporting){
+                    return false;
+                }
+                this.exporting = true;
+                this.exportedPage = 1;
+                this.exportData = cloneDeep({
+                    keyword: this.keyword,
+                    type: this.type,
+                    export: 1,
+                });
+                this.createExport();
+            },
+            createExport(){
+                Axios.post(route('export.beneficiary', 'create'), this.exportData)
+                .then(res => {
+                    this.exportedFilename = res.data.filename;
+                    this.exportPagination = cloneDeep(res.data.pagination);
+                    this.writeExport(this.exportedPage);
+                })
+                .catch(err => {
+                })
+                .then(err => {
+                    // this.submit = false;
+                });
+            },
+            
+            writeExport(page){
+                if (this.exportedPage > this.exportPagination.total_pages || this.exporting == false) {
+                    this.downloadExportedFile();
+                    return false;
+                }
+                this.exportData.page = page;
+                this.exportData.filename = this.exportedFilename;
+                Axios.post(route('export.beneficiary', 'write'), this.exportData)
+                .then(res => {
+                    this.exportedPage = parseInt(res.data.page);
+                    this.exportedPage++;
+                    this.writeExport(this.exportedPage);
+                })
+                .catch(err => {
+                    this.writeExport(this.exportedPage);
+                })
+                .then(err => {
+                    // this.submit = false;
+                });
+            },
+            downloadExportedFile(){
+                window.location = '/files/exported/'+this.exportedFilename + '.csv';
+                this.exporting = false;
+            },
+        },
+        computed: {
+            exportPercentage(){
+                if(this.exporting){
+                    return (((this.exportedPage-1) / this.exportPagination.total_pages) * 100).toFixed(2) + "%";
+                }
+                return '';
+            },
         }
     }
 </script>
