@@ -721,6 +721,12 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.brgys = [this.formData.client.psgc];
                     this.formData.client.city = this.formData.client.psgc.city_psgc;
                     this.formData.client.province = this.formData.client.psgc.province_psgc;
+                    if(isEmpty(this.formData.father)){
+                        this.formData.father = {};
+                    }
+                    if(isEmpty(this.formData.mother)){
+                        this.formData.mother = {};
+                    }
                 })
                 .catch(err => {
                     // console.log(err.response.status);

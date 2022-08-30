@@ -38,49 +38,56 @@ class BeneficiaryCsvSeeder extends Seeder
                 continue;
             }
 
-            $client = Client::create([
-                'last_name' => '',
-                'first_name' => '',
-                'middle_name' => '',
-                'ext_name' => '',
-                'full_name' => '',
-                'street_number' => '',
-                'psgc_id' => 378,
-                'mobile_number' => '',
-                'birth_date' => Carbon::now(),
-                'age' => 0,
-                'gender' => '',
-                'occupation' => '',
-                'monthly_salary' => 0,
-                'relationship_beneficiary' => '',
-                'sector_id' => 1,
-            ]);
-            $composition = Composition::create([
-                'client_id' => $client->id,
-                'user_id' => 1
-            ]);
+            $client_name = $user_data[4];
+            $client = Client::where('last_name', $client_name)->first();
+            if($client){
+                $composition = Composition::where('client_id', $client->id)->first();
+            }else{
+                $client = Client::create([
+                    'last_name' => $client_name,
+                    'first_name' => '',
+                    'middle_name' => '',
+                    'ext_name' => '',
+                    'full_name' => '',
+                    'street_number' => '',
+                    'psgc_id' => 378,
+                    'mobile_number' => '',
+                    // 'birth_date' => Carbon::now(),
+                    'age' => 0,
+                    'gender' => '',
+                    'occupation' => '',
+                    'monthly_salary' => 0,
+                    'relationship_beneficiary' => '',
+                    'sector_id' => 1,
+                ]);
+
+                $composition = Composition::create([
+                    'client_id' => $client->id,
+                    'user_id' => 1
+                ]);
+            }
     
-            $father = new BioParent([
-                'last_name' => '',
-                'first_name' => '',
-                'middle_name' => '',
-                'ext_name' => '',
-                'full_name' => 'DSWD',
-                'birth_date' => Carbon::now(),
-            ]);
-            $father->relationship_beneficiary = "father";
-            $mother = new BioParent([
-                'last_name' => '',
-                'first_name' => '',
-                'middle_name' => '',
-                'ext_name' => '',
-                'full_name' => 'DSWD',
-                'birth_date' => Carbon::now(),
-            ]);
-            $mother->relationship_beneficiary = "mother";
+            // $father = new BioParent([
+            //     'last_name' => '',
+            //     'first_name' => '',
+            //     'middle_name' => '',
+            //     'ext_name' => '',
+            //     'full_name' => 'DSWD',
+            //     'birth_date' => Carbon::now(),
+            // ]);
+            // $father->relationship_beneficiary = "father";
+            // $mother = new BioParent([
+            //     'last_name' => '',
+            //     'first_name' => '',
+            //     'middle_name' => '',
+            //     'ext_name' => '',
+            //     'full_name' => 'DSWD',
+            //     'birth_date' => Carbon::now(),
+            // ]);
+            // $mother->relationship_beneficiary = "mother";
             
-            $composition->father()->save($father);
-            $composition->mother()->save($mother);
+            // $composition->father()->save($father);
+            // $composition->mother()->save($mother);
             $swad_office_name = $user_data[0];
             $insert_data['last_name'] = $user_data[1];
             $school_level_name = $user_data[2];
