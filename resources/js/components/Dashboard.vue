@@ -1,15 +1,25 @@
 <template>
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-2">
+                <select class="form-control" v-model="swad_office_id" placeholder="SWAD OFFICE">
+                    <option value="">All SWAD Office</option>
+                    <option v-for="(swadOffice, key) in allSwadOffices" :key="key" :value="swadOffice.id">{{ swadOffice.name }}</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <select class="form-control" v-model="payout_id" placeholder="PAYOUT DATE">
+                    <option value="">All Payout Date</option>
+                    <option v-for="(payout, key) in allPayouts" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" type="button" @click="filterDashboard">View</button>
+            </div>
+        </div>
+        <br>
+        <br>
         <div class="table-responsive">
-            <select v-model="swad_office_id" placeholder="SWAD OFFICE">
-                <option value="">All SWAD Office</option>
-                <option v-for="(swadOffice, key) in allSwadOffices" :key="key" :value="swadOffice.id">{{ swadOffice.name }}</option>
-            </select>
-            <select v-model="payout_id" placeholder="PAYOUT DATE">
-                <option value="">All Payout Date</option>
-                <option v-for="(payout, key) in allPayouts" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
-            </select>
-            <button type="button" @click="filterDashboard">View</button>
             <!-- <table class="table table-bordered">
                 <thead>
                     <tr>

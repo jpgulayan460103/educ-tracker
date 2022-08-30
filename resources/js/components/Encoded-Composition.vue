@@ -70,7 +70,15 @@
                         </tbody>
                 </table>
             </div>
-        <pagination v-model="pagination.current_page" :records="pagination.total" :per-page="pagination.per_page" @paginate="getBeneficiaries"/>
+        <pagination
+            v-model="pagination.current_page"
+            :records="pagination.total"
+            :per-page="pagination.per_page"
+            @paginate="getBeneficiaries"
+            :options="{
+                edgeNavigation: true,
+            }"
+        />
         </fieldset>
     </div>
 </template>
@@ -78,6 +86,7 @@
 <script>
 import Axios from 'axios';
 import cloneDeep from 'lodash/cloneDeep'
+import debounce from 'lodash/debounce'
 import Pagination from 'vue-pagination-2';
     export default {
         components: {
@@ -109,7 +118,7 @@ import Pagination from 'vue-pagination-2';
             this.getBeneficiaries();
         },
         methods: {
-            getBeneficiaries(page = null){
+            getBeneficiaries: debounce(function(page = null){
                 Axios.get(route('beneficiaries.index'), {
                     params: {
                         keyword: this.keyword,
@@ -123,7 +132,7 @@ import Pagination from 'vue-pagination-2';
                 })
                 .catch(err => {})
                 .then(res => {})
-            },
+            }, 250),
             viewBeneficiary(beneficiary){
                 window.open(route('encoding', beneficiary.composition.uuid),
                     'newwindow',
