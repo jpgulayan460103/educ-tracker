@@ -251,7 +251,7 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                 }
 
                 if(format == "currency"){
-                    return this.formatCurrency(parseFloat(value));
+                    return this.formatCurrency(value);
                 }else{
                     return parseFloat(value);
                 }
