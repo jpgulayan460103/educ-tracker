@@ -272,17 +272,17 @@ class BeneficiaryController extends Controller
                 $export[] = $beneficiary['uuid'];
                 $export[] = $beneficiary['control_number'];
                 $export[] = $beneficiary['swad_office']['name'];
-                $export[] = $beneficiary['composition']['client']['full_name'];
+                $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['full_name'] : "";
                 $export[] = $beneficiary['full_name'];
-                $export[] = $beneficiary['composition']['client']['psgc']['full_address'];
+                $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";
                 $export[] = $beneficiary['school_level']['name'];
                 $export[] = $beneficiary['amount_granted'];
                 $export[] = $beneficiary['status'];
                 $export[] = $beneficiary['payout']['payout_date'];
                 $export[] = $beneficiary['remarks'];
-                $export[] = $beneficiary['composition']['father']['full_name'];
-                $export[] = $beneficiary['composition']['mother']['full_name'];
-                $export[] = $beneficiary['composition']['user']['full_name'];
+                $export[] = isset($beneficiary['composition']['father']) ? $beneficiary['composition']['father']['full_name'] : "";
+                $export[] = isset($beneficiary['composition']['mother']) ? $beneficiary['composition']['mother']['full_name'] : "";
+                $export[] = isset($beneficiary['composition']['user']) ? $beneficiary['composition']['user']['full_name'] : "";
 
                 $data = array();
                 foreach ($export as $export_data) {
