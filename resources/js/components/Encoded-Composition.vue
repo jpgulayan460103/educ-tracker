@@ -28,10 +28,18 @@
                         <option value="mother">Mother Name</option>
                     </select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
                     <div class="d-grid gap-2 d-md-block">
                         <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries">Search</button>
                         <button type="button" class="btn btn-warning btn-block" @click="exportBeneficiaries" :disabled="exporting">Download {{ exportPercentage }}</button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" v-model="showAll" true-value="yes" false-value="no">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Show All Beneficiaries
+                    </label>
                     </div>
                 </div>
             </div>
@@ -118,7 +126,9 @@ import DatePicker from 'vue2-datepicker';
             return {
                 beneficiaries: [],
                 keyword: "",
+                showAll: "no",
                 type: "control_number",
+                page: 1,
                 pagination: {
                     current_page: 1,
                     total: 1,
@@ -145,6 +155,7 @@ import DatePicker from 'vue2-datepicker';
                     params: {
                         keyword: this.keyword,
                         type: this.type,
+                        showAll: this.showAll,
                         page,
                     }
                 })
@@ -171,6 +182,7 @@ import DatePicker from 'vue2-datepicker';
                 this.exportData = cloneDeep({
                     keyword: this.keyword,
                     type: this.type,
+                    showAll: this.showAll,
                     export: 1,
                 });
                 this.createExport();

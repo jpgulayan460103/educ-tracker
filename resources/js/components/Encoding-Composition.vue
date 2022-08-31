@@ -435,7 +435,7 @@
             <div class="row gx-2">
                 <div class="col-md-3">
                     <label for="payout_id">Payout Date:</label>
-                    <select class="form-control" placeholder="Enter School Level" v-model="formData.payout_id">
+                    <select class="form-control" placeholder="Enter School Level" v-model="formData.payout_id" @change="updateCashBalance">
                         <option value="">NONE</option>
                         <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                     </select>
@@ -446,18 +446,25 @@
                     <input type="text" class="form-control" placeholder="Swad Office" :value="formData.client.swad_office_name" readonly>
                     <!-- <span style="color:red" v-if="formError[`client.swad_office_name`]">{{ formError[`client.swad_office_name`][0] }}</span> -->
                 </div>
-                <div class="col-md-3" v-for="(schoolLevelAmount, key) in schoolLevelAmounts()" :key="key">
+                <!-- <div class="col-md-3" v-for="(schoolLevelAmount, key) in schoolLevelAmounts()" :key="key">
                     <div class="form-group">
                         <label>Total of {{ schoolLevelAmount.name }} Amount:</label>
                         <input type="text" class="form-control" placeholder="Amount" :value="schoolLevelAmount.total_amount" readonly>
                         <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Total Amount:</label>
-                        <input type="text" class="form-control" placeholder="Amount" :value="totalSchoolLevelAmounts" readonly>
-                        <!-- <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span> -->
+                        <input type="text" class="form-control" placeholder="Amount" :value="formatCurrency(totalSchoolLevelAmounts)" readonly>
+                        <span style="color:red" v-if="formError[`school_level_amount`]">{{ formError[`school_level_amount`][0] }}</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Cash Balance:</label>
+                        <input type="text" class="form-control" placeholder="Amount" :value="formatCurrency(cashBalance)" readonly>
+                        <!-- <span style="color:red" v-if="formError[`school_level_amount`]">{{ formError[`school_level_amount`][0] }}</span> -->
                     </div>
                 </div>
             </div>
@@ -526,6 +533,7 @@ import cloneDeep from 'lodash/cloneDeep'
                 formType: "create",
                 encodedData: {},
                 showEncodedData: false,
+                cashBalance: 0,
             }
         },
         mounted() {
@@ -813,7 +821,33 @@ import cloneDeep from 'lodash/cloneDeep'
 
             closeEncoded(){
                 this.showEncodedData = false;
-            }
+            },
+
+
+            updateCashBalance(){
+                Axios.get(route('cash-balance', this.formData.payout_id), {
+                    params: {
+                        payout_id: this.formData.payout_id,
+                        swad_office_id: this.formData.client.swad_office_id ? this.formData.client.swad_office_id : this.user.swad_office_id,
+                    }
+                })
+                .then(res => {
+                    this.cashBalance = res.data.remaining;
+                })
+                .catch(err => {})
+                .then(res => {})
+                ;
+            },
+            formatCurrency(value){
+                if (typeof value !== "number") {
+                    return value;
+                }
+                var formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                });
+                return formatter.format(value).replace('$', '');
+            },
         },
         computed: {
             totalSchoolLevelAmounts(){

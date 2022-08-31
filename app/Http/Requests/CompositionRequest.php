@@ -33,7 +33,7 @@ class CompositionRequest extends FormRequest
     public function rules()
     {
         return [
-            'client.last_name' => ['required', 'string', 'max:255', new ValidStringName, new ClientExist],
+            'client.last_name' => ['required', 'string', 'max:255', new ValidStringName],
             'client.middle_name' => ['required_if:client.has_middle_name,false', 'max:255', new ValidStringName],
             'client.first_name' => ['required', 'string', 'max:255', new ValidStringName],
             'client.ext_name' => ['max:255', new ValidStringName],
@@ -111,9 +111,10 @@ class CompositionRequest extends FormRequest
                     }
                     $school_level_id = $school_level_amount['id'];
                     $total_amount = $school_level_amount['total_amount'];
-                    $payout_id = 2;
-                    $amount_granted = Beneficiary::where('payout_id', $payout_id)->sum('amount_granted');
-                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)->sum('allocated_amount');
+                    $payout_id = request('payout_id');
+                    $swad_office_id = request('client.swad_office_id');
+                    $amount_granted = Beneficiary::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('amount_granted');
+                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('allocated_amount');
                     // $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
                     // $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
 
@@ -126,7 +127,7 @@ class CompositionRequest extends FormRequest
                     //     $remaining < $total_amount
                     // ]);
                     if($remaining < $total_amount || $remaining == 0){
-                        $validator->errors()->add("school_level_amount.$key", "Not enough allocation.");
+                        $validator->errors()->add("school_level_amount", "Not enough allocation.");
                     }
 
                 }

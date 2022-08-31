@@ -36,9 +36,15 @@ class BeneficiaryController extends Controller
         );
         if($user->user_role != "Admin"){
             $user_id = $user->id;
-            $beneficiaries->whereHas("composition", function($q) use ($user_id){
-                $q->where("user_id", $user_id);
-            });
+            if($request->showAll == "yes"){
+                $beneficiaries->whereHas("composition", function($q) use ($user){
+                    $q->where("swad_office_id", $user->swad_office_id);
+                });
+            }else{
+                $beneficiaries->whereHas("composition", function($q) use ($user_id){
+                    $q->where("user_id", $user_id);
+                });
+            }
         }
         $beneficiaries->orderBy('id', 'desc');
         if(request()->has('type') && request('type') != "" && request()->has('keyword') && request('keyword') != ""){
@@ -313,5 +319,19 @@ class BeneficiaryController extends Controller
                 'page' => $request->page,
             ];
         }
+    }
+
+    public function cashBalance(Request $request)
+    {
+
+        $payout_id = request('payout_id');
+        $swad_office_id = request('swad_office_id');
+        $amount_granted = Beneficiary::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('amount_granted');
+        $allocated_amount = FundAllocation::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('allocated_amount');
+        return [
+            'amount_granted' => $amount_granted,
+            'allocated_amount' => $allocated_amount,
+            'remaining' => ($allocated_amount - $amount_granted)
+        ];
     }
 }
