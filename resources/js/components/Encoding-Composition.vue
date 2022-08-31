@@ -756,6 +756,7 @@ import cloneDeep from 'lodash/cloneDeep'
                     if(isEmpty(this.formData.mother)){
                         this.formData.mother = {};
                     }
+                    this.updateCashBalance();
                 })
                 .catch(err => {
                     // console.log(err.response.status);
@@ -831,7 +832,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 
             updateCashBalance(){
-                Axios.get(route('cash-balance', this.formData.payout_id), {
+                Axios.get(route('cash-balance'), {
                     params: {
                         payout_id: this.formData.payout_id,
                         swad_office_id: this.formData.client.swad_office_id ? this.formData.client.swad_office_id : this.user.swad_office_id,

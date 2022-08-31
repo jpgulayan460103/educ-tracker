@@ -5,29 +5,20 @@
             <div class="row">
                 <div class="col-md-3">
                     Search Query
-                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status'">
-                    <!-- <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-else> -->
-                    <!-- <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-else>
-                        <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
-                    </select> -->
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status' && type != 'payout_date'">
                     <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"  v-if="type == 'encoded_date'"></date-picker>
-                    <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-if="type == 'status'">
-                        <option value="Claimed">Claimed</option>
-                        <option value="For Scheduled Payout">For Scheduled Payout</option>
-                        <option value="No Requirements">No Requirements</option>
-                        <option value="Not Eligible">Not Eligible</option>
-                    </select>
                 </div>
                 <div class="col-md-2">
                     Search Category
                     <select class="form-control" placeholder="Search" v-model="type">
                         <option value="control_number">Control Number</option>
+                        <!-- <option value="payout_date">Payout Schedule</option> -->
                         <option value="beneficiary">Beneficiary Name</option>
-                        <option value="encoded_date">Encoded Date</option>
-                        <option value="status">Status</option>
+                        <!-- <option value="status">Status</option> -->
                         <option value="client">Client Name</option>
                         <option value="father">Father Name</option>
                         <option value="mother">Mother Name</option>
+                        <option value="encoded_date">Encoded Date</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -36,6 +27,24 @@
                         <option value="yes">Your Encoded</option>
                         <option value="no">All Beneficiaries</option>
                     </select>
+                </div>
+                <div class="col-md-2">
+                    Payout Date
+                    <select class="form-control" placeholder="Enter School Level" v-model="payout_id">
+                        <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    Status
+                    <select class="form-control" placeholder="Enter School Level" v-model="status">
+                        <option value="Claimed">Claimed</option>
+                        <option value="For Scheduled Payout">For Scheduled Payout</option>
+                        <option value="No Requirements">No Requirements</option>
+                        <option value="Not Eligible">Not Eligible</option>
+                    </select>
+                    <!-- <select class="form-control" placeholder="Enter School Level" v-model="swad_office_id">
+                        <option v-for="(swadOffice, key) in swadOffices" :key="key" :value="swadOffice.id">{{ swadOffice.name }}</option>
+                    </select> -->
                 </div>
                 <div class="col-md-2">
                     &nbsp;
@@ -122,7 +131,7 @@ import Pagination from 'vue-pagination-2';
 import DatePicker from 'vue2-datepicker';
 
     export default {
-        props: ['payouts'],
+        props: ['payouts','swadOffices'],
         components: {
             Pagination,
             DatePicker
@@ -131,7 +140,7 @@ import DatePicker from 'vue2-datepicker';
             return {
                 beneficiaries: [],
                 keyword: "",
-                showEncoded: "yes",
+                showEncoded: "no",
                 type: "control_number",
                 page: 1,
                 pagination: {
@@ -148,6 +157,9 @@ import DatePicker from 'vue2-datepicker';
                     total: 1,
                     per_page: 1,
                 },
+                payout_id: null,
+                swad_office_id: null,
+                status: null,
             }
         },
         mounted() {
@@ -161,6 +173,9 @@ import DatePicker from 'vue2-datepicker';
                         keyword: this.keyword,
                         type: this.type,
                         showEncoded: this.showEncoded,
+                        payout_id: this.payout_id,
+                        swad_office_id: this.swad_office_id,
+                        status: this.status,
                         page,
                     }
                 })
@@ -187,6 +202,9 @@ import DatePicker from 'vue2-datepicker';
                 this.exportData = cloneDeep({
                     keyword: this.keyword,
                     type: this.type,
+                    payout_id: this.payout_id,
+                    swad_office_id: this.swad_office_id,
+                    status: this.status,
                     showEncoded: this.showEncoded,
                     export: 1,
                 });

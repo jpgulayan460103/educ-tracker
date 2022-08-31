@@ -43,8 +43,10 @@ class HomeController extends Controller
 
     public function beneficiaries()
     {
+        $swad_offices = SwadOffice::all();
         $payouts = Payout::all();
         $data = [
+            'swad_offices' => $swad_offices,
             'payouts' => $payouts,
         ];
         return view('beneficiaries', $data);

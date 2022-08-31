@@ -54,9 +54,6 @@ class BeneficiaryController extends Controller
                 case 'control_number':
                     $beneficiaries->where('control_number', 'like', "%$keyword%");
                     break;
-                case 'status':
-                    $beneficiaries->where('status', $keyword);
-                    break;
                 case 'encoded_date':
                     $beneficiaries->whereBetween('created_at', [
                         Carbon::parse($keyword),
@@ -86,6 +83,16 @@ class BeneficiaryController extends Controller
                     # code...
                     break;
             }
+        }
+
+        if(request()->has('payout_id') && request('payout_id') != ""){
+            $beneficiaries->where("beneficiaries.payout_id", $request->payout_id);
+        }
+        if(request()->has('status') && request('status') != ""){
+            $beneficiaries->where("beneficiaries.status", $request->status);
+        }
+        if(request()->has('swad_office_id') && request('swad_office_id') != ""){
+            // $beneficiaries->where("beneficiaries.swad_office_id", $request->swad_office_id);
         }
         if($request->export){
             $num_pages = 250;
@@ -270,7 +277,7 @@ class BeneficiaryController extends Controller
             $headers[] = 'School Level';
             $headers[] = 'Amount Granted';
             $headers[] = 'Status';
-            $headers[] = 'Status Date';
+            $headers[] = 'Payout Date';
             $headers[] = 'Remarks';
             $headers[] = 'Father Name';
             $headers[] = 'Mother Name';
@@ -296,6 +303,8 @@ class BeneficiaryController extends Controller
                 $mobile_number = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['mobile_number'] : "";
                 if($mobile_number != ""){
                     $export[] = "'+639".substr($mobile_number, 2);
+                }else{
+                    $export[] = "";
                 }
                 $export[] = $beneficiary['full_name'];
                 $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";

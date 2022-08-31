@@ -36,7 +36,7 @@ Route::group(['prefix' => '/data'], function () {
     Route::put('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
     Route::get('/family-composition/{uuid}/uuid', [CompositionController::class, 'showUuid'])->name('family-composition.uuid');
     Route::post('/export/beneficiaries/{type}', [BeneficiaryController::class, 'export'])->name('export.beneficiary');
-    Route::get('/cash-balance/{type}', [BeneficiaryController::class, 'cashBalance'])->name('cash-balance');
+    Route::get('/cash-balance', [BeneficiaryController::class, 'cashBalance'])->name('cash-balance');
     Route::resources([
         'family-composition' => CompositionController::class,
         'beneficiaries' => BeneficiaryController::class,
