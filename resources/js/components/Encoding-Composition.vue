@@ -294,7 +294,7 @@
                 </div>
             </fieldset>
             <hr>
-            <h2>Beneficiaries</h2>
+            <h2>Beneficiaries ({{ formData.beneficiaries.length }})</h2>
             <span style="color:red" v-if="formError['beneficiary']">{{ formError['beneficiary'][0] }}</span>
             <fieldset class="border p-2 my-2" v-for="(beneficiary, key) in formData.beneficiaries" :key="key">
                 <legend  class="w-auto">Student's {{ key + 1 }} Information <button type="button" class="btn btn-danger" @click="removeStudent(key)" v-if="formType == 'create' || user.user_role == 'Admin'">Remove Student</button></legend>

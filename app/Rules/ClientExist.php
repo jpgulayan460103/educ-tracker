@@ -68,8 +68,9 @@ class ClientExist implements Rule
             $q->whereIn("compositions.id", $client_ids);
         })->where('beneficiaries.status', "Claimed");
         $beneficiary_count = $beneficiary_query->count();
-        // dd();
-        if($beneficiary_count >= 3){
+        $form_data_beneficiaries = request('beneficiaries');
+        $total_beneficiaries = $beneficiary_count + count($form_data_beneficiaries);
+        if($total_beneficiaries > 3){
             $this->uuids = Composition::whereIn('client_id', $client_ids)->pluck('uuid');
             return false;
         }else{
