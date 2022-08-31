@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Beneficiary extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'last_name',
@@ -31,6 +32,32 @@ class Beneficiary extends Model
         'remarks',
         'control_number',
     ];
+
+    protected static $logAttributes = [
+        'last_name',
+        'first_name',
+        'middle_name',
+        'ext_name',
+        'full_name',
+        'school_level_id',
+        'birth_date',
+        'age',
+        'gender',
+        'composition_id',
+        'status',
+        'sector_id',
+        'swad_office_id',
+        'payout_id',
+        'sector_others',
+        'school_name',
+        'amount_granted',
+        'remarks',
+        'control_number',
+    ];
+
+    protected static $logOnlyDirty = true;
+    
+    protected static $submitEmptyLogs = false;
 
     public static function boot()
     {

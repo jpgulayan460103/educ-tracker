@@ -16,6 +16,7 @@ class AddForeignKeys1 extends Migration
         Schema::table('beneficiaries', function (Blueprint $table) {
             $table->foreign('school_level_id')->references('id')->on('school_levels')->onDelete('cascade');;
             $table->foreign('composition_id')->references('id')->on('compositions')->onDelete('cascade');;
+            $table->foreign('payout_id')->references('id')->on('payouts')->onDelete('cascade');;
             $table->foreign('swad_office_id')->references('id')->on('swad_offices')->onDelete('cascade');;
             $table->index(['last_name', 'first_name', 'middle_name'], 'beneficiary_query_index');
         });
@@ -59,6 +60,7 @@ class AddForeignKeys1 extends Migration
         Schema::table('beneficiaries', function (Blueprint $table) {
             $table->dropForeign(['school_level_id']);
             $table->dropForeign(['composition_id']);
+            $table->dropForeign(['payout_id']);
             $table->dropForeign(['swad_office_id']);
         });
         Schema::table('bio_parents', function (Blueprint $table) {

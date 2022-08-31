@@ -5,15 +5,15 @@
             <div class="row">
                 <div class="col-md-3">
                     Search Query
-                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status' && type != 'payout_date'">
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status' && type != 'payout_date'" @keydown.enter="getBeneficiaries">
                     <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"  v-if="type == 'encoded_date'"></date-picker>
                 </div>
                 <div class="col-md-2">
                     Search Category
                     <select class="form-control" placeholder="Search" v-model="type">
-                        <option value="control_number">Control Number</option>
-                        <!-- <option value="payout_date">Payout Schedule</option> -->
                         <option value="beneficiary">Beneficiary Name</option>
+                        <!-- <option value="payout_date">Payout Schedule</option> -->
+                        <option value="control_number">Control Number</option>
                         <!-- <option value="status">Status</option> -->
                         <option value="client">Client Name</option>
                         <option value="father">Father Name</option>
@@ -49,7 +49,7 @@
                 <div class="col-md-2">
                     &nbsp;
                     <div class="d-grid gap-2 d-md-block">
-                        <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries">Search</button>
+                        <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries" :disabled="onSearching">Search</button>
                         <button type="button" class="btn btn-warning btn-block" @click="exportBeneficiaries" :disabled="exporting">Download {{ exportPercentage }}</button>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ import DatePicker from 'vue2-datepicker';
                 beneficiaries: [],
                 keyword: "",
                 showEncoded: "no",
-                type: "control_number",
+                type: "beneficiary",
                 page: 1,
                 pagination: {
                     current_page: 1,
@@ -160,6 +160,7 @@ import DatePicker from 'vue2-datepicker';
                 payout_id: null,
                 swad_office_id: null,
                 status: null,
+                onSearching: false,
             }
         },
         mounted() {
@@ -168,6 +169,7 @@ import DatePicker from 'vue2-datepicker';
         },
         methods: {
             getBeneficiaries: debounce(function(page = null){
+                this.onSearching = true;
                 Axios.get(route('beneficiaries.index'), {
                     params: {
                         keyword: this.keyword,
@@ -180,10 +182,13 @@ import DatePicker from 'vue2-datepicker';
                     }
                 })
                 .then(res => {
+                    this.onSearching = false;
                     this.beneficiaries = res.data.data;
                     this.pagination = res.data.meta.pagination;
                 })
-                .catch(err => {})
+                .catch(err => {
+                    this.onSearching = false;
+                })
                 .then(res => {})
             }, 250),
             viewBeneficiary(beneficiary){
