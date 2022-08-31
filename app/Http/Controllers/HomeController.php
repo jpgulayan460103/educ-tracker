@@ -43,7 +43,11 @@ class HomeController extends Controller
 
     public function beneficiaries()
     {
-        return view('beneficiaries');
+        $payouts = Payout::all();
+        $data = [
+            'payouts' => $payouts,
+        ];
+        return view('beneficiaries', $data);
     }
 
     public function encoding(Request $request, $uuid = null)

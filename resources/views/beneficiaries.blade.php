@@ -2,6 +2,8 @@
 
 @section('content')
 <div class="container-fluid">
-    <encoded-composition />
+    <encoded-composition
+        :payouts="{{ json_encode($payouts) }}"
+    />
 </div>
 @endsection

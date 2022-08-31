@@ -22,7 +22,7 @@ class BeneficiaryController extends Controller
      */
     public function index(Request $request)
     {
-
+        DB::enableQueryLog();
         $user = Auth::user();
         $beneficiaries = Beneficiary::with(
             'composition.father',
@@ -45,6 +45,15 @@ class BeneficiaryController extends Controller
             $keyword = $request->keyword;
             $type = $request->type;
             switch ($type) {
+                case 'control_number':
+                    $beneficiaries->where('control_number', 'like', "%$keyword%");
+                    break;
+                case 'encoded_date':
+                    $beneficiaries->whereBetween('created_at', [
+                        Carbon::parse($keyword),
+                        Carbon::parse($keyword)->clone()->addDay()->subSecond()
+                    ]);
+                    break;
                 case 'client':
                     $beneficiaries->whereHas("composition.client", function($q) use ($keyword){
                         $q->where("full_name", 'like', "%$keyword%");
@@ -75,6 +84,7 @@ class BeneficiaryController extends Controller
             $num_pages = 10;
         }
         $beneficiaries = $beneficiaries->paginate($num_pages);
+        // return DB::getQueryLog();
 
         return fractal($beneficiaries, new BeneficiaryTransformer)->parseIncludes('
             composition.father,

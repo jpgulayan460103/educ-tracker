@@ -4,12 +4,19 @@
             <legend  class="w-auto">Encoded Beneficiaries</legend>
             <div class="row">
                 <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Search" v-model="keyword">
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date'">
+                    <!-- <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-else> -->
+                    <!-- <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-else>
+                        <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
+                    </select> -->
+                    <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY" v-else></date-picker>
                 </div>
                 <div class="col-md-2">
                     <select class="form-control" placeholder="Search" v-model="type">
-                        <option value="client">Client Name</option>
+                        <option value="control_number">Control Number</option>
                         <option value="beneficiary">Beneficiary Name</option>
+                        <option value="encoded_date">Encoded Date</option>
+                        <option value="client">Client Name</option>
                         <option value="father">Father Name</option>
                         <option value="mother">Mother Name</option>
                     </select>
@@ -27,6 +34,7 @@
                     <thead>
                         <tr>
                             <th>SWAD Office</th>
+                            <th>Control No.</th>
                             <th>Client Name</th>
                             <th>Beneficiary Name</th>
                             <th>Address</th>
@@ -38,12 +46,14 @@
                             <th>Father's Name</th>
                             <th>Mother's Name</th>
                             <th>Encoded By</th>
+                            <th>Date Encoded</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody v-for="beneficiary in beneficiaries" :key="beneficiary.key">
                             <tr>
                                 <td>{{ beneficiary.swad_office && beneficiary.swad_office.name }}</td>
+                                <td>{{ beneficiary.control_number }}</td>
                                 <td>{{ beneficiary.composition && beneficiary.composition.client && beneficiary.composition.client.full_name }}</td>
                                 <td>{{ beneficiary.full_name }}</td>
                                 <td>
@@ -63,6 +73,7 @@
                                     <span>{{ beneficiary.composition && beneficiary.composition.mother && beneficiary.composition.mother.full_name }}</span>
                                 </td>
                                 <td>{{ beneficiary.composition && beneficiary.composition.user && beneficiary.composition.user.full_name }}</td>
+                                <td>{{ beneficiary.created_at }}</td>
                                 <td>
                                     <a href="#" @click="viewBeneficiary(beneficiary)">View</a>
                                 </td>
@@ -88,15 +99,19 @@ import Axios from 'axios';
 import cloneDeep from 'lodash/cloneDeep'
 import debounce from 'lodash/debounce'
 import Pagination from 'vue-pagination-2';
+import DatePicker from 'vue2-datepicker';
+
     export default {
+        props: ['payouts'],
         components: {
-            Pagination
+            Pagination,
+            DatePicker
         },
         data(){
             return {
                 beneficiaries: [],
                 keyword: "",
-                type: "client",
+                type: "control_number",
                 pagination: {
                     current_page: 1,
                     total: 1,

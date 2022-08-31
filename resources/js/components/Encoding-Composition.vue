@@ -464,6 +464,14 @@
             <br>
 
             <button type="submit" class="btn btn-primary" :disabled="submit" v-if="formType == 'create' || user.user_role == 'Admin' || formData.user_id == user.id">Submit</button>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" v-if="showEncodedData">
+                <strong>Beneficiaries</strong>
+                <ul class="list-group" v-if="encodedData.beneficiaries && encodedData.beneficiaries.data">
+                    <li class="list-group-item" v-for="(beneficiary, key) in encodedData.beneficiaries.data" :key="key"><b>[{{ beneficiary.control_number }}]</b> - {{ beneficiary.full_name }}</li>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="closeEncoded"></button>
+            </div>
         </form>
     </div>
 </template>
@@ -516,6 +524,8 @@ import cloneDeep from 'lodash/cloneDeep'
                 submit: false,
                 filteredPsgc: [],
                 formType: "create",
+                encodedData: {},
+                showEncodedData: false,
             }
         },
         mounted() {
@@ -555,6 +565,8 @@ import cloneDeep from 'lodash/cloneDeep'
                 Axios.post(route('family-composition.store'), this.formData)
                 .then(res => {
                     this.submit = false;
+                    this.encodedData = res.data;
+                    this.showEncodedData = true;
                     alert("Successfuly saved.");
                     this.formData = {
                         client: {
@@ -704,9 +716,11 @@ import cloneDeep from 'lodash/cloneDeep'
             },
             handleChangeSector(){
                 let sector = this.sectors.filter(item => item.id == this.formData.client.sector_id);
-                this.formData.client.sector_name = sector[0].name;
-                if(this.formData.client.sector_name != "Others"){
-                    this.formData.client.sector_other_id = null;
+                if(!isEmpty(sector)){
+                    this.formData.client.sector_name = sector[0].name;
+                    if(this.formData.client.sector_name != "Others"){
+                        this.formData.client.sector_other_id = null;
+                    }
                 }
             },
             getCompositionData(){
@@ -792,7 +806,12 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData.beneficiaries[0].middle_name = this.formData.client.middle_name;
                     this.formData.beneficiaries[0].ext_name = this.formData.client.ext_name;
                     this.formData.beneficiaries[0].birth_date = this.formData.client.birth_date;
+                    this.formData.beneficiaries[0].gender = this.formData.client.gender;
                 }
+            },
+
+            closeEncoded(){
+                this.showEncodedData = false;
             }
         },
         computed: {

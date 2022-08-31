@@ -63,6 +63,7 @@ class BeneficiaryTransformer extends TransformerAbstract
             'swad_office_id' => $beneficiary->swad_office_id,
             'uuid' => $beneficiary->uuid,
             'control_number' => $beneficiary->control_number,
+            'created_at' => $beneficiary->created_at->toDateString(),
         ];
     }
 

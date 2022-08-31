@@ -85,8 +85,13 @@ class CompositionController extends Controller
             $composition->beneficiaries()->saveMany($beneficiaries);
             $composition->father()->save($father);
             $composition->mother()->save($mother);
-
             DB::commit();
+            return fractal($composition, new CompositionTransformer)->parseIncludes('
+                beneficiaries,
+                father,
+                mother,
+                client,
+            ');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -168,8 +173,8 @@ class CompositionController extends Controller
             $this->updateBeneficiaries($id);
             BioParent::find($form_data['father']['id'])->update($form_data['father']);
             BioParent::find($form_data['mother']['id'])->update($form_data['mother']);
-
             DB::commit();
+            return $composition;
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
