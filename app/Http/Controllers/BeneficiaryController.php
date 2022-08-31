@@ -48,6 +48,9 @@ class BeneficiaryController extends Controller
                 case 'control_number':
                     $beneficiaries->where('control_number', 'like', "%$keyword%");
                     break;
+                case 'status':
+                    $beneficiaries->where('status', $keyword);
+                    break;
                 case 'encoded_date':
                     $beneficiaries->whereBetween('created_at', [
                         Carbon::parse($keyword),
@@ -255,6 +258,7 @@ class BeneficiaryController extends Controller
             $headers[] = 'Control Number';
             $headers[] = 'SWAD Office';
             $headers[] = 'Client Name';
+            $headers[] = 'Cellphone Number';
             $headers[] = 'Beneficiary';
             $headers[] = 'Address';
             $headers[] = 'School Level';
@@ -283,6 +287,10 @@ class BeneficiaryController extends Controller
                 $export[] = $beneficiary['control_number'];
                 $export[] = $beneficiary['swad_office']['name'];
                 $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['full_name'] : "";
+                $mobile_number = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['mobile_number'] : "";
+                if($mobile_number != ""){
+                    $export[] = "'+639".substr($mobile_number, 2);
+                }
                 $export[] = $beneficiary['full_name'];
                 $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";
                 $export[] = $beneficiary['school_level']['name'];

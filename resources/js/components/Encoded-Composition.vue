@@ -4,18 +4,25 @@
             <legend  class="w-auto">Encoded Beneficiaries</legend>
             <div class="row">
                 <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date'">
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status'">
                     <!-- <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-else> -->
                     <!-- <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-else>
                         <option v-for="(payout, key) in payouts.filter(item => item.is_active == 1)" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                     </select> -->
-                    <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY" v-else></date-picker>
+                    <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"  v-if="type == 'encoded_date'"></date-picker>
+                    <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-if="type == 'status'">
+                        <option value="Claimed">Claimed</option>
+                        <option value="For Scheduled Payout">For Scheduled Payout</option>
+                        <option value="No Requirements">No Requirements</option>
+                        <option value="Not Eligible">Not Eligible</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <select class="form-control" placeholder="Search" v-model="type">
                         <option value="control_number">Control Number</option>
                         <option value="beneficiary">Beneficiary Name</option>
                         <option value="encoded_date">Encoded Date</option>
+                        <option value="status">Status</option>
                         <option value="client">Client Name</option>
                         <option value="father">Father Name</option>
                         <option value="mother">Mother Name</option>
