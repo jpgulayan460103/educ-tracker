@@ -46,7 +46,7 @@ class CompositionRequest extends FormRequest
             'client.sector_id' => ['required'],
             'client.client_sector_id' => ['required'],
             'client.sector_other_id' => ['required_if:client.sector_name,Others'],
-            'client.mobile_number' => ['required', 'min: 11' ,'max:11', new ValidCellphoneNumber],
+            'client.mobile_number' => [new ValidCellphoneNumber],
             // 'client.birth_date' => ['required', 'date' , 'before:'.Carbon::now()->toDateString()],
             // 'client.age' => ['required', 'integer'],
             'client.gender' => ['required'],
