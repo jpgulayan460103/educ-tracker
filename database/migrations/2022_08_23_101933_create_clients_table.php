@@ -16,6 +16,7 @@ class CreateClientsTable extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('full_name')->nullable();
+            $table->string('full_name_mi')->nullable();
             $table->string('last_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
@@ -37,6 +38,7 @@ class CreateClientsTable extends Migration
             $table->string('uuid')->nullable();
             $table->index('uuid');
             $table->fulltext('full_name');
+            $table->fulltext('full_name_mi');
         });
     }
 

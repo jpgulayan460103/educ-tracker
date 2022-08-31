@@ -2,7 +2,9 @@
 
 namespace App\Rules;
 
+use App\Models\Beneficiary;
 use App\Models\Client;
+use App\Models\Composition;
 use Illuminate\Contracts\Validation\Rule;
 
 class ClientExist implements Rule
@@ -12,10 +14,10 @@ class ClientExist implements Rule
      *
      * @return void
      */
-    public $composition;
+    public $uuids;
     public function __construct()
     {
-        //
+        $this->uuids = [];
     }
 
     /**
@@ -32,18 +34,47 @@ class ClientExist implements Rule
         $last_name = request("$field.last_name");
         $first_name = request("$field.first_name");
         $middle_name = request("$field.middle_name");
+        $ext_name = request("$field.ext_name");
+
+        $full_name_array = [
+            $first_name,
+            $middle_name,
+            $last_name,
+            $ext_name,
+        ];
+        $full_name = trim(implode(" ",$full_name_array));
+        $full_name = trim(preg_replace("/\s+/", " ", $full_name));
+
+
+        $full_name_mi_array = [
+            $first_name,
+            ($middle_name ? substr($middle_name, 0, 1) : ""),
+            $last_name,
+            $ext_name,
+        ];
+        $full_name_mi = trim(implode(" ",$full_name_mi_array));
+        $full_name_mi = trim(preg_replace("/\s+/", " ", $full_name_mi));
+
         $id = request("$field.id");
 
-        $client_query = Client::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        // $client_query = Client::where('full_name', $full_name);
+        $client_query = Client::where('full_name_mi', $full_name_mi);
         if($id && $id != ""){
             $client_query->where('id', '<>', $id);
         }
-        $client_count = $client_query->count();
-        if($client_count != 0){
-            $client = $client_query->first();
-            $this->composition = $client->composition;
+        $client_ids = $client_query->pluck('id');
+
+        $beneficiary_query = Beneficiary::whereHas("composition", function($q) use ($client_ids){
+            $q->whereIn("compositions.id", $client_ids);
+        })->where('beneficiaries.status', "Claimed");
+        $beneficiary_count = $beneficiary_query->count();
+        // dd();
+        if($beneficiary_count >= 3){
+            $this->uuids = Composition::whereIn('client_id', $client_ids)->pluck('uuid');
+            return false;
+        }else{
+            return true;
         }
-        return $client_count == 0;
     }
 
     /**
@@ -53,7 +84,13 @@ class ClientExist implements Rule
      */
     public function message()
     {
-        $uuid = $this->composition->uuid;
-        return 'The client exist.'."<a target='_blank' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
+        $links = [];
+        foreach ($this->uuids as $uuid) {
+            $uuid_array = explode("-", $uuid);
+            $last_uuid = end($uuid_array);
+            $last_uuid = "View composition";
+            $links[] = "<a target='_blank' href='".route('encoding', $uuid)."'>".$last_uuid."</a>";
+        }
+        return 'This client has reached its maximum beneficiaries.<br>'. implode("<br>", $links);
     }
 }

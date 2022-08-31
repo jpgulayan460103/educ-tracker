@@ -41,8 +41,20 @@ class Client extends Model
                 $model->last_name,
                 $model->ext_name,
             ];
-            $full_name = implode(" ",$full_name_array);
-            $model->full_name = trim($full_name);
+            $full_name = trim(implode(" ",$full_name_array));
+            $full_name = trim(preg_replace("/\s+/", " ", $full_name));
+            $model->full_name = $full_name;
+
+            $full_name_mi_array = [
+                $model->first_name,
+                ($model->middle_name ? substr($model->middle_name, 0, 1) : ""),
+                $model->last_name,
+                $model->ext_name,
+            ];
+            $full_name_mi = trim(implode(" ",$full_name_mi_array));
+            $full_name_mi = trim(preg_replace("/\s+/", " ", $full_name_mi));
+            $model->full_name_mi = $full_name_mi;
+
         });
         self::updating(function($model) {
             $full_name_array = [
@@ -51,8 +63,19 @@ class Client extends Model
                 $model->last_name,
                 $model->ext_name,
             ];
-            $full_name = implode(" ",$full_name_array);
-            $model->full_name = trim($full_name);
+            $full_name = trim(implode(" ",$full_name_array));
+            $full_name = trim(preg_replace("/\s+/", " ", $full_name));
+            $model->full_name = $full_name;
+
+            $full_name_mi_array = [
+                $model->first_name,
+                ($model->middle_name ? substr($model->middle_name, 0, 1) : ""),
+                $model->last_name,
+                $model->ext_name,
+            ];
+            $full_name_mi = trim(implode(" ",$full_name_mi_array));
+            $full_name_mi = trim(preg_replace("/\s+/", " ", $full_name_mi));
+            $model->full_name_mi = $full_name_mi;
         });
     }
 

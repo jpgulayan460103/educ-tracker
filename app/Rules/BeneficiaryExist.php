@@ -33,9 +33,31 @@ class BeneficiaryExist implements Rule
         $last_name = request("$field.$index.last_name");
         $first_name = request("$field.$index.first_name");
         $middle_name = request("$field.$index.middle_name");
+        $ext_name = request("$field.$index.ext_name");
+        $full_name_array = [
+            $first_name,
+            $middle_name,
+            $last_name,
+            $ext_name,
+        ];
+        $full_name = trim(implode(" ",$full_name_array));
+        $full_name = trim(preg_replace("/\s+/", " ", $full_name));
+
+
+        $full_name_mi_array = [
+            $first_name,
+            ($middle_name ? substr($middle_name, 0, 1) : ""),
+            $last_name,
+            $ext_name,
+        ];
+        $full_name_mi = trim(implode(" ",$full_name_mi_array));
+        $full_name_mi = trim(preg_replace("/\s+/", " ", $full_name_mi));
+
+
         $id = request("$field.$index.id");
 
-        $beneficiary_query = Beneficiary::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        // $beneficiary_query = Beneficiary::where('full_name', $full_name);
+        $beneficiary_query = Beneficiary::where('full_name_mi', $full_name_mi);
         if($id && $id != ""){
             $beneficiary_query->where('id', '<>', $id);
         }
@@ -55,6 +77,7 @@ class BeneficiaryExist implements Rule
     public function message()
     {
         $uuid = $this->composition->uuid;
-        return 'The beneficiary exist.'."<a target='_blank' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
+        return 'The beneficiary exist.<br>'."<a target='_blank' href='".route('encoding', $this->composition->uuid)."'>View composition</a>";
+        // return 'The beneficiary exist.'."<a target='_blank' href='".route('encoding', $this->composition->uuid)."'>".$this->composition->uuid."</a>";
     }
 }

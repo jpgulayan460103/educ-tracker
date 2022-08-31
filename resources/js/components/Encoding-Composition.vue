@@ -731,6 +731,7 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData.beneficiaries = res.data.beneficiaries.data;
                     this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
                     this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
+                    this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
                     this.cities = [this.formData.client.psgc];
                     this.brgys = [this.formData.client.psgc];
                     this.formData.client.city = this.formData.client.psgc.city_psgc;

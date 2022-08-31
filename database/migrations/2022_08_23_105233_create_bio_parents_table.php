@@ -16,6 +16,7 @@ class CreateBioParentsTable extends Migration
         Schema::create('bio_parents', function (Blueprint $table) {
             $table->id();
             $table->string('full_name')->nullable();
+            $table->string('full_name_mi')->nullable();
             $table->string('last_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
@@ -25,6 +26,7 @@ class CreateBioParentsTable extends Migration
             $table->unsignedBigInteger('composition_id')->nullable();
             $table->string('uuid')->nullable();
             $table->fulltext('full_name');
+            $table->fulltext('full_name_mi');
             $table->timestamps();
         });
     }

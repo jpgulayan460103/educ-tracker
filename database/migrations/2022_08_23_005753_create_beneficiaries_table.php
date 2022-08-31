@@ -16,6 +16,7 @@ class CreateBeneficiariesTable extends Migration
         Schema::create('beneficiaries', function (Blueprint $table) {
             $table->id();
             $table->string('full_name')->nullable();
+            $table->string('full_name_mi')->nullable();
             $table->string('last_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
@@ -37,6 +38,7 @@ class CreateBeneficiariesTable extends Migration
             $table->string('uuid')->nullable();
             $table->timestamps();
             $table->fulltext('full_name');
+            $table->fulltext('full_name_mi');
         });
     }
 

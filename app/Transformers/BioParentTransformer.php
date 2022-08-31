@@ -32,7 +32,7 @@ class BioParentTransformer extends TransformerAbstract
      */
     public function transform(BioParent $bioParent)
     {
-        return [
+        $data = [
             'id' => $bioParent->id,
             'key' => $bioParent->id,
             'full_name' => $bioParent->full_name,
@@ -45,5 +45,9 @@ class BioParentTransformer extends TransformerAbstract
             'composition_id' => $bioParent->composition_id,
             'uuid' => $bioParent->uuid,
         ];
+        if($data['birth_date'] == null){
+            unset($data['birth_date']);
+        }
+        return $data;
     }
 }

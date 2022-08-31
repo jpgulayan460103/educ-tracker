@@ -35,7 +35,7 @@ class ClientTransformer extends TransformerAbstract
      */
     public function transform(Client $client)
     {
-        return [
+        $data = [
             'id' => $client->id,
             'key' => $client->id,
             'last_name' => $client->last_name,
@@ -56,6 +56,11 @@ class ClientTransformer extends TransformerAbstract
             'sector_other_id' => $client->sector_other_id,
             'client_sector_id' => $client->client_sector_id,
         ];
+
+        if($data['birth_date'] == null){
+            unset($data['birth_date']);
+        }
+        return $data;
     }
     public function includePsgc(Client $client)
     {

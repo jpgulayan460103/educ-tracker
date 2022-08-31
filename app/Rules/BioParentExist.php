@@ -32,9 +32,20 @@ class BioParentExist implements Rule
         $last_name = request("$field.last_name");
         $first_name = request("$field.first_name");
         $middle_name = request("$field.middle_name");
+        $ext_name = request("$field.ext_name");
+
+        $full_name_array = [
+            $first_name,
+            $middle_name,
+            $last_name,
+            $ext_name,
+        ];
+        $full_name = trim(implode(" ",$full_name_array));
+        $full_name = trim(preg_replace("/\s+/", " ", $full_name));
+        
         $id = request("$field.id");
 
-        $bio_parent_query = BioParent::where('last_name', $last_name)->where('first_name', $first_name)->where('middle_name', $middle_name);
+        $bio_parent_query = BioParent::where('full_name', $full_name);
         if($id && $id != ""){
             $bio_parent_query->where('id', '<>', $id);
         }

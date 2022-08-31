@@ -45,6 +45,7 @@ class PsgcTransformer extends TransformerAbstract
             'brgy_psgc' => $psgc->brgy_psgc,
             'district' => $psgc->district,
             'subdistrict' => $psgc->subdistrict,
+            'swad_office_id' => $psgc->swad_office_id,
             'full_address' => $psgc->brgy_name.", ".$psgc->city_name.", ".$psgc->province_name
         ];
     }

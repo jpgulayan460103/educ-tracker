@@ -36,7 +36,7 @@ class BeneficiaryTransformer extends TransformerAbstract
      */
     public function transform(Beneficiary $beneficiary)
     {
-        return [
+        $data = [
             'id' => $beneficiary->id,
             'key' => $beneficiary->id,
             'last_name' => $beneficiary->last_name,
@@ -65,6 +65,11 @@ class BeneficiaryTransformer extends TransformerAbstract
             'control_number' => $beneficiary->control_number,
             'created_at' => $beneficiary->created_at->toDateString(),
         ];
+
+        if($data['birth_date'] == null){
+            unset($data['birth_date']);
+        }
+        return $data;
     }
 
     public function includeComposition(Beneficiary $beneficiary)
