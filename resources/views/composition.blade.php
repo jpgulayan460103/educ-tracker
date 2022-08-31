@@ -11,6 +11,7 @@
         :user="{{ json_encode($user) }}"
         uuid="{{ $uuid }}"
         :client-sectors="{{ json_encode($client_sectors) }}"
+        :swad-offices="{{ json_encode($swad_offices) }}"
     />
 </div>
 @endsection

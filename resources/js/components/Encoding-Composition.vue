@@ -8,7 +8,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="last_name">Last Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.client.last_name">
+                            <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.client.last_name" :disabled="ownEncoded">
                             <span style="color:red" v-if="formError['client.last_name']"><span v-html="formError['client.last_name'][0]"></span></span>
                         </div>
                     </div>
@@ -470,7 +470,8 @@
             </div>
             <br>
 
-            <button type="submit" class="btn btn-primary" :disabled="submit" v-if="formType == 'create' || user.user_role == 'Admin' || formData.user_id == user.id">Submit</button>
+            <!-- <button type="submit" class="btn btn-primary" :disabled="submit" v-if="formType == 'create' || user.user_role == 'Admin' || formData.user_id == user.id">Submit</button> -->
+            <button type="submit" class="btn btn-primary" :disabled="submit" >Submit</button>
 
             <div class="alert alert-success alert-dismissible fade show" role="alert" v-if="showEncodedData">
                 <strong>Beneficiaries</strong>
@@ -502,6 +503,7 @@ import cloneDeep from 'lodash/cloneDeep'
             'user',
             'uuid',
             'clientSectors',
+            'swadOffices',
         ],
         data(){
             return {
@@ -740,6 +742,10 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
                     this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
                     this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
+                    let swad_office = this.swadOffices.filter(item => item.id == this.formData.client.psgc.swad_office_id);
+                    if(!isEmpty(swad_office)){
+                        this.formData.client.swad_office_name = swad_office[0].name;
+                    }
                     this.cities = [this.formData.client.psgc];
                     this.brgys = [this.formData.client.psgc];
                     this.formData.client.city = this.formData.client.psgc.city_psgc;
@@ -854,6 +860,9 @@ import cloneDeep from 'lodash/cloneDeep'
                 return this.schoolLevelAmounts().reduce((sum, t) => {
                     return sum += parseFloat(t.total_amount);
                 }, 0);
+            },
+            ownEncoded(){
+                return ((this.formType == 'update' && this.formData.user_id == this.user.id) || this.user.user_role == 'Admin');
             }
         }
     }

@@ -59,6 +59,7 @@ class HomeController extends Controller
         $payouts = Payout::all();
         $user = Auth::user();
         $client_sectors = ClientSector::all();
+        $swad_offices = SwadOffice::all();
         $data = [
             'psgcs' => $psgcs,
             'school_levels' => $school_levels,
@@ -68,7 +69,9 @@ class HomeController extends Controller
             'user' => $user,
             'uuid' => $uuid,
             'client_sectors' => $client_sectors,
+            'swad_offices' => $swad_offices,
         ];
+        // return $data;
         return view('composition', $data);
     }
 
