@@ -8,7 +8,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="last_name">Last Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.client.last_name" :disabled="ownEncoded">
+                            <input type="text" class="form-control" placeholder="Enter Last Name" v-model="formData.client.last_name">
                             <span style="color:red" v-if="formError['client.last_name']"><span v-html="formError['client.last_name'][0]"></span></span>
                         </div>
                     </div>
