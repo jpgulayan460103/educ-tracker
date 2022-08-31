@@ -36,13 +36,13 @@ class BeneficiaryController extends Controller
         );
         if($user->user_role != "Admin"){
             $user_id = $user->id;
-            if($request->showAll == "yes"){
-                $beneficiaries->whereHas("composition", function($q) use ($user){
-                    $q->where("swad_office_id", $user->swad_office_id);
-                });
-            }else{
+            if($request->showEncoded == "yes"){
                 $beneficiaries->whereHas("composition", function($q) use ($user_id){
                     $q->where("user_id", $user_id);
+                });
+            }else{
+                $beneficiaries->whereHas("composition", function($q) use ($user){
+                    $q->where("swad_office_id", $user->swad_office_id);
                 });
             }
         }

@@ -4,6 +4,7 @@
             <legend  class="w-auto">Encoded Beneficiaries</legend>
             <div class="row">
                 <div class="col-md-3">
+                    Search Query
                     <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status'">
                     <!-- <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-else> -->
                     <!-- <select class="form-control" placeholder="Enter School Level" v-model="keyword" v-else>
@@ -18,6 +19,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
+                    Search Category
                     <select class="form-control" placeholder="Search" v-model="type">
                         <option value="control_number">Control Number</option>
                         <option value="beneficiary">Beneficiary Name</option>
@@ -29,18 +31,21 @@
                     </select>
                 </div>
                 <div class="col-md-2">
+                    Search Result
+                    <select class="form-control" placeholder="Search" v-model="showEncoded">
+                        <option value="yes">Your Encoded</option>
+                        <option value="no">All Beneficiaries</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    &nbsp;
                     <div class="d-grid gap-2 d-md-block">
                         <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries">Search</button>
                         <button type="button" class="btn btn-warning btn-block" @click="exportBeneficiaries" :disabled="exporting">Download {{ exportPercentage }}</button>
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" v-model="showAll" true-value="yes" false-value="no">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        Show All Beneficiaries
-                    </label>
-                    </div>
+                    
                 </div>
             </div>
             <br>
@@ -126,7 +131,7 @@ import DatePicker from 'vue2-datepicker';
             return {
                 beneficiaries: [],
                 keyword: "",
-                showAll: "no",
+                showEncoded: "yes",
                 type: "control_number",
                 page: 1,
                 pagination: {
@@ -155,7 +160,7 @@ import DatePicker from 'vue2-datepicker';
                     params: {
                         keyword: this.keyword,
                         type: this.type,
-                        showAll: this.showAll,
+                        showEncoded: this.showEncoded,
                         page,
                     }
                 })
@@ -182,7 +187,7 @@ import DatePicker from 'vue2-datepicker';
                 this.exportData = cloneDeep({
                     keyword: this.keyword,
                     type: this.type,
-                    showAll: this.showAll,
+                    showEncoded: this.showEncoded,
                     export: 1,
                 });
                 this.createExport();
