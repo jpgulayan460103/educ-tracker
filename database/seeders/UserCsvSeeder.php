@@ -33,6 +33,7 @@ class UserCsvSeeder extends Seeder
             $insert_data['middle_name'] = strtoupper($user_data[3]);
             $insert_data['ext_name'] = $user_data[4];
             $insert_data['password'] = "dswd12345";
+            $insert_data['user_role'] = "Encoder";
             $swad_office_name = $user_data[5];
             $office_name = $user_data[6];
 
@@ -47,7 +48,7 @@ class UserCsvSeeder extends Seeder
 
     public function json()
     {
-        $reader = Reader::createFromPath(public_path('/dataseeders/users.csv'), 'r');
+        $reader = Reader::createFromPath(public_path('/dataseeders/users1.csv'), 'r');
         $results = $reader->getRecords();
         $data = array();
         foreach ($results as $key => $row) {
