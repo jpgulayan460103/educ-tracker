@@ -28,6 +28,7 @@ class Client extends Model
         'client_sector_id',
         'sector_id',
         'sector_other_id',
+        'swad_office_id',
     ];
 
     public static function boot()
@@ -100,5 +101,9 @@ class Client extends Model
     public function sector_other()
     {
         return $this->belongsTo(SectorOther::class);
+    }
+    public function swad_office()
+    {
+        return $this->belongsTo(SwadOffice::class);
     }
 }

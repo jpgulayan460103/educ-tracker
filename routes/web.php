@@ -30,12 +30,16 @@ Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLogi
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/change-password', [App\Http\Controllers\HomeController::class, 'changePassword'])->name('changePassword');
 Route::get('/fund-allocation', [App\Http\Controllers\HomeController::class, 'allocations'])->name('allocations');
+Route::get('/import/beneficiaries', [App\Http\Controllers\HomeController::class, 'importBeneficiary']);
 
 
 Route::group(['prefix' => '/data'], function () {
     Route::put('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
     Route::get('/family-composition/{uuid}/uuid', [CompositionController::class, 'showUuid'])->name('family-composition.uuid');
     Route::post('/export/beneficiaries/{type}', [BeneficiaryController::class, 'export'])->name('export.beneficiary');
+    Route::post('/import/beneficiaries/initialize', [BeneficiaryController::class, 'importInitialize'])->name('import.beneficiary.initialize');
+    Route::post('/import/beneficiaries/extract', [BeneficiaryController::class, 'extractImportedData'])->name('import.beneficiary.extract');
+    Route::post('/import/beneficiaries/data', [BeneficiaryController::class, 'importData'])->name('import.beneficiary.data');
     Route::get('/cash-balance', [BeneficiaryController::class, 'cashBalance'])->name('cash-balance');
     Route::resources([
         'family-composition' => CompositionController::class,

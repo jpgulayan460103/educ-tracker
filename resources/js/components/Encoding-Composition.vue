@@ -741,8 +741,8 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData.beneficiaries = res.data.beneficiaries.data;
                     this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
                     this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
-                    this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
-                    let swad_office = this.swadOffices.filter(item => item.id == this.formData.client.psgc.swad_office_id);
+                    // this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
+                    let swad_office = this.swadOffices.filter(item => item.id == this.formData.client.swad_office_id);
                     if(!isEmpty(swad_office)){
                         this.formData.client.swad_office_name = swad_office[0].name;
                     }

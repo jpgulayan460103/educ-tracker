@@ -117,4 +117,9 @@ class HomeController extends Controller
         ];
         return view('allocation', $data);
     }
+
+    public function importBeneficiary(Request $request)
+    {
+        return view('import-beneficiary');
+    }
 }

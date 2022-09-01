@@ -29,6 +29,8 @@ class AddForeignKeys1 extends Migration
             $table->foreign('client_sector_id')->references('id')->on('client_sectors')->onDelete('cascade');;
             $table->foreign('sector_other_id')->references('id')->on('sector_others')->onDelete('cascade');;
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');;
+            $table->foreign('psgc_id')->references('id')->on('psgcs')->onDelete('cascade');;
+            $table->foreign('swad_office_id')->references('id')->on('swad_offices')->onDelete('cascade');;
             $table->index(['last_name', 'first_name', 'middle_name'], 'client_query_index');
         });
         Schema::table('compositions', function (Blueprint $table) {
@@ -70,7 +72,9 @@ class AddForeignKeys1 extends Migration
             $table->dropForeign(['sector_id']);
             $table->dropForeign(['sector_other_id']);
             $table->dropForeign(['user_id']);
+            $table->dropForeign(['psgc_id']);
             $table->dropForeign(['client_sector_id']);
+            $table->dropForeign(['swad_office_id']);
         });
         Schema::table('compositions', function (Blueprint $table) {
             $table->dropForeign(['client_id']);

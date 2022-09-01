@@ -6,6 +6,7 @@ import Dashboard from './Dashboard'
 import Users from './Users'
 import ChangePassword from './ChangePassword'
 import Allocation from './Allocation'
+import ImportBeneficiary from './ImportBeneficiary'
 
 Vue.component('encoding-composition', EncodingComposition);
 Vue.component('encoded-composition', EncodedComposition);
@@ -13,3 +14,4 @@ Vue.component('dashboard', Dashboard);
 Vue.component('users', Users);
 Vue.component('change-password', ChangePassword);
 Vue.component('allocation', Allocation);
+Vue.component('import-beneficiary', ImportBeneficiary);

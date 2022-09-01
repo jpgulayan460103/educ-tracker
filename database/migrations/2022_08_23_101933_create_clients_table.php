@@ -22,7 +22,6 @@ class CreateClientsTable extends Migration
             $table->string('middle_name')->nullable();
             $table->string('ext_name')->nullable();
             $table->string('street_number')->nullable();
-            $table->unsignedBigInteger('psgc_id')->nullable();
             $table->string('mobile_number')->nullable();
             $table->date('birth_date')->nullable();
             $table->integer('age')->nullable();
@@ -30,10 +29,12 @@ class CreateClientsTable extends Migration
             $table->string('occupation')->nullable();
             $table->float('monthly_salary', 15, 2)->nullable();
             $table->string('relationship_beneficiary')->nullable();
+            $table->unsignedBigInteger('psgc_id')->nullable();
             $table->unsignedBigInteger('client_sector_id')->nullable();
             $table->unsignedBigInteger('sector_id')->nullable();
             $table->unsignedBigInteger('sector_other_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('swad_office_id')->nullable();
             $table->timestamps();
             $table->string('uuid')->nullable();
             $table->index('uuid');

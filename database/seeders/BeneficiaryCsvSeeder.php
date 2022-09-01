@@ -7,6 +7,8 @@ use App\Models\BioParent;
 use App\Models\Client;
 use App\Models\Composition;
 use App\Models\Office;
+use App\Models\Payout;
+use App\Models\Psgc;
 use App\Models\SchoolLevel;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -38,8 +40,13 @@ class BeneficiaryCsvSeeder extends Seeder
                 continue;
             }
 
-            $client_name = $user_data[4];
-            $client = Client::where('last_name', $client_name)->first();
+            $client_name = $user_data[5];
+            $payout_date = $user_data[6];
+            $swad_office_name = $user_data[1];
+            $payout = Payout::where('payout_date', $payout_date)->first();
+            $swad_office = SwadOffice::where('name', $swad_office_name)->first();
+            $psgc = Psgc::where('swad_office_id', $swad_office->id)->first();
+            $client = Client::where('last_name', $client_name)->where('swad_office_id', $swad_office->id)->first();
             if($client){
                 $composition = Composition::where('client_id', $client->id)->first();
             }else{
@@ -50,7 +57,8 @@ class BeneficiaryCsvSeeder extends Seeder
                     'ext_name' => '',
                     'full_name' => '',
                     'street_number' => '',
-                    'psgc_id' => 378,
+                    'psgc_id' => $psgc->id,
+                    'swad_office_id' => $swad_office->id,
                     'mobile_number' => '',
                     // 'birth_date' => Carbon::now(),
                     'age' => 0,
@@ -88,16 +96,16 @@ class BeneficiaryCsvSeeder extends Seeder
             
             // $composition->father()->save($father);
             // $composition->mother()->save($mother);
-            $swad_office_name = $user_data[0];
-            $insert_data['last_name'] = $user_data[1];
-            $school_level_name = $user_data[2];
+            $swad_office_name = $user_data[1];
+            $insert_data['last_name'] = $user_data[2];
+            $school_level_name = $user_data[3];
             
 
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
             $school_level = SchoolLevel::where('name', $school_level_name)->first();
             $insert_data['swad_office_id'] = $swad_office->id;
             $insert_data['school_level_id'] = $school_level->id;
-            $insert_data['payout_id'] = 1;
+            $insert_data['payout_id'] = $payout->id;
             $insert_data['composition_id'] = $composition->id;
             $insert_data['status'] = "Claimed";
             $insert_data['amount_granted'] = $school_level->amount;

@@ -55,6 +55,7 @@ class ClientTransformer extends TransformerAbstract
             'sector_id' => $client->sector_id,
             'sector_other_id' => $client->sector_other_id,
             'client_sector_id' => $client->client_sector_id,
+            'swad_office_id' => $client->swad_office_id,
         ];
 
         if($data['birth_date'] == null){
@@ -84,6 +85,12 @@ class ClientTransformer extends TransformerAbstract
     {
         if($client->client_sector){
             return $this->item($client->client_sector, new ClientSectorTransformer);
+        }
+    }
+    public function includeSwadOffice(Client $client)
+    {
+        if($client->swad_office){
+            return $this->item($client->swad_office, new SwadOfficeTransformer);
         }
     }
 }
