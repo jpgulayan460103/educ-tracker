@@ -42,6 +42,7 @@ class BeneficiaryCsvSeeder extends Seeder
 
             $client_name = $user_data[5];
             $payout_date = $user_data[6];
+            $status = $user_data[7];
             $swad_office_name = $user_data[1];
             $payout = Payout::where('payout_date', $payout_date)->first();
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
@@ -57,7 +58,7 @@ class BeneficiaryCsvSeeder extends Seeder
                     'ext_name' => '',
                     'full_name' => '',
                     'street_number' => '',
-                    'psgc_id' => $psgc->id,
+                    // 'psgc_id' => $psgc->id,
                     'swad_office_id' => $swad_office->id,
                     'mobile_number' => '',
                     // 'birth_date' => Carbon::now(),
@@ -66,7 +67,7 @@ class BeneficiaryCsvSeeder extends Seeder
                     'occupation' => '',
                     'monthly_salary' => 0,
                     'relationship_beneficiary' => '',
-                    'sector_id' => 1,
+                    // 'sector_id' => 1,
                 ]);
 
                 $composition = Composition::create([
@@ -107,7 +108,7 @@ class BeneficiaryCsvSeeder extends Seeder
             $insert_data['school_level_id'] = $school_level->id;
             $insert_data['payout_id'] = $payout->id;
             $insert_data['composition_id'] = $composition->id;
-            $insert_data['status'] = "Claimed";
+            $insert_data['status'] = $user_data[7];
             $insert_data['amount_granted'] = $school_level->amount;
             $format = $swad_office->code."-01-";
             $next_control_number = 1;

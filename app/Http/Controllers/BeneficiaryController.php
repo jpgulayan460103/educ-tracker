@@ -319,7 +319,7 @@ class BeneficiaryController extends Controller
                     'ext_name' => '',
                     'full_name' => '',
                     'street_number' => '',
-                    'psgc_id' => $psgc->id,
+                    // 'psgc_id' => $psgc->id,
                     'swad_office_id' => $swad_office->id,
                     'mobile_number' => '',
                     'age' => 0,
@@ -327,7 +327,7 @@ class BeneficiaryController extends Controller
                     'occupation' => '',
                     'monthly_salary' => 0,
                     'relationship_beneficiary' => '',
-                    'sector_id' => 1,
+                    // 'sector_id' => 1,
                 ]);
 
                 $composition = Composition::create([
@@ -347,8 +347,8 @@ class BeneficiaryController extends Controller
             $insert_data['school_level_id'] = $school_level->id;
             $insert_data['payout_id'] = $payout->id;
             $insert_data['composition_id'] = $composition->id;
-            $insert_data['status'] = "Claimed";
-            $insert_data['amount_granted'] = $school_level->amount;
+            $insert_data['status'] = $beneficiary_data[7];
+            $insert_data['amount_granted'] = $beneficiary_data[7] == "Claimed" ? $school_level->amount : 0;
             $format = $swad_office->code."-01-";
             $next_control_number = 1;
             $last_beneficiary = Beneficiary::where('control_number', 'like', "$format%")->orderBy('id','desc')->first();

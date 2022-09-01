@@ -362,6 +362,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
+
                         <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
                             <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id" >
@@ -374,6 +375,13 @@
                             <input class="form-control" placeholder="Enter School Level" :value="formData.beneficiaries[key].school_level.name" readonly />
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
                         </div>
+                        <!-- <div class="form-group">
+                            <label for="school_level_id">School Level:</label>
+                            <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id" >
+                                <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
+                            </select>
+                            <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
+                        </div> -->
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">
@@ -554,6 +562,7 @@ import cloneDeep from 'lodash/cloneDeep'
         methods: {
             formSubmit: debounce(function(){
                 this.formData.school_level_amounts = this.schoolLevelAmounts();
+                this.formData.totalSchoolLevelAmounts = this.totalSchoolLevelAmounts;
                 for (let index = 0; index < this.formData.beneficiaries.length; index++) {
                     this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
                     this.formData.beneficiaries[index].payout_id = this.formData.payout_id;
@@ -646,6 +655,7 @@ import cloneDeep from 'lodash/cloneDeep'
                         mother: {},
                         beneficiaries: [],
                     }
+                    window.close();
                 })
                 .catch(err => {
                     this.submit = false;
@@ -740,21 +750,28 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData = res.data;
                     this.formData.beneficiaries = res.data.beneficiaries.data;
                     this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
-                    this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
+                    
                     // this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
                     let swad_office = this.swadOffices.filter(item => item.id == this.formData.client.swad_office_id);
                     if(!isEmpty(swad_office)){
                         this.formData.client.swad_office_name = swad_office[0].name;
                     }
-                    this.cities = [this.formData.client.psgc];
-                    this.brgys = [this.formData.client.psgc];
-                    this.formData.client.city = this.formData.client.psgc.city_psgc;
-                    this.formData.client.province = this.formData.client.psgc.province_psgc;
+                    if(!isEmpty(this.formData.client.psgc)){
+                        this.formData.client.brgy = this.formData.client.psgc.brgy_psgc;
+                        this.cities = [this.formData.client.psgc];
+                        this.brgys = [this.formData.client.psgc];
+                        this.formData.client.city = this.formData.client.psgc.city_psgc;
+                        this.formData.client.province = this.formData.client.psgc.province_psgc;
+                    }
                     if(isEmpty(this.formData.father)){
-                        this.formData.father = {};
+                        this.formData.father = {
+                            has_middle_name: true,
+                        };
                     }
                     if(isEmpty(this.formData.mother)){
-                        this.formData.mother = {};
+                        this.formData.mother = {
+                            has_middle_name: true,
+                        };
                     }
                     this.updateCashBalance();
                 })

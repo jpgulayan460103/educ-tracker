@@ -171,8 +171,18 @@ class CompositionController extends Controller
             Client::findOrFail($composition->client_id)->update($form_data['client']);
             $beneficiaries = [];
             $this->updateBeneficiaries($id);
-            BioParent::find($form_data['father']['id'])->update($form_data['father']);
-            BioParent::find($form_data['mother']['id'])->update($form_data['mother']);
+            if(isset($form_data['father']) && isset($form_data['father']['id'])){
+                $father = BioParent::find($form_data['father']['id']);
+                if($father){
+                    $father->update($form_data['father']);
+                }
+            }
+            if(isset($form_data['mother']) && isset($form_data['mother']['id'])){
+                $mother = BioParent::find($form_data['mother']['id']);
+                if($mother){
+                    $mother->update($form_data['mother']);
+                }
+            }
             DB::commit();
             return $composition;
         } catch (\Throwable $th) {

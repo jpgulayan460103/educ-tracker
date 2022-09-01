@@ -86,9 +86,9 @@
                                 <td>{{ beneficiary.composition && beneficiary.composition.client && beneficiary.composition.client.full_name }}</td>
                                 <td>{{ beneficiary.full_name }}</td>
                                 <td>
-                                    <span>{{ beneficiary.composition.client.psgc.brgy_name }}</span>,
-                                    <span>{{ beneficiary.composition.client.psgc.city_name }}</span>,
-                                    <span>{{ beneficiary.composition.client.psgc.province_name }}</span>
+                                    <span>{{ beneficiary.composition.client.psgc ? beneficiary.composition.client.psgc.brgy_name : "" }}</span>,
+                                    <span>{{ beneficiary.composition.client.psgc ? beneficiary.composition.client.psgc.city_name : "" }}</span>,
+                                    <span>{{ beneficiary.composition.client.psgc ? beneficiary.composition.client.psgc.province_name : "" }}</span>
                                 </td>
                                 <td>{{ beneficiary.school_level.name }}</td>
                                 <td>{{ beneficiary.status == "Claimed" ? beneficiary.school_level.amount : 0 }}</td>

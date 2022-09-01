@@ -104,32 +104,68 @@ class CompositionRequest extends FormRequest
             if(request('school_level_amounts') == array()){
                 $validator->errors()->add("school_level_amounts", "No Amounts .");
             }else{
-                $school_level_amounts = request('school_level_amounts');
-                foreach ($school_level_amounts as $key => $school_level_amount) {
-                    if($school_level_amount['total_amount'] == 0){
-                        continue;
-                    }
-                    $school_level_id = $school_level_amount['id'];
-                    $total_amount = $school_level_amount['total_amount'];
-                    $payout_id = request('payout_id');
-                    $swad_office_id = request('client.swad_office_id');
-                    $amount_granted = Beneficiary::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('amount_granted');
-                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('allocated_amount');
-                    // $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
-                    // $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
+                // $school_level_amounts = request('school_level_amounts');
+                // foreach ($school_level_amounts as $key => $school_level_amount) {
+                //     if($school_level_amount['total_amount'] == 0){
+                //         continue;
+                //     }
+                //     $school_level_id = $school_level_amount['id'];
+                //     $total_amount = $school_level_amount['total_amount'];
+                //     $payout_id = request('payout_id');
+                //     $swad_office_id = request('client.swad_office_id');
+                //     $amount_granted = Beneficiary::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('amount_granted');
+                //     $allocated_amount = FundAllocation::where('payout_id', $payout_id)->where('swad_office_id', $swad_office_id)->sum('allocated_amount');
+                //     // $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
+                //     // $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
 
-                    $remaining = $allocated_amount - $amount_granted;
-                    // dd([
-                    //     'allocated_amount' => $allocated_amount,
-                    //     'amount_granted' => $amount_granted,
-                    //     'total_amount' => $total_amount,
-                    //     'remaining' => $remaining,
-                    //     $remaining < $total_amount
-                    // ]);
-                    if($remaining < $total_amount || $remaining == 0){
-                        $validator->errors()->add("school_level_amount", "Not enough allocation.");
-                    }
+                //     $remaining = $allocated_amount - $amount_granted;
+                //     // dd([
+                //     //     'allocated_amount' => $allocated_amount,
+                //     //     'amount_granted' => $amount_granted,
+                //     //     'total_amount' => $total_amount,
+                //     //     'remaining' => $remaining,
+                //     //     $remaining < $total_amount
+                //     // ]);
+                //     if($remaining < $total_amount || $remaining == 0){
+                //         $validator->errors()->add("school_level_amount", "Not enough allocation.");
+                //     }
 
+                // }
+                
+                $total_amount = request('totalSchoolLevelAmounts');
+                $payout_id = request('payout_id');
+                $swad_office_id = request('client.swad_office_id');
+                $beneficiaries = collect(request('beneficiaries'));
+                $beneficiary_ids = $beneficiaries->pluck('id')->toArray();
+                if(request()->has('id')){
+                    $amount_granted = Beneficiary::where('payout_id', $payout_id)
+                        ->where('swad_office_id', $swad_office_id)
+                        ->whereNotIn('id', $beneficiary_ids)
+                        ->sum('amount_granted');
+                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)
+                        ->where('swad_office_id', $swad_office_id)
+                        ->sum('allocated_amount');
+                }else{
+                    $amount_granted = Beneficiary::where('payout_id', $payout_id)
+                        ->where('swad_office_id', $swad_office_id)
+                        ->sum('amount_granted');
+                    $allocated_amount = FundAllocation::where('payout_id', $payout_id)
+                        ->where('swad_office_id', $swad_office_id)
+                        ->sum('allocated_amount');
+                }
+                // $amount_granted = Beneficiary::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('amount_granted');
+                // $allocated_amount = FundAllocation::where('school_level_id', $school_level_id)->where('payout_id', $payout_id)->sum('allocated_amount');
+
+                $remaining = $allocated_amount - $amount_granted - $total_amount;
+                // dd([
+                //     'allocated_amount' => $allocated_amount,
+                //     'amount_granted' => $amount_granted,
+                //     'total_amount' => $total_amount,
+                //     'remaining' => $remaining,
+                //     $remaining < 0 && $total_amount != 0
+                // ]);
+                if($remaining < 0 && $total_amount != 0){
+                    $validator->errors()->add("school_level_amount", "Not enough allocation.");
                 }
             }
         }
