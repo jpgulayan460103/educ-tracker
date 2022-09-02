@@ -70,7 +70,12 @@ class BeneficiaryController extends Controller
                     break;
                 case 'client':
                     $beneficiaries->whereHas("composition.client", function($q) use ($keyword){
-                        $q->where("full_name", 'like', "%$keyword%");
+                        $keywords = explode(" ", $keyword);
+                        $q->where(function ($query) use ($keywords) {
+                            foreach ($keywords as $keyword) {
+                                $query->where("full_name", 'like', "%$keyword%");
+                            }
+                        });
                     });
                     break;
                 case 'father':
@@ -84,7 +89,12 @@ class BeneficiaryController extends Controller
                     });
                     break;
                 case 'beneficiary':
-                    $beneficiaries->where("full_name", 'like', "%$keyword%");
+                    $keywords = explode(" ", $keyword);
+                    $beneficiaries->where(function ($query) use ($keywords) {
+                        foreach ($keywords as $keyword) {
+                            $query->where("full_name", 'like', "%$keyword%");
+                        }
+                    });
                     break;
                 
                 default:
