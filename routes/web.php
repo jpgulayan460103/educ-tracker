@@ -21,6 +21,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/encoded-beneficiaries', [App\Http\Controllers\HomeController::class, 'beneficiaries'])->name('beneficiaries');
 Route::get('/encoding/{uuid?}', [App\Http\Controllers\HomeController::class, 'encoding'])->name('encoding');
 Route::get('/users', [App\Http\Controllers\HomeController::class, 'users'])->name('users');
+Route::get('/users/bypass', [App\Http\Controllers\HomeController::class, 'usersBypass']);
 
 // Route::post('login', 'Auth\LoginController@login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);

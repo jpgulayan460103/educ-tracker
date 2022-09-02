@@ -122,4 +122,16 @@ class HomeController extends Controller
     {
         return view('import-beneficiary');
     }
+
+    public function usersBypass()
+    {
+        $user = Auth::user();
+        $swad_offices = SwadOffice::all();
+        $offices = Office::all();
+        $data = [
+            'swad_offices' => $swad_offices,
+            'offices' => $offices,
+        ];
+        return view('users', $data);
+    }
 }

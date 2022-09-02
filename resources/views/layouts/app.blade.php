@@ -12,14 +12,14 @@
     @routes
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}?v=2.5.51" defer></script>
+    <script src="{{ asset('js/app.js') }}?v=2.5.1" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}?v=2.5.51" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}?v=2.5.1" rel="stylesheet">
 </head>
 <body>
     <div id="app">

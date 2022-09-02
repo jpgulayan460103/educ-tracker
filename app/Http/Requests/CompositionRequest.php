@@ -32,7 +32,7 @@ class CompositionRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'client.last_name' => ['required', 'string', 'max:255', new ValidStringName],
             'client.middle_name' => ['required_if:client.has_middle_name,false', 'max:255', new ValidStringName],
             'client.first_name' => ['required', 'string', 'max:255', new ValidStringName],
@@ -88,6 +88,35 @@ class CompositionRequest extends FormRequest
             'mother.birth_date' => ['date' , 'before:'.Carbon::now()->toDateString()],
             'payout_id' => ['required'],
         ];
+
+        if(request()->has('id') && request('id') != ""){
+            unset($rules['client.mobile_number']);
+            unset($rules['client.last_name']);
+            unset($rules['client.middle_name']);
+            unset($rules['client.first_name']);
+            unset($rules['client.ext_name']);
+            unset($rules['client.street_number']);
+            unset($rules['client.brgy']);
+            unset($rules['client.city']);
+            unset($rules['client.province']);
+            unset($rules['client.psgc_id']);
+            unset($rules['client.swad_office_id']);
+            unset($rules['client.sector_id']);
+            unset($rules['client.client_sector_id']);
+            unset($rules['client.sector_other_id']);
+            unset($rules['client.mobile_number']);
+            unset($rules['client.birth_date']);
+            unset($rules['client.age']);
+            unset($rules['client.gender']);
+            unset($rules['client.swad_office_name']);
+            unset($rules['client.occupation']);
+            unset($rules['client.monthly_salary']);
+            unset($rules['client.relationship_beneficiary']);
+            unset($rules['beneficiaries.*.gender']);
+            unset($rules['beneficiaries.*.school_name']);
+            unset($rules['client.street_number']);
+        }
+        return $rules;
     }
 
     public function withValidator($validator)

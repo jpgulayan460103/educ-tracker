@@ -90,8 +90,8 @@
                                     <span>{{ beneficiary.composition.client.psgc ? beneficiary.composition.client.psgc.city_name : "" }}</span>,
                                     <span>{{ beneficiary.composition.client.psgc ? beneficiary.composition.client.psgc.province_name : "" }}</span>
                                 </td>
-                                <td>{{ beneficiary.school_level.name }}</td>
-                                <td>{{ beneficiary.status == "Claimed" ? beneficiary.school_level.amount : 0 }}</td>
+                                <td>{{ beneficiary.school_level ? beneficiary.school_level.name : "" }}</td>
+                                <td>{{ beneficiary.status == "Claimed" && beneficiary.school_level ? beneficiary.school_level.amount : 0 }}</td>
                                 <td>{{ beneficiary.status }}</td>
                                 <td>{{ beneficiary.payout ? beneficiary.payout.payout_date : "" }}</td>
                                 <td>{{ beneficiary.remarks }}</td>

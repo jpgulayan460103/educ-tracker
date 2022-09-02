@@ -305,6 +305,8 @@ class BeneficiaryController extends Controller
         $columns[] = "UUID";
         // $writer->insertOne($columns);
         foreach ($beneficiaries as $key => $beneficiary_data) {
+
+            $insert_data = [];
             $number = $beneficiary_data[0];
             $payout_date = $beneficiary_data[1];
             $swad_office_name = $beneficiary_data[2];
@@ -336,6 +338,7 @@ class BeneficiaryController extends Controller
             $client_sector_id = null;
             $sector_id = null;
             $sector_other_id = null;
+            $psgc_id = null;
 
             $client_sector = ClientSector::where('name' , trim($sector_name))->first();
             $sector_other = SectorOther::where('name' , trim($sector_other_name))->first();
@@ -351,10 +354,16 @@ class BeneficiaryController extends Controller
                 $sector_other_id = $sector_other->id;
             }
 
+
             
             $payout = Payout::where('payout_date', $payout_date)->first();
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
-            $psgc = Psgc::where('swad_office_id', $swad_office->id)->first();
+            if($municipality != ""){
+                $psgc = Psgc::where('swad_office_id', $swad_office->id)->where('city_name', $municipality)->first();
+                if($psgc){
+                    $psgc_id = $psgc->id;
+                }
+            }
             $client = Client::where('last_name', $client_name)->where('swad_office_id', $swad_office->id)->first();
             if($client && trim($client_name) != "" && $client_last_name == ""){
                 $composition = Composition::where('client_id', $client->id)->first();
@@ -364,13 +373,13 @@ class BeneficiaryController extends Controller
                     $client = Client::create([
                         'last_name' => $client_last_name,
                         'first_name' => $client_first_name,
-                        'middle_name' => $client_first_name,
+                        'middle_name' => $client_middle_name,
                         'ext_name' => $client_ext_name,
                         'full_name' => '',
                         'street_number' => $street_number,
-                        // 'psgc_id' => $psgc->id,
+                        'psgc_id' => $psgc_id,
                         'swad_office_id' => $swad_office->id,
-                        'mobile_number' => str_pad($mobile_number, 11, "0", STR_PAD_LEFT),
+                        // 'mobile_number' => str_pad($mobile_number, 11, "0", STR_PAD_LEFT),
                         'age' => 0,
                         'gender' => '',
                         'occupation' => '',
