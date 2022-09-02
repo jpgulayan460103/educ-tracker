@@ -363,7 +363,7 @@
                     </div>
                     <div class="col-md-2">
 
-                        <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
+                        <!-- <div class="form-group"  v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed' || beneficiary.id == null">
                             <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id" >
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
@@ -374,14 +374,14 @@
                             <label for="school_level_id">School Level:</label>
                             <input class="form-control" placeholder="Enter School Level" :value="formData.beneficiaries[key].school_level.name" readonly />
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
-                        </div>
-                        <!-- <div class="form-group">
+                        </div> -->
+                        <div class="form-group">
                             <label for="school_level_id">School Level:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].school_level_id" >
                                 <option v-for="(schoolLevel, key) in schoolLevels" :key="key" :value="schoolLevel.id">{{ schoolLevel.name }}</option>
                             </select>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.school_level_id`]">{{ formError[`beneficiaries.${key}.school_level_id`][0] }}</span>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">
@@ -392,7 +392,8 @@
                     </div>
                 </div>
                 <div class="row gx-2">
-                    <div class="col-md-2" v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'">
+                    <div class="col-md-2">
+                    <!-- <div class="col-md-2" v-if="formType == 'create' || user.user_role == 'Admin' || formData.beneficiaries[key].status != 'Claimed'"> -->
                         <div class="form-group" >
                             <label for="status">Claim Status:</label>
                             <select class="form-control" placeholder="Enter School Level" v-model="formData.beneficiaries[key].status">
@@ -404,13 +405,13 @@
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.status`]">{{ formError[`beneficiaries.${key}.status`][0] }}</span>
                         </div>
                     </div>
-                    <div class="col-md-2" v-else>
+                    <!-- <div class="col-md-2" v-else>
                         <div class="form-group" >
                             <label for="status">Claim Status:</label>
                             <input class="form-control" placeholder="Enter School Level" :value="formData.beneficiaries[key].status" readonly/>
                             <span style="color:red" v-if="formError[`beneficiaries.${key}.status`]">{{ formError[`beneficiaries.${key}.status`][0] }}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-2">
                         <!-- <div class="form-group">
                             <label for="payout_id">Status Date:</label>
@@ -462,6 +463,8 @@
                         <span style="color:red" v-if="formError[`school_level_amount.${key}`]">{{ formError[`school_level_amount.${key}`][0] }}</span>
                     </div>
                 </div> -->
+            </div>
+            <div class="row gx-2">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Total Amount:</label>
