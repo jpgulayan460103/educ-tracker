@@ -25,6 +25,7 @@ class Client extends Model
         'occupation',
         'monthly_salary',
         'relationship_beneficiary',
+        'remarks',
         'client_sector_id',
         'sector_id',
         'sector_other_id',

@@ -48,7 +48,7 @@ class BeneficiaryCsvSeeder extends Seeder
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
             $psgc = Psgc::where('swad_office_id', $swad_office->id)->first();
             $client = Client::where('last_name', $client_name)->where('swad_office_id', $swad_office->id)->first();
-            if($client){
+            if($client && trim($client_name) != ""){
                 $composition = Composition::where('client_id', $client->id)->first();
             }else{
                 $client = Client::create([

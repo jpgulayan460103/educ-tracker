@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Beneficiary;
 use App\Models\Client;
+use App\Models\ClientSector;
 use App\Models\Composition;
 use App\Models\FundAllocation;
 use App\Models\Payout;
 use App\Models\Psgc;
 use App\Models\SchoolLevel;
+use App\Models\Sector;
+use App\Models\SectorOther;
 use App\Models\SwadOffice;
 use App\Transformers\BeneficiaryTransformer;
 use Carbon\Carbon;
@@ -302,33 +305,104 @@ class BeneficiaryController extends Controller
         $columns[] = "UUID";
         // $writer->insertOne($columns);
         foreach ($beneficiaries as $key => $beneficiary_data) {
-            $client_name = $beneficiary_data[5];
-            $payout_date = $beneficiary_data[6];
-            $swad_office_name = $beneficiary_data[1];
+            $number = $beneficiary_data[0];
+            $payout_date = $beneficiary_data[1];
+            $swad_office_name = $beneficiary_data[2];
+            $client_name = $beneficiary_data[4];
+            if(trim($client_name) == ""){
+                $client_name = $beneficiary_data[5];
+            }
+            $beneficiary_name = $beneficiary_data[5];
+            $relationship_beneficiary = $beneficiary_data[6];
+            $street_number = $beneficiary_data[7];
+            $municipality = $beneficiary_data[8];
+            $school_level_name = $beneficiary_data[9];
+            $sector_name = $beneficiary_data[10];
+            $sector_other_name = $beneficiary_data[11];
+            $status = $beneficiary_data[12];
+            $remarks = $beneficiary_data[13];
+            $amount_granted = $beneficiary_data[14];
+            $beneficiary_last_name = $beneficiary_data[15];
+            $beneficiary_first_name = $beneficiary_data[16];
+            $beneficiary_middle_name = $beneficiary_data[17];
+            $beneficiary_ext_name = $beneficiary_data[18];
+
+            $client_last_name = $beneficiary_data[19];
+            $client_first_name = $beneficiary_data[20];
+            $client_middle_name = $beneficiary_data[21];
+            $client_ext_name = $beneficiary_data[22];
+            $mobile_number = $beneficiary_data[23];
+
+            $client_sector_id = null;
+            $sector_id = null;
+            $sector_other_id = null;
+
+            $client_sector = ClientSector::where('name' , trim($sector_name))->first();
+            $sector_other = SectorOther::where('name' , trim($sector_other_name))->first();
+            if($client_sector){
+                $client_sector_id = $client_sector->id;
+            }else{
+                $sector = Sector::where('name' , trim($sector_name))->first();
+                if($sector){
+                    $sector_id = $sector->id;
+                }
+            }
+            if($sector_other){
+                $sector_other_id = $sector_other->id;
+            }
+
+            
             $payout = Payout::where('payout_date', $payout_date)->first();
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
             $psgc = Psgc::where('swad_office_id', $swad_office->id)->first();
             $client = Client::where('last_name', $client_name)->where('swad_office_id', $swad_office->id)->first();
-            if($client){
+            if($client && trim($client_name) != "" && $client_last_name == ""){
                 $composition = Composition::where('client_id', $client->id)->first();
             }else{
-                $client = Client::create([
-                    'last_name' => $client_name,
-                    'first_name' => '',
-                    'middle_name' => '',
-                    'ext_name' => '',
-                    'full_name' => '',
-                    'street_number' => '',
-                    // 'psgc_id' => $psgc->id,
-                    'swad_office_id' => $swad_office->id,
-                    'mobile_number' => '',
-                    'age' => 0,
-                    'gender' => '',
-                    'occupation' => '',
-                    'monthly_salary' => 0,
-                    'relationship_beneficiary' => '',
-                    // 'sector_id' => 1,
-                ]);
+
+                if($client_name == "" && $client_last_name != ""){
+                    $client = Client::create([
+                        'last_name' => $client_last_name,
+                        'first_name' => $client_first_name,
+                        'middle_name' => $client_first_name,
+                        'ext_name' => $client_ext_name,
+                        'full_name' => '',
+                        'street_number' => $street_number,
+                        // 'psgc_id' => $psgc->id,
+                        'swad_office_id' => $swad_office->id,
+                        'mobile_number' => str_pad($mobile_number, 11, "0", STR_PAD_LEFT),
+                        'age' => 0,
+                        'gender' => '',
+                        'occupation' => '',
+                        'monthly_salary' => 0,
+                        'relationship_beneficiary' => $relationship_beneficiary,
+                        'sector_id' => $sector_id,
+                        'client_sector_id' => $client_sector_id,
+                        'sector_other_id' => $sector_other_id,
+                        'remarks' => $remarks,
+                    ]);
+                }else{
+                    $client = Client::create([
+                        'last_name' => $client_name,
+                        'first_name' => '',
+                        'middle_name' => '',
+                        'ext_name' => '',
+                        'full_name' => '',
+                        'street_number' => $street_number,
+                        // 'psgc_id' => $psgc->id,
+                        'swad_office_id' => $swad_office->id,
+                        'mobile_number' => '',
+                        'age' => 0,
+                        'gender' => '',
+                        'occupation' => '',
+                        'monthly_salary' => 0,
+                        'relationship_beneficiary' => $relationship_beneficiary,
+                        'sector_id' => $sector_id,
+                        'client_sector_id' => $client_sector_id,
+                        'sector_other_id' => $sector_other_id,
+                        'remarks' => $remarks,
+                    ]);
+                }
 
                 $composition = Composition::create([
                     'client_id' => $client->id,
@@ -336,19 +410,26 @@ class BeneficiaryController extends Controller
                 ]);
             }
 
-            $swad_office_name = $beneficiary_data[1];
-            $insert_data['last_name'] = $beneficiary_data[2];
-            $school_level_name = $beneficiary_data[3];
-            
-
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
             $school_level = SchoolLevel::where('name', $school_level_name)->first();
             $insert_data['swad_office_id'] = $swad_office->id;
-            $insert_data['school_level_id'] = $school_level->id;
-            $insert_data['payout_id'] = $payout->id;
+            if($school_level){
+                $insert_data['school_level_id'] = $school_level->id;
+            }
+            if($payout){
+                $insert_data['payout_id'] = $payout->id;
+            }
             $insert_data['composition_id'] = $composition->id;
-            $insert_data['status'] = $beneficiary_data[7];
-            $insert_data['amount_granted'] = $beneficiary_data[7] == "Claimed" ? $school_level->amount : 0;
+            if($beneficiary_name != ""){
+                $insert_data['last_name'] = $beneficiary_name;
+            }else{
+                $insert_data['last_name'] = $beneficiary_last_name;
+                $insert_data['first_name'] = $beneficiary_first_name;
+                $insert_data['middle_name'] = $beneficiary_middle_name;
+                $insert_data['ext_name'] = $beneficiary_ext_name;
+            }
+            $insert_data['status'] = $status;
+            $insert_data['amount_granted'] = $status == "Claimed" ? $school_level->amount : 0;
             $format = $swad_office->code."-01-";
             $next_control_number = 1;
             $last_beneficiary = Beneficiary::where('control_number', 'like', "$format%")->orderBy('id','desc')->first();

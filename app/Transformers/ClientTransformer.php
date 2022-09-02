@@ -49,6 +49,7 @@ class ClientTransformer extends TransformerAbstract
             'birth_date' => $client->birth_date,
             'age' => $client->age,
             'gender' => $client->gender,
+            'remarks' => $client->remarks,
             'occupation' => $client->occupation,
             'monthly_salary' => $client->monthly_salary,
             'relationship_beneficiary' => $client->relationship_beneficiary,

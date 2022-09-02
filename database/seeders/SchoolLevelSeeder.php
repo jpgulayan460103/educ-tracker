@@ -19,11 +19,11 @@ class SchoolLevelSeeder extends Seeder
             'amount' => 1000,            
         ]);
         SchoolLevel::create([
-            'name' => 'Junior High',
+            'name' => 'High School',
             'amount' => 2000,            
         ]);
         SchoolLevel::create([
-            'name' => 'Senior High',
+            'name' => 'Senior High School',
             'amount' => 3000,            
         ]);
         SchoolLevel::create([
