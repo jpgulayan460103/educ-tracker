@@ -333,7 +333,9 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                     if(isEmpty(swadReport)){
                         total_amount_granted = 0;
                     }else{
-                        total_amount_granted = swadReport[0].sum_amount_granted;
+                        total_amount_granted = swadReport.reduce((sum, t) => {
+                            return sum += parseFloat(t.sum_amount_granted);
+                        }, 0);;
                     }
                 }
 
