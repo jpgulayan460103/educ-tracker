@@ -115,6 +115,8 @@ class CompositionRequest extends FormRequest
             unset($rules['beneficiaries.*.gender']);
             unset($rules['beneficiaries.*.school_name']);
             unset($rules['client.street_number']);
+            unset($rules['father.birth_date']);
+            unset($rules['mother.birth_date']);
         }
         return $rules;
     }
