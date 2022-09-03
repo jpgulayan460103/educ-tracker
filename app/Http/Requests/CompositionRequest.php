@@ -96,11 +96,11 @@ class CompositionRequest extends FormRequest
             unset($rules['client.first_name']);
             unset($rules['client.ext_name']);
             unset($rules['client.street_number']);
-            unset($rules['client.brgy']);
-            unset($rules['client.city']);
-            unset($rules['client.province']);
-            unset($rules['client.psgc_id']);
-            unset($rules['client.swad_office_id']);
+            // unset($rules['client.brgy']);
+            // unset($rules['client.city']);
+            // unset($rules['client.province']);
+            // unset($rules['client.psgc_id']);
+            // unset($rules['client.swad_office_id']);
             unset($rules['client.sector_id']);
             unset($rules['client.client_sector_id']);
             unset($rules['client.sector_other_id']);

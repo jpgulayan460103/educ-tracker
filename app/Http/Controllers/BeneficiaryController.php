@@ -522,11 +522,11 @@ class BeneficiaryController extends Controller
                     $export[] = "";
                 }
                 $export[] = $beneficiary['full_name'];
-                $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";
+                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";
                 $export[] = $beneficiary['school_level']['name'];
                 $export[] = $beneficiary['amount_granted'];
                 $export[] = $beneficiary['status'];
-                $export[] = $beneficiary['payout']['payout_date'];
+                $export[] = isset($beneficiary['payout']) ? $beneficiary['payout']['payout_date'] : "";
                 $export[] = $beneficiary['remarks'];
                 $export[] = isset($beneficiary['composition']['father']) ? $beneficiary['composition']['father']['full_name'] : "";
                 $export[] = isset($beneficiary['composition']['mother']) ? $beneficiary['composition']['mother']['full_name'] : "";
