@@ -589,6 +589,28 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData.beneficiaries[index].swad_office_id = this.formData.client.swad_office_id;
                     this.formData.beneficiaries[index].payout_id = this.formData.payout_id;
                 }
+                if(this.noFather){
+                    this.formData.father = {
+                        has_middle_name: true,
+                        no_data: true,
+                    }
+                }else{
+                    this.formData.father = {
+                        ...this.formData.father,
+                        no_data: false,
+                    }
+                }
+                if(this.noMother){
+                    this.formData.mother = {
+                        has_middle_name: true,
+                        no_data: true,
+                    }
+                }else{
+                    this.formData.mother = {
+                        ...this.formData.mother,
+                        no_data: false,
+                    }
+                }
                 if(this.formType == "create"){
                     this.createComposition();
                 }else{

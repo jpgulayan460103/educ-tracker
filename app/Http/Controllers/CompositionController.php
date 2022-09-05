@@ -83,8 +83,12 @@ class CompositionController extends Controller
                 'user_id' => $user->id
             ]);
             $composition->beneficiaries()->saveMany($beneficiaries);
-            $composition->father()->save($father);
-            $composition->mother()->save($mother);
+            if(!$form_data['father']['no_data']){
+                $composition->father()->save($father);
+            }
+            if(!$form_data['mother']['no_data']){
+                $composition->mother()->save($mother);
+            }
             DB::commit();
             return fractal($composition, new CompositionTransformer)->parseIncludes('
                 beneficiaries,
