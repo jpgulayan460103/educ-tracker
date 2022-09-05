@@ -1,58 +1,40 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-2">
+            <div class="col-md-2">
                 <select class="form-control" v-model="swad_office_id" placeholder="SWAD OFFICE">
                     <option value="">All SWAD Office</option>
                     <option v-for="(swadOffice, key) in allSwadOffices" :key="key" :value="swadOffice.id">{{ swadOffice.name }}</option>
                 </select>
             </div>
-            <div class="col-2">
+            <div class="col-md-2">
                 <select class="form-control" v-model="payout_id" placeholder="PAYOUT DATE">
                     <option value="">All Payout Date</option>
                     <option v-for="(payout, key) in allPayouts" :key="key" :value="payout.id">{{ payout.payout_date }}</option>
                 </select>
             </div>
-            <div class="col-2">
+            <div class="col-md-2">
+                <select class="form-control" v-model="by" placeholder="PAYOUT DATE">
+                    <option value="swad">SWAD Office</option>
+                    <option value="district">SWAD Office with District</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <button class="btn btn-primary" type="button" @click="filterDashboard">View</button>
             </div>
         </div>
         <br>
         <br>
         <div class="table-responsive">
-            <!-- <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th style="text-align: center;" rowspan="2">Education Level</th>
-                        <th style="text-align: center;" v-for="swadOffice in swadOffices" :key="swadOffice.key" colspan="2">{{ swadOffice.name }}</th>
-                        <th style="text-align: center;" colspan="2">Grand Total</th>
-                    </tr>
-                    <tr>
-                        <th style="text-align: center;" v-for="(tableHeader, key) in tableHeaders" :key="key">{{ tableHeader.label }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(schoolLevel, key) in schoolLevels">
-                        <td>{{ schoolLevel.name }}</td>
-                        <td v-for="(tableHeader, key) in tableHeaders" :key="key" :class="tableHeader.prop">{{ extractData(tableHeader.prop, tableHeader.swad_office_id, tableHeader.format, schoolLevel.id) }}</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Grand Total</th>
-                        <th v-for="(tableHeader, key) in tableHeaders" :key="key" :class="tableHeader.prop">{{ totalData(tableHeader.prop, tableHeader.swad_office_id, tableHeader.format) }}</th>
-                    </tr>
-                </tfoot>
-            </table> -->
-
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th style="text-align: center;" rowspan="2">SWAD Office</th>
-                        <th style="text-align: center;" rowspan="2">Available Cash Balance</th>
+                        <th style="text-align: center;" rowspan="2" v-if="by == 'district'">District</th>
+                        <th style="text-align: center;" rowspan="2" v-else>Available Cash Balance</th>
                         <th style="text-align: center;" v-for="schoolLevel in schoolLevels" :key="schoolLevel.key" colspan="2">{{ schoolLevel.name }}</th>
                         <th style="text-align: center;" colspan="2">Grand Total</th>
-                        <th style="text-align: center;" rowspan="2">Balance</th>
+                        <th style="text-align: center;" rowspan="2" v-if="by == 'swad'">Balance</th>
                     </tr>
                     <tr>
                         <th style="text-align: center;" v-for="(tableHeader, key) in tableHeaders" :key="key">{{ tableHeader.label }}</th>
@@ -60,18 +42,20 @@
                 </thead>
                 <tbody>
                     <tr v-for="(swadOffice, key) in swadOffices">
-                        <td>{{ swadOffice.name }}</td>
-                        <td style="text-align: right;">{{ extractCashBalance(swadOffice.id) }}</td>
-                        <td v-for="(tableHeader, key) in tableHeaders" :key="key" :class="tableHeader.prop">{{ extractData(tableHeader.prop, tableHeader.school_level_id, tableHeader.format, swadOffice.id) }}</td>
-                        <th style="text-align: right;">{{ calculateBalance(swadOffice.id) }}</th>
+                        <td style="text-align: center;">{{ swadOffice.name }}</td>
+                        <td style="text-align: center;" v-if="by == 'district'">{{ swadOffice.district }}</td>
+                        <td style="text-align: right;" v-else>{{ extractCashBalance(swadOffice.id) }}</td>
+                        <td v-for="(tableHeader, key) in tableHeaders" :key="key" :class="tableHeader.prop">{{ extractData(tableHeader.prop, tableHeader.school_level_id, tableHeader.format, swadOffice.id, swadOffice.district) }}</td>
+                        <th style="text-align: right;" v-if="by == 'swad'">{{ calculateBalance(swadOffice.id) }}</th>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th>Grand Total</th>
-                        <td style="text-align: right;">{{ extractCashBalance() }}</td>
+                        <td style="text-align: center;" v-if="by == 'district'"></td>
+                        <td style="text-align: right;"  v-else>{{ extractCashBalance() }}</td>
                         <th v-for="(tableHeader, key) in tableHeaders" :key="key" :class="tableHeader.prop">{{ totalData(tableHeader.prop, tableHeader.school_level_id, tableHeader.format) }}</th>
-                        <th style="text-align: right;">{{ calculateBalance() }}</th>
+                        <th style="text-align: right;" v-if="by == 'swad'">{{ calculateBalance() }}</th>
                     </tr>
                 </tfoot>
             </table>
@@ -97,6 +81,7 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                 payout_id: "",
                 schoolLevelReports: [],
                 fundAllocations: [],
+                by: "swad",
             }
         },
         async mounted() {
@@ -113,45 +98,19 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                     }
                 })
                 .then(res => {
-                    // this.tableHeaders = [];
                     this.swadOffices = res.data;
-                    // for (let index = 0; index < this.swadOffices.length; index++) {
-                    //     const element = this.swadOffices[index];
-                    //     this.tableHeaders = [
-                    //         ...this.tableHeaders,
-                    //         {
-                    //             label: 'SUM of Amount Granted',
-                    //             prop: 'sum_amount_granted',
-                    //             swad_office_id: this.swadOffices[index].id,
-                    //             format: 'currency',
-                    //         }
-                    //     ];
-                    //     this.tableHeaders = [
-                    //         ...this.tableHeaders,
-                    //         {
-                    //             label: 'COUNT of Beneficiary',
-                    //             prop: 'beneficiary_served',
-                    //             swad_office_id: this.swadOffices[index].id,
-                    //             format: 'float',
-                    //         }
-                    //     ]
-                    // }
-                    // this.tableHeaders = [
-                    //     ...this.tableHeaders,
-                    //     {
-                    //         label: 'SUM of Amount Granted',
-                    //         prop: 'total_amount_granted',
-                    //         format: 'currency',
-                    //     }
-                    // ];
-                    // this.tableHeaders = [
-                    //     ...this.tableHeaders,
-                    //     {
-                    //         label: 'COUNT of Beneficiary',
-                    //         prop: 'total_beneficiaries_served',
-                    //         format: 'float',
-                    //     }
-                    // ]
+                })
+                .catch(err => {})
+                .then(res => {})
+            },
+            async getSwadOfficeDistricts(id = null){
+                return Axios.get(route('swad-offices.districts'), {
+                    params: {
+                        id
+                    }
+                })
+                .then(res => {
+                    this.swadOffices = res.data;
                 })
                 .catch(err => {})
                 .then(res => {})
@@ -210,7 +169,8 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                 return Axios.get(route('report'), {
                     params: {
                         payout_id,
-                        swad_office_id
+                        swad_office_id,
+                        by: this.by
                     }
                 })
                 .then(res => {
@@ -244,15 +204,25 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                 .then(res => {})
                 ;
             },
-            extractData(prop, school_level_id, format, swad_office_id){
+            extractData(prop, school_level_id, format, swad_office_id, swad_office_district = null){
                 let value;
                 if(school_level_id == null){
-                    let swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id);
+                    let swadOfficeReport;
+                    if(this.by == "swad"){
+                        swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id);
+                    }else{
+                        swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id && item.district == swad_office_district);
+                    }
                     value = swadOfficeReport.reduce((sum, t) => {
                         return sum += parseFloat(t[prop]);
                     }, 0);;
                 }else{
-                    let swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id && item.school_level_id == school_level_id);
+                    let swadOfficeReport;
+                    if(this.by == "swad"){
+                        swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id && item.school_level_id == school_level_id);
+                    }else{
+                        swadOfficeReport = this.swadReports.filter(item => item.swad_office_id == swad_office_id && item.school_level_id == school_level_id && item.district == swad_office_district);
+                    }
                     if(isEmpty(swadOfficeReport)){
                         value = 0;
                     }else{
@@ -287,7 +257,11 @@ import route from '../../../vendor/tightenco/ziggy/src/js';
                 }
             },
             async filterDashboard(){
-                await this.getSwadOffices(this.swad_office_id);
+                if(this.by == "swad"){
+                    await this.getSwadOffices(this.swad_office_id);
+                }else{
+                    await this.getSwadOfficeDistricts(this.swad_office_id);
+                }
                 await this.getReports(this.payout_id, this.swad_office_id);
                 // await this.getSchoolLevels();
             },

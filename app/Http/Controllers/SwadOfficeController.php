@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SwadOffice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SwadOfficeController extends Controller
 {
@@ -19,6 +20,27 @@ class SwadOfficeController extends Controller
             $swad_offices->where('id', $request->id);
         }
         return $swad_offices->get();
+    }
+
+    public function districts(Request $request)
+    {
+        $psgcs = SwadOffice::query();
+        $psgcs->groupBy('psgcs.swad_office_id');
+        $psgcs->groupBy('psgcs.district');
+        $psgcs->select(
+            'psgcs.swad_office_id',
+            'psgcs.district',
+            'psgcs.province_name',
+            'psgcs.city_name',
+            'swad_offices.name',
+            'swad_offices.id',
+        );
+
+        if($request->id){
+            $psgcs->where('psgcs.swad_office_id', $request->id);
+        }
+        $psgcs->leftJoin('psgcs', 'psgcs.swad_office_id', '=', 'swad_offices.id');
+        return $psgcs->get();
     }
 
     /**

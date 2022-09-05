@@ -74,9 +74,10 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="province">Province:
+                                <a href="#"><span style="font-size: 80%;" @click="resetAddress">Clear Address</span></a>
                                 <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.province_name }}</b> -->
                             </label>
-                            <select class="form-control" placeholder="Enter Province" v-model="formData.client.province" @change="populateCities">
+                            <select class="form-control" placeholder="Enter Province" v-model="formData.client.province" @change="populateCities" :disabled="disableAddress">
                                 <option v-for="(province, key) in provinces" :key="key" :value="province.province_psgc">{{ province.province_name }}</option>
                             </select>
                             <span style="color:red" v-if="formError['client.province']">{{ formError['client.province'][0] }}</span>
@@ -87,7 +88,7 @@
                             <label for="city">City:
                                 <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.city_name }}</b> -->
                             </label>
-                            <select class="form-control" placeholder="Enter City" v-model="formData.client.city" @change="populateBarangay">
+                            <select class="form-control" placeholder="Enter City" v-model="formData.client.city" @change="populateBarangay" :disabled="disableAddress">
                                 <option v-for="(city, key) in cities" :key="key" :value="city.city_psgc">{{ city.city_name }}</option>
                             </select>
                             <span style="color:red" v-if="formError['client.city']">{{ formError['client.city'][0] }}</span>
@@ -98,7 +99,7 @@
                             <label for="brgy">Barangay:
                                 <!-- <b v-if="formType == 'update'">{{ formData.client && formData.client.psgc && formData.client.psgc.brgy_name }}</b> -->
                             </label>
-                            <select class="form-control" placeholder="Enter Barangay" v-model="formData.client.brgy" @change="setPsgcId">
+                            <select class="form-control" placeholder="Enter Barangay" v-model="formData.client.brgy" @change="setPsgcId" :disabled="disableAddress">
                                 <option v-for="(brgy, key) in brgys" :key="key" :value="brgy.brgy_psgc">{{ brgy.brgy_name }}</option>
                             </select>
                             <span style="color:red" v-if="formError['client.brgy']">{{ formError['client.brgy'][0] }}</span>
@@ -186,9 +187,14 @@
             </fieldset>
 
             <fieldset class="border p-2 my-2">
-                <legend  class="w-auto">Father's Information</legend>
+                
+                <legend  class="w-auto">
+                    Father's Information
+                    <input type="checkbox" id="no_father" v-model="noFather" @change="noData($event,'father')"/>
+                    <label for="no_father"><span style="font-size: 80%;">No Father's Data</span></label>
+                </legend>
 
-                <div class="row gx-2">
+                <div class="row gx-2" v-if="!noFather">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="last_name">Father Last Name:</label>
@@ -241,8 +247,12 @@
                 </div>
             </fieldset>
             <fieldset class="border p-2 my-2">
-                <legend  class="w-auto">Mother's Information</legend>
-                <div class="row gx-2">
+                <legend  class="w-auto">
+                    Mother's Information
+                    <input type="checkbox" id="no_mother" v-model="noMother" @change="noData($event,'mother')"/>
+                    <label for="no_mother"><span style="font-size: 80%;">No Mother's Data</span></label>
+                </legend>
+                <div class="row gx-2" v-if="!noMother">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="last_name">Mother Last Name:</label>
@@ -522,6 +532,11 @@ import cloneDeep from 'lodash/cloneDeep'
                 formData:{
                     client: {
                         has_middle_name: false,
+                        no_mother: false,
+                        no_father: false,
+                        province: null,
+                        city: null,
+                        brgy: null,
                     },
                     father: {
                         has_middle_name: false,
@@ -533,6 +548,9 @@ import cloneDeep from 'lodash/cloneDeep'
                         has_middle_name: false,
                     }],
                 },
+                disableAddress: false,
+                noFather: false,
+                noMother: false,
                 formError:{
                     client: {},
                     father: {},
@@ -594,6 +612,8 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData = {
                         client: {
                             has_middle_name: false,
+                            no_mother: false,
+                            no_father: false,
                         },
                         father: {
                             has_middle_name: false,
@@ -642,6 +662,8 @@ import cloneDeep from 'lodash/cloneDeep'
                     this.formData = {
                         client: {
                             has_middle_name: false,
+                            no_mother: false,
+                            no_father: false,
                         },
                         father: {
                             has_middle_name: false,
@@ -659,7 +681,11 @@ import cloneDeep from 'lodash/cloneDeep'
                         mother: {},
                         beneficiaries: [],
                     }
-                    window.close();
+                    if(window.opener == null){
+                        window.location = "/encoding";
+                    }else{
+                        window.close();
+                    }
                 })
                 .catch(err => {
                     this.submit = false;
@@ -723,6 +749,29 @@ import cloneDeep from 'lodash/cloneDeep'
                 }
             },
 
+            noData(e, field){
+                if(e.target.checked){
+                    this.formData[field] = {
+                        has_middle_name: true,
+                    };
+                }
+                if(field == "mother"){
+                    this.noMother = e.target.checked;
+                }else{
+                    this.noFather = e.target.checked;
+                }
+            },
+
+            resetAddress(){
+                let address = {
+                    province: null,
+                    city: null,
+                    brgy: null,
+                }
+                this.formData.client = {...this.formData.client, ...address};
+                this.disableAddress = false;
+            },
+
             changeBeneficiaryAmount(key){
                 this.beneficiaryAmount(this.formData.beneficiaries[key].school_level_id, this.formData.beneficiaries[key].status, key);
             },
@@ -750,9 +799,10 @@ import cloneDeep from 'lodash/cloneDeep'
             getCompositionData(){
                 Axios.get(route('family-composition.uuid', this.uuid))
                 .then(res => {
+                    this.disableAddress = true;
                     // console.log(res.data);
-                    this.formData = res.data;
-                    this.formData.beneficiaries = res.data.beneficiaries.data;
+                    this.formData = cloneDeep(res.data);
+                    this.formData.beneficiaries = cloneDeep(res.data.beneficiaries.data);
                     this.formData.payout_id = this.formData.beneficiaries[0].payout_id;
                     
                     // this.formData.client.swad_office_id = this.formData.client.psgc.swad_office_id;
@@ -766,13 +816,19 @@ import cloneDeep from 'lodash/cloneDeep'
                         this.brgys = [this.formData.client.psgc];
                         this.formData.client.city = this.formData.client.psgc.city_psgc;
                         this.formData.client.province = this.formData.client.psgc.province_psgc;
+                    }else{
+                        this.formData.client.province = null;
+                        this.formData.client.city = null;
+                        this.formData.client.brgy = null;
                     }
                     if(isEmpty(this.formData.father)){
+                        this.noFather = true;
                         this.formData.father = {
                             has_middle_name: true,
                         };
                     }
                     if(isEmpty(this.formData.mother)){
+                        this.noMother = true;
                         this.formData.mother = {
                             has_middle_name: true,
                         };

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\CompositionController;
 use App\Http\Controllers\FundAllocationController;
+use App\Http\Controllers\PsgcController;
 use App\Http\Controllers\SchoolLevelController;
 use App\Http\Controllers\SwadOfficeController;
 use Illuminate\Http\Request;
@@ -32,3 +33,4 @@ Route::resources([
 
 Route::get('beneficiaries/reports', [BeneficiaryController::class, 'report'])->name('report');
 Route::get('fund-allocations/reports', [FundAllocationController::class, 'report'])->name('report.fund-allocation');
+Route::get('districts', [SwadOfficeController::class, 'districts'])->name('swad-offices.districts');

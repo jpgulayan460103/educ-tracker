@@ -13,4 +13,13 @@ class Psgc extends Model
     {
         return $this->belongsTo(SwadOffice::class);
     }
+
+    //update districs
+
+    /* 
+    
+    update psgcs set `district` = "Lone" WHERE `province_psgc` = '112400000' and `district` = "";
+    update psgcs set `district` = "Lone" WHERE `province_psgc` = '118600000' and `district` = "";
+
+    */
 }

@@ -42,7 +42,10 @@ class BeneficiaryController extends Controller
             'payout',
             'swad_office',
         );
-        if($user->user_role != "Admin"){
+        if(!$request->wantsJson()){
+            abort(403);
+        }
+        if($user->user_role && $user->user_role != "Admin"){
             $user_id = $user->id;
             if($request->showEncoded == "yes"){
                 $beneficiaries->whereHas("composition", function($q) use ($user_id){
@@ -201,15 +204,23 @@ class BeneficiaryController extends Controller
     public function report(Request $request)
     {
 
-        $report_query = Beneficiary::where('status', 'Claimed');
-        $report_query->select(
+        /*  */
+        $report_query = Beneficiary::where('beneficiaries.status', 'Claimed');
+        $report_query->leftJoin('compositions', 'beneficiaries.composition_id', '=', 'compositions.id');
+        $report_query->leftJoin('clients', 'compositions.client_id', '=', 'clients.id');
+        $report_query->leftJoin('swad_offices', 'beneficiaries.swad_office_id', '=', 'swad_offices.id');
+        
+
+        $select = [
             DB::raw("count(*) as beneficiary_served"),
             DB::raw("sum(amount_granted) as sum_amount_granted"),
-            'swad_office_id',
-            'school_level_id',
-        );
-        $report_query->groupBy('swad_office_id');
-        $report_query->groupBy('school_level_id');
+            DB::raw("swad_offices.name as swad_office_name"),
+            'beneficiaries.swad_office_id',
+            'beneficiaries.school_level_id',
+        ];
+        $report_query->select($select);
+        $report_query->groupBy('beneficiaries.swad_office_id');
+        $report_query->groupBy('beneficiaries.school_level_id');
 
         if($request->payout_id){
             $payout_id = $request->payout_id;
@@ -220,6 +231,18 @@ class BeneficiaryController extends Controller
             $report_query->where('beneficiaries.swad_office_id', $swad_office_id);
         }
 
+        if($request->by && $request->by == "district"){
+            $report_query->leftJoin('psgcs', 'clients.psgc_id', '=', 'psgcs.id');
+            $report_query->addSelect('psgcs.province_name');
+            $report_query->addSelect('psgcs.district');
+            $report_query->groupBy('psgcs.district');
+            $report_query->whereNotNull('psgcs.district');
+            
+            // $report_query->orderBy('psgcs.district');
+            // $report_query->orderBy('psgcs.province_name');
+        }else{
+            
+        }
 
         $fund_allocations = FundAllocation::query();
         if($request->payout_id){
@@ -231,49 +254,10 @@ class BeneficiaryController extends Controller
         $fund_allocations->select('swad_office_id', DB::raw("SUM(allocated_amount) as total_allocated_amount"));
         $fund_allocations->groupBy('swad_office_id');
 
-
         return [
             'beneficiaries' => $report_query->get(),
             'fund_allocations' => $fund_allocations->get(),
         ];
-    }
-
-    public function resport(Request $request)
-    {
-        // DB::enableQueryLog();
-        $swad_offices = SwadOffice::all();
-        $school_level = SchoolLevel::all();
-        $claimed_status = "Claimed";
-        foreach ($swad_offices as $swad_office) {
-            $beneficiaries_query = $swad_office
-                ->beneficiaries()
-                ->with('school_level')
-                ->select(
-                    DB::raw('count(*) as beneficiary_served'),
-                    DB::raw('(count(*) * '.$swad_office->amount.') as sum_amount_granted'),
-                    'school_level_id',
-                )
-                ->groupBy('school_level_id')
-                ->where('beneficiaries.status', $claimed_status);
-            $total_served_query = $swad_office
-                ->beneficiaries()
-                ->where('beneficiaries.status', $claimed_status);
-            if($request->payout_id){
-                $payout_id = $request->payout_id;
-                $beneficiaries_query->where('beneficiaries.payout_id', $payout_id);
-                $total_served_query->where('beneficiaries.payout_id', $payout_id);
-            }
-            if($request->school_level_id){
-                $school_level_id = $request->school_level_id;
-                $beneficiaries_query->where('beneficiaries.school_level_id', $school_level_id);
-                $total_served_query->where('beneficiaries.school_level_id', $school_level_id);
-            }
-            $swad_office->school_levels = $beneficiaries_query->get();
-            $swad_office->total_beneficiaries_served = $total_served_query->count();
-            $swad_office->total_amount_granted = $swad_office->total_beneficiaries_served * $swad_office->amount;
-        }
-        // return DB::getQueryLog();
-        return $swad_offices;
     }
 
     public function importInitialize(Request $request)

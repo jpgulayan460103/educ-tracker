@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Psgc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PsgcController extends Controller
 {
