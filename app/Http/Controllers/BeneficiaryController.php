@@ -489,8 +489,17 @@ class BeneficiaryController extends Controller
             $headers[] = 'SWAD Office';
             $headers[] = 'Client Name';
             $headers[] = 'Cellphone Number';
-            $headers[] = 'Beneficiary';
-            $headers[] = 'Address';
+            $headers[] = 'Beneficiary Full';
+            $headers[] = 'Beneficiary Full';
+            $headers[] = 'Beneficiary Last Name';
+            $headers[] = 'Beneficiary First Name';
+            $headers[] = 'Beneficiary Middle Name';
+            $headers[] = 'Beneficiary Ext Name';
+            $headers[] = 'Street Number';
+            $headers[] = 'Province';
+            $headers[] = 'Municipality';
+            $headers[] = 'Barangay';
+            $headers[] = 'District';
             $headers[] = 'School Level';
             $headers[] = 'Amount Granted';
             $headers[] = 'Status';
@@ -523,8 +532,18 @@ class BeneficiaryController extends Controller
                 }else{
                     $export[] = "";
                 }
+
                 $export[] = $beneficiary['full_name'];
-                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['full_address'] : "";
+                $export[] = trim($beneficiary['last_name'].", ".$beneficiary['first_name']." ".$beneficiary['middle_name']." ".$beneficiary['ext_name']);
+                $export[] = $beneficiary['last_name'];
+                $export[] = $beneficiary['first_name'];
+                $export[] = $beneficiary['middle_name'];
+                $export[] = $beneficiary['ext_name'];
+                $export[] = isset($beneficiary['composition']['client']) ? $beneficiary['composition']['client']['street_number'] : "";
+                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['province_name'] : "";
+                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['city_name'] : "";
+                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['brgy_name'] : "";
+                $export[] = isset($beneficiary['composition']['client']) && isset($beneficiary['composition']['client']['psgc']) ? $beneficiary['composition']['client']['psgc']['district'] : "";
                 $export[] = $beneficiary['school_level']['name'];
                 $export[] = $beneficiary['amount_granted'];
                 $export[] = $beneficiary['status'];
