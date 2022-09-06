@@ -64,6 +64,7 @@ class BeneficiaryTransformer extends TransformerAbstract
             'uuid' => $beneficiary->uuid,
             'control_number' => $beneficiary->control_number,
             'created_at' => $beneficiary->created_at->toDateString(),
+            'created_at_full' => $beneficiary->created_at,
         ];
 
         if($data['birth_date'] == null){

@@ -573,6 +573,7 @@ class BeneficiaryController extends Controller
             $headers[] = 'Father Name';
             $headers[] = 'Mother Name';
             $headers[] = 'Encoded By';
+            $headers[] = 'Encoded Date time';
 
             $writer->insertOne($headers);
             $index_data = $this->index($request);
@@ -617,7 +618,8 @@ class BeneficiaryController extends Controller
                 $export[] = isset($beneficiary['composition']['father']) ? $beneficiary['composition']['father']['full_name'] : "";
                 $export[] = isset($beneficiary['composition']['mother']) ? $beneficiary['composition']['mother']['full_name'] : "";
                 $export[] = isset($beneficiary['composition']['user']) ? $beneficiary['composition']['user']['full_name'] : "";
-
+                $export[] = $beneficiary['created_at_full'];
+                
                 $data = array();
                 foreach ($export as $export_data) {
                     $data[] = mb_convert_encoding($export_data, 'UTF-16LE', 'UTF-8');
