@@ -3,7 +3,10 @@
         <input class="field-input" type="file" @change="getSelectedFiles($event)" name="selected_files" id="selected_files" ref="selected_files"
             accept=".csv">
         
-        
+        <select placeholder="Search" v-model="importType">
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+        </select>
         <button type="submit" class="btn btn-sm btn-primary" @click="submitUpload">Import</button>
         <br> {{ importedBeneficiariesCount }} / {{ isEmpty(beneficiaries) ? 0 : beneficiaries.length - 1 }}
     </div>
@@ -27,6 +30,7 @@ import isEmpty from 'lodash/isEmpty'
                 importRoute: route('import.beneficiary.data'),
                 processedFilename: "",
                 importedFilename: "",
+                importType: "create",
             }
         },
         methods: {
@@ -102,6 +106,7 @@ import isEmpty from 'lodash/isEmpty'
                     columns: this.beneficiaries[0],
                     beneficiaries,
                     processed_filename: this.processedFilename,
+                    importType: this.importType,
                 })
                 .then(res => {
                     this.importedBeneficiariesCount = this.importedBeneficiariesCount + res.data.count;

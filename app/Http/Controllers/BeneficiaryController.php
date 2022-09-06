@@ -309,6 +309,71 @@ class BeneficiaryController extends Controller
 
     public function importData(Request $request)
     {
+        if($request->importType == "create"){
+            return $this->addImportedData($request);
+        }else{
+            return $this->updateImportData($request);
+        }
+    }
+
+    public function updateImportData(Request $request)
+    {
+        $beneficiaries = $request->beneficiaries;
+        $processed_filename = $request->processed_filename;
+        $columns = $request->columns;
+        $writer = Writer::createFromPath("files/processed/$processed_filename.csv", 'a+');
+        $columns[] = "Control Number";
+        $columns[] = "UUID";
+        foreach ($beneficiaries as $key => $beneficiary_data) {
+
+            $uuid = $beneficiary_data[0];
+            $control_number = $beneficiary_data[1];
+            $beneficiary_name = $beneficiary_data[2];
+            $school_level_name = $beneficiary_data[3];
+            $status = $beneficiary_data[4];
+            $payout_date = $beneficiary_data[5];
+            $remarks = $beneficiary_data[6];
+
+            $payout = Payout::where('payout_date', $payout_date)->first();
+            $school_level = SchoolLevel::where('name', $school_level_name)->first();
+
+            if(!$payout){
+                $beneficiary_data[] = "Failed";    
+                $beneficiary_data[] = "No Payout Schedule";
+                continue;
+            }
+            if(!$school_level){
+                $beneficiary_data[] = "Failed";    
+                $beneficiary_data[] = "No Educational Level";
+                continue;
+            }
+
+            $beneficiary = Beneficiary::where('uuid', $uuid)->where('control_number', $control_number)->first();
+            if($beneficiary){
+                $beneficiary->status = $status;
+                $beneficiary->remarks = $remarks;
+                $beneficiary->payout_id = $payout->id;
+                $beneficiary->school_level_id = $school_level->id;
+                $beneficiary->save();
+                $beneficiary_data[] = "Success";    
+            }else{
+                $beneficiary_data[] = "Failed";    
+                $beneficiary_data[] = "No beneficiary found";    
+            }
+
+            $data = array();
+            foreach ($beneficiary_data as $export_data) {
+                $data[] = mb_convert_encoding($export_data, 'UTF-16LE', 'UTF-8');
+            }
+            $writer->insertOne($data);
+        }
+        return [
+            'count' => count($beneficiaries),
+        ];
+    }
+
+    public function addImportedData(Request $request)
+    {
         $beneficiaries = $request->beneficiaries;
         $processed_filename = $request->processed_filename;
         $columns = $request->columns;
