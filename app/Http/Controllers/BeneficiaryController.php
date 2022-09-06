@@ -62,13 +62,31 @@ class BeneficiaryController extends Controller
             $keyword = $request->keyword;
             $type = $request->type;
             switch ($type) {
+                case 'general':
+                    $beneficiaries->where(function ($query) use ($keyword) {
+                        $query->orWhereHas("composition.client", function($q) use ($keyword){
+                            $keywords = explode(" ", $keyword);
+                            $q->where(function ($query) use ($keywords) {
+                                foreach ($keywords as $keyword) {
+                                    $query->where("full_name", 'like', "%$keyword%");
+                                }
+                            });
+                        });
+                        $query->orWhere(function ($query) use ($keyword) {
+                            $keywords = explode(" ", $keyword);
+                            foreach ($keywords as $keyword) {
+                                $query->where("full_name", 'like', "%$keyword%");
+                            }
+                        });
+                    });
+                    break;
                 case 'control_number':
                     $beneficiaries->where('control_number', 'like', "%$keyword%");
                     break;
                 case 'encoded_date':
                     $beneficiaries->whereBetween('created_at', [
-                        Carbon::parse($keyword),
-                        Carbon::parse($keyword)->clone()->addDay()->subSecond()
+                        Carbon::parse($keyword[0]),
+                        Carbon::parse($keyword[1])->clone()->addDay()->subSecond()
                     ]);
                     break;
                 case 'client':

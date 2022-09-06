@@ -3,14 +3,18 @@
         <fieldset class="border p-2 my-2">
             <legend  class="w-auto">Encoded Beneficiaries</legend>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4" v-if="type != 'encoded_date'">
                     Search Query
-                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" v-if="type != 'encoded_date' && type != 'status' && type != 'payout_date'" @keydown.enter="getBeneficiaries">
-                    <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"  v-if="type == 'encoded_date'"></date-picker>
+                    <input type="text" class="form-control" placeholder="Search" v-model="keyword" @keydown.enter="getBeneficiaries">
+                </div>
+                <div class="col-md-4" v-else>
+                    Search Query
+                    <date-picker v-model="keyword" format="MM/DD/YYYY" type="date" value-type="YYYY-MM-DD" style="width: 100%;" placeholder="MM/DD/YYYY"  v-if="type == 'encoded_date'" range></date-picker>
                 </div>
                 <div class="col-md-2">
                     Search Category
                     <select class="form-control" placeholder="Search" v-model="type">
+                        <option value="general">General Search</option>
                         <option value="beneficiary">Beneficiary Name</option>
                         <!-- <option value="payout_date">Payout Schedule</option> -->
                         <option value="control_number">Control Number</option>
@@ -52,9 +56,6 @@
                         <button type="button" class="btn btn-primary btn-block" @click="getBeneficiaries" :disabled="onSearching">Search</button>
                         <button type="button" class="btn btn-warning btn-block" @click="exportBeneficiaries" :disabled="exporting">Download {{ exportPercentage }}</button>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    
                 </div>
             </div>
             <br>
@@ -141,7 +142,7 @@ import DatePicker from 'vue2-datepicker';
                 beneficiaries: [],
                 keyword: "",
                 showEncoded: "no",
-                type: "beneficiary",
+                type: "general",
                 page: 1,
                 pagination: {
                     current_page: 1,
