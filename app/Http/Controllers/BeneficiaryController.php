@@ -324,6 +324,7 @@ class BeneficiaryController extends Controller
         $writer = Writer::createFromPath("files/processed/$processed_filename.csv", 'a+');
         $columns[] = "Control Number";
         $columns[] = "UUID";
+        $imported = [];
         foreach ($beneficiaries as $key => $beneficiary_data) {
 
             $uuid = $beneficiary_data[0];
@@ -336,24 +337,22 @@ class BeneficiaryController extends Controller
 
             $payout = Payout::where('payout_date', $payout_date)->first();
             $school_level = SchoolLevel::where('name', $school_level_name)->first();
+            $payout_id = null;
+            $school_level_id = null;
 
             if(!$payout){
-                $beneficiary_data[] = "Failed";    
                 $beneficiary_data[] = "No Payout Schedule";
-                continue;
             }
             if(!$school_level){
-                $beneficiary_data[] = "Failed";    
                 $beneficiary_data[] = "No Educational Level";
-                continue;
             }
 
             $beneficiary = Beneficiary::where('uuid', $uuid)->where('control_number', $control_number)->first();
             if($beneficiary){
                 $beneficiary->status = $status;
                 $beneficiary->remarks = $remarks;
-                $beneficiary->payout_id = $payout->id;
-                $beneficiary->school_level_id = $school_level->id;
+                $beneficiary->payout_id = $payout_id;
+                $beneficiary->school_level_id = $school_level_id;
                 $beneficiary->save();
                 $beneficiary_data[] = "Success";    
             }else{
@@ -366,9 +365,11 @@ class BeneficiaryController extends Controller
                 $data[] = mb_convert_encoding($export_data, 'UTF-16LE', 'UTF-8');
             }
             $writer->insertOne($data);
+            $imported[$key] = $data;
         }
         return [
             'count' => count($beneficiaries),
+            'bene' => $imported
         ];
     }
 
