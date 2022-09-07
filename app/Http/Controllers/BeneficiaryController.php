@@ -448,26 +448,45 @@ class BeneficiaryController extends Controller
             }else{
 
                 if($client_name == "" && $client_last_name != ""){
-                    $client = Client::create([
-                        'last_name' => $client_last_name,
-                        'first_name' => $client_first_name,
-                        'middle_name' => $client_middle_name,
-                        'ext_name' => $client_ext_name,
-                        'full_name' => '',
-                        'street_number' => $street_number,
-                        'psgc_id' => $psgc_id,
-                        'swad_office_id' => $swad_office->id,
-                        // 'mobile_number' => str_pad($mobile_number, 11, "0", STR_PAD_LEFT),
-                        'age' => 0,
-                        'gender' => '',
-                        'occupation' => '',
-                        'monthly_salary' => 0,
-                        'relationship_beneficiary' => $relationship_beneficiary,
-                        'sector_id' => $sector_id,
-                        'client_sector_id' => $client_sector_id,
-                        'sector_other_id' => $sector_other_id,
-                        'remarks' => $remarks,
-                    ]);
+
+                    $client_full_name_array = [
+                        $client_first_name,
+                        $client_middle_name,
+                        $client_last_name,
+                        $client_ext_name,
+                    ];
+                    $client_full_name = trim(implode(" ",$client_full_name_array));
+                    $client_full_name = trim(preg_replace("/\s+/", " ", $client_full_name));
+
+                    $client = Client::where('full_name', $client_full_name)->where('swad_office_id', $swad_office->id)->first();
+                    if($client){
+                        $composition = Composition::where('client_id', $client->id)->first();
+                    }else{
+                        $client = Client::create([
+                            'last_name' => $client_last_name,
+                            'first_name' => $client_first_name,
+                            'middle_name' => $client_middle_name,
+                            'ext_name' => $client_ext_name,
+                            'full_name' => '',
+                            'street_number' => $street_number,
+                            'psgc_id' => $psgc_id,
+                            'swad_office_id' => $swad_office->id,
+                            // 'mobile_number' => str_pad($mobile_number, 11, "0", STR_PAD_LEFT),
+                            'age' => 0,
+                            'gender' => '',
+                            'occupation' => '',
+                            'monthly_salary' => 0,
+                            'relationship_beneficiary' => $relationship_beneficiary,
+                            'sector_id' => $sector_id,
+                            'client_sector_id' => $client_sector_id,
+                            'sector_other_id' => $sector_other_id,
+                            'remarks' => $remarks,
+                        ]);
+                        $composition = Composition::create([
+                            'client_id' => $client->id,
+                            'user_id' => 1
+                        ]);
+                    }
                 }else{
                     $client = Client::create([
                         'last_name' => $client_name,
@@ -489,12 +508,12 @@ class BeneficiaryController extends Controller
                         'sector_other_id' => $sector_other_id,
                         'remarks' => $remarks,
                     ]);
-                }
 
-                $composition = Composition::create([
-                    'client_id' => $client->id,
-                    'user_id' => 1
-                ]);
+                    $composition = Composition::create([
+                        'client_id' => $client->id,
+                        'user_id' => 1
+                    ]);
+                }
             }
 
             $swad_office = SwadOffice::where('name', $swad_office_name)->first();
