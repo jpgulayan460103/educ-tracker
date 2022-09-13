@@ -339,12 +339,18 @@ class BeneficiaryController extends Controller
             $school_level = SchoolLevel::where('name', $school_level_name)->first();
             $payout_id = null;
             $school_level_id = null;
+            $amount_granted = 0;
 
             if(!$payout){
                 $beneficiary_data[] = "No Payout Schedule";
+            }else{
+                $payout_id = $payout->id;
             }
             if(!$school_level){
                 $beneficiary_data[] = "No Educational Level";
+            }else{
+                $school_level_id = $school_level->id;
+                $amount_granted = $school_level->amount;
             }
 
             $beneficiary = Beneficiary::where('uuid', $uuid)->where('control_number', $control_number)->first();
@@ -353,6 +359,7 @@ class BeneficiaryController extends Controller
                 $beneficiary->remarks = $remarks;
                 $beneficiary->payout_id = $payout_id;
                 $beneficiary->school_level_id = $school_level_id;
+                $beneficiary->amount_granted = $amount_granted;
                 $beneficiary->save();
                 $beneficiary_data[] = "Success";    
             }else{
@@ -362,7 +369,7 @@ class BeneficiaryController extends Controller
 
             $data = array();
             foreach ($beneficiary_data as $export_data) {
-                $data[] = mb_convert_encoding($export_data, 'UTF-16LE', 'UTF-8');
+                $data[] = mb_convert_encoding($export_data, 'UTF-8', 'UTF-8');
             }
             $writer->insertOne($data);
             $imported[$key] = $data;
@@ -495,7 +502,7 @@ class BeneficiaryController extends Controller
                         'ext_name' => '',
                         'full_name' => '',
                         'street_number' => $street_number,
-                        // 'psgc_id' => $psgc->id,
+                        'psgc_id' => $psgc_id,
                         'swad_office_id' => $swad_office->id,
                         'mobile_number' => '',
                         'age' => 0,
