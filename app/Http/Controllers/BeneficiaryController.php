@@ -427,6 +427,7 @@ class BeneficiaryController extends Controller
 
             $client_sector = ClientSector::where('name' , trim($sector_name))->first();
             $sector_other = SectorOther::where('name' , trim($sector_other_name))->first();
+            $remarks = "";
             if($client_sector){
                 $client_sector_id = $client_sector->id;
             }else{
