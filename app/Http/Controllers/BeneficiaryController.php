@@ -390,7 +390,7 @@ class BeneficiaryController extends Controller
         $columns[] = "UUID";
         // $writer->insertOne($columns);
         foreach ($beneficiaries as $key => $beneficiary_data) {
-            $remarks = "";
+
             $insert_data = [];
             $number = $beneficiary_data[0];
             $payout_date = $beneficiary_data[1];
@@ -427,7 +427,6 @@ class BeneficiaryController extends Controller
 
             $client_sector = ClientSector::where('name' , trim($sector_name))->first();
             $sector_other = SectorOther::where('name' , trim($sector_other_name))->first();
-            
             if($client_sector){
                 $client_sector_id = $client_sector->id;
             }else{
@@ -543,7 +542,6 @@ class BeneficiaryController extends Controller
                 $insert_data['ext_name'] = $beneficiary_ext_name;
             }
             $insert_data['status'] = $status;
-            $insert_data['remarks'] = $remarks;
             $insert_data['amount_granted'] = $status == "Claimed" ? $school_level->amount : 0;
             $format = $swad_office->code."-01-";
             $next_control_number = 1;
