@@ -542,6 +542,7 @@ class BeneficiaryController extends Controller
                 $insert_data['ext_name'] = $beneficiary_ext_name;
             }
             $insert_data['status'] = $status;
+            $insert_data['remarks'] = $remarks;
             $insert_data['amount_granted'] = $status == "Claimed" ? $school_level->amount : 0;
             $format = $swad_office->code."-01-";
             $next_control_number = 1;
